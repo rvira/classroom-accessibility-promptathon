@@ -7,7 +7,7 @@
   --ink: #14161a;
   --ink-soft: #4d5563;
   --ink-mute: #8a93a1;
-  --accent: #2f6bdb;
+  --accent: #46820f;
   --ui: Arial, Helvetica, sans-serif;
   --display: 'Atkinson Hyperlegible', 'Segoe UI', Arial, sans-serif;
   --ask-h: clamp(250px, 31vh, 320px);
@@ -25,9 +25,9 @@
   font-family: var(--ui);
   color: var(--ink);
   background:
-    radial-gradient(60% 56% at 50% 44%, #e3eefe 0%, rgba(227, 238, 254, 0) 72%),
-    radial-gradient(40% 38% at 84% 6%, #eef3fd 0%, rgba(238, 243, 253, 0) 70%),
-    radial-gradient(44% 44% at 8% 92%, #f3f2fc 0%, rgba(243, 242, 252, 0) 72%),
+    radial-gradient(60% 56% at 50% 44%, #e9f4dc 0%, rgba(227, 238, 254, 0) 72%),
+    radial-gradient(40% 38% at 84% 6%, #eff7e6 0%, rgba(238, 243, 253, 0) 70%),
+    radial-gradient(44% 44% at 8% 92%, #f5f7ea 0%, rgba(243, 242, 252, 0) 72%),
     #fdfefe;
   background-attachment: fixed;
   overflow-x: hidden;
@@ -83,8 +83,8 @@
   border: 1px solid rgba(20, 22, 26, 0.3);
   border-radius: 50%;
   box-shadow:
-    0 0 0 8px rgba(47, 107, 219, 0.03),
-    0 0 40px 9px rgba(47, 107, 219, 0.07);
+    0 0 0 8px rgba(70, 130, 15, 0.03),
+    0 0 40px 9px rgba(70, 130, 15, 0.07);
   animation: breathe 14s ease-in-out infinite alternate;
 }
 
@@ -132,6 +132,41 @@
   min-width: 0;
 }
 
+.kicker-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: clamp(8px, 1.2vh, 16px);
+}
+
+.kicker-row .kicker {
+  margin: 0;
+}
+
+.block-info {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border: 1px solid #d3e3c2;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--accent);
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.block-info:hover {
+  background: #eef7e1;
+}
+
+.block-info[aria-expanded='true'] {
+  border-color: #15171b;
+  background: #15171b;
+  color: #fff;
+}
+
 .kicker {
   margin: 0 0 clamp(8px, 1.2vh, 16px);
   font-family: var(--ui);
@@ -171,6 +206,126 @@
   font-size: clamp(1.15rem, 1.55vw, 1.75rem);
   line-height: 1.32;
   color: var(--ink-soft);
+}
+
+/* ---------- technical version card ---------- */
+
+.tech-card {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(96px, 11vh, 118px);
+  z-index: 30;
+  width: min(560px, calc(100vw - 32px));
+  transform: translateX(-50%);
+  padding: 16px 20px 18px;
+  border: 1px solid #dcead0;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 24px 60px rgba(15, 20, 35, 0.2);
+  text-align: left;
+  animation: tech-pop 0.18s ease both;
+}
+
+/* Keeps the horizontal centring: a plain transform in the keyframes would
+   cancel translateX(-50%). */
+@keyframes tech-pop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 6px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.tech-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.tech-head span {
+  font-family: var(--ui);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.tech-close {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  background: none;
+  color: var(--ink-mute);
+}
+
+.tech-close:hover {
+  color: var(--ink);
+}
+
+.tech-label {
+  margin: 0 0 6px;
+  font-family: var(--ui);
+  font-size: 0.78rem;
+  color: var(--ink-mute);
+}
+
+.math-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 6px;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: clamp(1.3rem, 2vw, 1.7rem);
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.math-line sup {
+  font-size: 0.62em;
+  vertical-align: super;
+  line-height: 0;
+}
+
+.math-soft {
+  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  color: var(--ink-soft);
+}
+
+.integral {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.int-glyph {
+  font-size: 2.1em;
+  line-height: 0.75;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.int-limits {
+  display: flex;
+  flex-direction: column;
+  margin-right: 4px;
+  font-size: 0.55em;
+  line-height: 1.05;
+  font-family: var(--ui);
+}
+
+.tech-note {
+  margin: 0;
+  font-family: var(--ui);
+  font-size: 0.82rem;
+  color: var(--ink-mute);
 }
 
 /* ---------- the pill that becomes the catch-up band ---------- */
@@ -245,7 +400,7 @@
   justify-content: space-between;
   gap: 12px;
   padding-bottom: 8px;
-  border-bottom: 1px solid #e7eaf0;
+  border-bottom: 1px solid #e6ecdf;
 }
 
 .sheet-title {
@@ -262,7 +417,7 @@
   place-items: center;
   width: 34px;
   height: 34px;
-  border: 1px solid #dfe3ea;
+  border: 1px solid #e0e6d9;
   border-radius: 50%;
   background: #fff;
   color: var(--ink);
@@ -379,7 +534,7 @@
   gap: 12px;
   padding: 7px 14px;
   border-radius: 12px;
-  background: #f3f6fc;
+  background: #f3f8ec;
 }
 
 .step-icon {
@@ -388,7 +543,7 @@
   flex: none;
   width: 32px;
   height: 32px;
-  border: 1px solid #e0e7f4;
+  border: 1px solid #e0ecd2;
   border-radius: 9px;
   background: #fff;
   color: var(--accent);
@@ -417,7 +572,7 @@
   flex-wrap: wrap;
   margin-top: 6px;
   padding: 10px 0 8px;
-  border-top: 1px solid #e7eaf0;
+  border-top: 1px solid #e6ecdf;
 }
 
 .back-to-lecture {
@@ -441,14 +596,14 @@
   width: 26px;
   height: 26px;
   margin-left: auto;
-  border: 1px solid #cfd9ea;
+  border: 1px solid #d3e3c2;
   border-radius: 50%;
   background: #fff;
   color: var(--accent);
 }
 
 .step-info:hover {
-  background: #eaf1ff;
+  background: #eef7e1;
 }
 
 .step-info[aria-expanded='true'] {
@@ -464,7 +619,7 @@
   z-index: 5;
   width: min(420px, calc(100% - 24px));
   padding: 12px 14px;
-  border: 1px solid #dbe4f2;
+  border: 1px solid #dcead0;
   border-radius: 14px;
   background: #fff;
   box-shadow: 0 18px 40px rgba(15, 20, 35, 0.18);
@@ -550,7 +705,7 @@ button {
 
 button:focus-visible,
 input:focus-visible {
-  outline: 3px solid #1f5bd0;
+  outline: 3px solid #46820f;
   outline-offset: 2px;
 }
 
@@ -808,6 +963,20 @@ input:focus-visible {
     left: 8px;
     bottom: 70px;
     width: auto;
+  }
+
+  .tech-card {
+    bottom: 100px;
+    padding: 14px 16px 16px;
+  }
+
+  .block-info {
+    width: 24px;
+    height: 24px;
+  }
+
+  .math-line {
+    font-size: 1.15rem;
   }
 
   .step-text {

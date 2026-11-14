@@ -4,8 +4,8 @@ import '@fontsource/atkinson-hyperlegible/700.css'
 import './App.css'
 
 /* Sample state from one Math 2B (Calculus) lecture on integrals.
-   Synthetic, not a transcript, and no model is called. Copy is kept plain
-   on purpose: short words, no notation in the main line. */
+   Synthetic, not a transcript, and no model is called. The visible copy is
+   plain on purpose; the exact maths lives behind each small i button. */
 const lecture = {
   course: 'Math 2B · Lecture 14 · Integrals',
   where: 'The class is on one integral problem. They just renamed a messy part with the letter u.',
@@ -42,6 +42,89 @@ const catchUpSteps = [
 ]
 
 type Stage = 'ask' | 'steps'
+type BlockKey = 'where' | 'next' | 'keep'
+
+function Integral({ lower, upper, children }: { lower: string; upper: string; children: React.ReactNode }) {
+  return (
+    <span className="integral">
+      <span className="int-glyph" aria-hidden="true">
+        ∫
+      </span>
+      <span className="int-limits" aria-hidden="true">
+        <span>{upper}</span>
+        <span>{lower}</span>
+      </span>
+      <span className="int-body">{children}</span>
+    </span>
+  )
+}
+
+function Technical({ block }: { block: BlockKey }) {
+  if (block === 'where') {
+    return (
+      <>
+        <p className="tech-label">On the board</p>
+        <p className="math-line" aria-hidden="true">
+          <Integral lower="0" upper="1">
+            2x·e<sup>x²</sup> dx
+          </Integral>
+        </p>
+        <p className="math-line math-soft" aria-hidden="true">
+          u = x², &nbsp;du = 2x·dx
+        </p>
+        <p className="sr-only">
+          The board reads: the integral from 0 to 1 of 2x times e to the x squared, dx. Underneath it,
+          u equals x squared and du equals 2x dx.
+        </p>
+      </>
+    )
+  }
+
+  if (block === 'next') {
+    return (
+      <>
+        <p className="tech-label">Limit change</p>
+        <p className="math-line" aria-hidden="true">
+          x = 0 &nbsp;→&nbsp; u = 0
+        </p>
+        <p className="math-line" aria-hidden="true">
+          x = 1 &nbsp;→&nbsp; u = 1
+        </p>
+        <p className="math-line math-soft" aria-hidden="true">
+          <Integral lower="0" upper="1">
+            2x·e<sup>x²</sup> dx
+          </Integral>
+          &nbsp;=&nbsp;
+          <Integral lower="0" upper="1">
+            e<sup>u</sup> du
+          </Integral>
+        </p>
+        <p className="sr-only">
+          The start and end values are rewritten in u: x equals 0 becomes u equals 0, and x equals 1
+          becomes u equals 1. The integral from 0 to 1 of 2x times e to the x squared, dx becomes the
+          integral from 0 to 1 of e to the u, du.
+        </p>
+      </>
+    )
+  }
+
+  return (
+    <>
+      <p className="tech-label">Exact value</p>
+      <p className="math-line" aria-hidden="true">
+        <Integral lower="0" upper="1">
+          e<sup>u</sup> du
+        </Integral>
+        &nbsp;=&nbsp; e − 1 ≈ 1.718
+      </p>
+      <p className="tech-note">Evaluated in u. x never comes back.</p>
+      <p className="sr-only">
+        The integral from 0 to 1 of e to the u, du equals e minus 1, about 1.718. It is evaluated in u,
+        so x is never substituted back.
+      </p>
+    </>
+  )
+}
 
 function App() {
   const [open, setOpen] = useState(false)
@@ -49,6 +132,7 @@ function App() {
   const [draft, setDraft] = useState('')
   const [answer, setAnswer] = useState('')
   const [openInfo, setOpenInfo] = useState<number | null>(null)
+  const [openTech, setOpenTech] = useState<BlockKey | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const close = () => {
@@ -66,19 +150,24 @@ function App() {
   }, [open, stage])
 
   useEffect(() => {
-    if (!open) return
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return
       if (openInfo !== null) {
         setOpenInfo(null)
         return
       }
-      setOpen(false)
-      setStage('ask')
+      if (openTech !== null) {
+        setOpenTech(null)
+        return
+      }
+      if (open) {
+        setOpen(false)
+        setStage('ask')
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [open, openInfo])
+  }, [open, openInfo, openTech])
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault()
@@ -88,6 +177,12 @@ function App() {
     setDraft('')
     setStage('steps')
   }
+
+  const blocks: { key: BlockKey; label: string }[] = [
+    { key: 'where', label: 'Where we are' },
+    { key: 'next', label: 'Next' },
+    { key: 'keep', label: 'Keep in mind' },
+  ]
 
   const shell = ['app']
   if (open) shell.push('sheet-open')
@@ -117,28 +212,85 @@ function App() {
 
           <section className="row" aria-label="Sample classroom activity">
             <div className="block">
-              <h2 className="kicker">Where we are</h2>
+              <div className="kicker-row">
+                <h2 className="kicker">{blocks[0].label}</h2>
+                <button
+                  type="button"
+                  className="block-info"
+                  aria-expanded={openTech === 'where'}
+                  aria-label="Show the technical version of where we are"
+                  onClick={() => setOpenTech(openTech === 'where' ? null : 'where')}
+                >
+                  <Info size={15} aria-hidden="true" />
+                </button>
+              </div>
               <p className="context">{lecture.where}</p>
             </div>
 
             <div className="block">
-              <h2 className="kicker">Next</h2>
+              <div className="kicker-row">
+                <h2 className="kicker">{blocks[1].label}</h2>
+                <button
+                  type="button"
+                  className="block-info"
+                  aria-expanded={openTech === 'next'}
+                  aria-label="Show the technical version of the next step"
+                  onClick={() => setOpenTech(openTech === 'next' ? null : 'next')}
+                >
+                  <Info size={15} aria-hidden="true" />
+                </button>
+              </div>
               <h1 className="action" aria-live="polite">
                 {lecture.next}
               </h1>
             </div>
 
             <div className="block">
-              <h2 className="kicker">Keep in mind</h2>
+              <div className="kicker-row">
+                <h2 className="kicker">{blocks[2].label}</h2>
+                <button
+                  type="button"
+                  className="block-info"
+                  aria-expanded={openTech === 'keep'}
+                  aria-label="Show the technical version of what to keep in mind"
+                  onClick={() => setOpenTech(openTech === 'keep' ? null : 'keep')}
+                >
+                  <Info size={15} aria-hidden="true" />
+                </button>
+              </div>
               <p className="constraints">{lecture.keep}</p>
             </div>
           </section>
         </div>
       </main>
 
+      {openTech !== null && (
+        <div className="tech-card" role="dialog" aria-label="Technical version">
+          <div className="tech-head">
+            <span>Technical version</span>
+            <button
+              type="button"
+              className="tech-close"
+              onClick={() => setOpenTech(null)}
+              aria-label="Close technical version"
+            >
+              <X size={14} aria-hidden="true" />
+            </button>
+          </div>
+          <Technical block={openTech} />
+        </div>
+      )}
+
       <div className={dock.join(' ')}>
         {!open ? (
-          <button type="button" className="dock-trigger" onClick={() => setOpen(true)}>
+          <button
+            type="button"
+            className="dock-trigger"
+            onClick={() => {
+              setOpenTech(null)
+              setOpen(true)
+            }}
+          >
             Catch me up
             <ArrowRight size={20} aria-hidden="true" />
           </button>
