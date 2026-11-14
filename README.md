@@ -1,6 +1,8 @@
 # Classroom Accessibility — Prompt-a-thon
 
-A React + TypeScript + Vite starter for exploring how AI can reduce classroom barriers for students with disabilities. The product direction is still being chosen; the starter is not yet a working accessibility product.
+Signal is a React + TypeScript + Vite classroom-accessibility prototype. The current working direction is Now-First Design: a synthetic Math 2B activity with an inline, prewritten catch-up recap. It is not live AI or a validated accessibility product.
+
+See [UI reconciliation](research/ui-reconciliation.md) for the chosen design direction, superseded alternatives and implementation scope.
 
 ## Run locally
 

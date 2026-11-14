@@ -142,4 +142,4 @@ Use [the UI standard](ui-standard.md) for measurable acceptance criteria and [th
 
 This philosophy synthesizes the project's [original principles and linked research](now-first-design.md), [visual-direction rationale](signal-visual-direction.md), [typography review](bold-icons-font-review.md), [competitor research](ui-competitor-review.md) and [UI standard](ui-standard.md). Those documents separate guidance, observations and hypotheses. No new clinical or product-efficacy findings are asserted here.
 
-The philosophy and standard describe the intended design. Existing prototype behavior may differ; the migration gaps remain documented in the UI standard. This document does not select the candidate on the team's behalf or change the app.
+The philosophy and standard describe the intended design. Existing prototype behavior may differ; the migration gaps remain documented in the UI standard. The current UI implementation follows this visual direction; [UI reconciliation](ui-reconciliation.md) records the selected choices and the remaining product scope.
