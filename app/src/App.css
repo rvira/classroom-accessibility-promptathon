@@ -1,7 +1,7 @@
 /* Signal — a Math 2B lecture, reduced to where the class is, the next action,
    and what matters. Arial carries the supporting voice; Atkinson Hyperlegible
-   700 is reserved for the central next action. The black pill at the bottom
-   expands into the catch-up conversation. No panels in the reading field. */
+   700 is reserved for the central next action. The pill at the bottom expands
+   into a prompt, then into numbered catch-up steps, always below the lecture. */
 
 :root {
   --ink: #14161a;
@@ -10,6 +10,8 @@
   --accent: #2f6bdb;
   --ui: Arial, Helvetica, sans-serif;
   --display: 'Atkinson Hyperlegible', 'Segoe UI', Arial, sans-serif;
+  --ask-h: clamp(250px, 31vh, 320px);
+  --steps-h: clamp(380px, 50vh, 520px);
 }
 
 * {
@@ -43,16 +45,24 @@
   padding: clamp(18px, 3.4vh, 48px) clamp(20px, 4vw, 64px) clamp(104px, 13vh, 148px);
 }
 
+/* The sheet owns the bottom of the screen; the lecture stays above it. */
+.sheet-open > main {
+  padding-bottom: calc(var(--ask-h) + 26px);
+}
+
+.sheet-steps > main {
+  padding-bottom: calc(var(--steps-h) + 18px);
+}
+
 .workspace {
   width: min(100%, 1560px);
   text-align: center;
-  transition: opacity 0.35s ease;
+  transition: transform 0.35s ease;
 }
 
-/* The sheet takes the foreground; the lecture field recedes behind it. */
-.sheet-open .workspace,
-.sheet-open .ether {
-  opacity: 0.25;
+.sheet-steps .workspace {
+  transform: scale(0.8);
+  transform-origin: center center;
 }
 
 .course {
@@ -163,7 +173,7 @@
   color: var(--ink-soft);
 }
 
-/* ---------- the pill that becomes the catch-up sheet ---------- */
+/* ---------- the pill that becomes the catch-up band ---------- */
 
 .dock {
   position: fixed;
@@ -190,11 +200,15 @@
 
 .dock.open {
   max-width: 100%;
-  height: min(58vh, 540px);
+  height: var(--ask-h);
   bottom: 0;
   border-radius: 26px 26px 0 0;
   background: #fff;
   box-shadow: 0 -18px 60px rgba(15, 20, 35, 0.18);
+}
+
+.dock.open.steps {
+  height: var(--steps-h);
 }
 
 .dock-trigger {
@@ -213,15 +227,16 @@
   letter-spacing: 0.01em;
 }
 
-/* ---------- the conversation ---------- */
+/* ---------- the catch-up band ---------- */
 
 .sheet {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 16px clamp(16px, 4vw, 40px) 0;
-  animation: sheet-in 0.45s ease both;
-  animation-delay: 0.1s;
+  padding: 14px clamp(16px, 4vw, 40px) 0;
+  animation: sheet-in 0.4s ease both;
+  animation-delay: 0.12s;
 }
 
 .sheet-head {
@@ -229,13 +244,13 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding-bottom: 10px;
+  padding-bottom: 8px;
   border-bottom: 1px solid #e7eaf0;
 }
 
 .sheet-title {
   font-family: var(--ui);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -257,128 +272,258 @@
   background: #f4f6fa;
 }
 
-.thread {
+/* the question and the blinking cursor */
+
+.ask {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 0;
+  padding-bottom: 14px;
+  text-align: center;
+}
+
+.question {
+  margin: 0;
+  font-family: var(--ui);
+  font-size: clamp(1.2rem, 1.65vw, 1.7rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.answer-line {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 660px);
+}
+
+.answer-line input {
+  width: 100%;
+  height: 58px;
+  padding: 0 14px;
+  border: 0;
+  border-bottom: 1px solid rgba(20, 22, 26, 0.26);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 1.3rem;
+  text-align: center;
+  caret-color: var(--accent);
+}
+
+.answer-line input:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+.caret {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2px;
+  height: 28px;
+  margin-left: -1px;
+  margin-top: -14px;
+  background: var(--accent);
+  animation: blink 1.15s step-end infinite;
+}
+
+.hint {
+  margin: 0;
+  font-family: var(--ui);
+  font-size: 0.85rem;
+  color: var(--ink-mute);
+}
+
+/* the steps */
+
+.steps-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding-top: 12px;
+}
+
+.remembered {
+  margin: 0 0 8px;
+  font-family: var(--ui);
+  font-size: 0.85rem;
+  color: var(--ink-mute);
+  text-align: center;
+}
+
+.steps {
   flex: 1;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 16px 2px 12px;
+  gap: 6px;
+  margin: 0;
+  padding: 0 2px;
+  list-style: none;
   text-align: left;
   scrollbar-width: thin;
 }
 
-.bubble {
-  max-width: min(680px, 92%);
-  padding: 12px 16px;
-  border-radius: 16px;
-  font-family: var(--ui);
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-.bubble p {
-  margin: 0;
-}
-
-.bubble.guide {
-  align-self: flex-start;
-  background: #f1f4fa;
-  color: var(--ink);
-  border-bottom-left-radius: 6px;
-}
-
-.bubble.user {
-  align-self: flex-end;
-  background: #15171b;
-  color: #fff;
-  border-bottom-right-radius: 6px;
-}
-
-.bubble ol {
-  margin: 10px 0 0;
-  padding-left: 20px;
-  display: grid;
-  gap: 7px;
-}
-
-.bubble li {
-  padding-left: 2px;
-}
-
-.bubble.thinking {
+.steps li {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
+  padding: 7px 14px;
+  border-radius: 12px;
+  background: #f3f6fc;
+}
+
+.step-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e0e7f4;
+  border-radius: 9px;
+  background: #fff;
+  color: var(--accent);
+}
+
+.step-text {
+  padding: 2px 0;
+  font-family: var(--ui);
+  font-size: 0.97rem;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+.step-num {
+  display: inline-block;
+  margin-right: 8px;
+  font-weight: 700;
   color: var(--ink-mute);
 }
 
-.bubble.thinking span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #b6bfcd;
-  animation: pulse 1.2s ease-in-out infinite;
-}
-
-.bubble.thinking span:nth-child(2) {
-  animation-delay: 0.15s;
-}
-
-.bubble.thinking span:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-.bubble.thinking em {
-  margin-left: 4px;
-  font-size: 0.85rem;
-  font-style: normal;
-}
-
-.composer {
+.steps-foot {
   display: flex;
-  gap: 10px;
   align-items: center;
-  padding: 12px 0 14px;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+  padding: 10px 0 8px;
   border-top: 1px solid #e7eaf0;
 }
 
-.composer input {
-  flex: 1;
-  min-width: 0;
-  min-height: 46px;
-  padding: 0 18px;
-  border: 1px solid #d8dce4;
-  border-radius: 999px;
-  background: #fff;
-  color: var(--ink);
-  font-family: var(--ui);
-  font-size: 1rem;
-}
-
-.composer input::placeholder {
-  color: var(--ink-mute);
-}
-
-.composer button {
-  min-height: 46px;
+.back-to-lecture {
+  min-height: 44px;
   padding: 0 22px;
   border: 0;
   border-radius: 999px;
   background: #15171b;
   color: #fff;
   font-family: var(--ui);
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 700;
 }
 
-.composer button:disabled {
-  opacity: 0.4;
-  cursor: default;
+/* small i buttons and their clarification card */
+
+.step-info {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  margin-left: auto;
+  border: 1px solid #cfd9ea;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--accent);
+}
+
+.step-info:hover {
+  background: #eaf1ff;
+}
+
+.step-info[aria-expanded='true'] {
+  border-color: #15171b;
+  background: #15171b;
+  color: #fff;
+}
+
+.clarify {
+  position: absolute;
+  right: clamp(10px, 3vw, 28px);
+  bottom: 76px;
+  z-index: 5;
+  width: min(420px, calc(100% - 24px));
+  padding: 12px 14px;
+  border: 1px solid #dbe4f2;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 18px 40px rgba(15, 20, 35, 0.18);
+  text-align: left;
+  animation: pop 0.18s ease both;
+}
+
+.clarify-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.clarify-head span {
+  font-family: var(--ui);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.clarify-close {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  background: none;
+  color: var(--ink-mute);
+}
+
+.clarify-close:hover {
+  color: var(--ink);
+}
+
+.clarify p {
+  margin: 0;
+  font-family: var(--ui);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .sample-note {
-  margin: 0 0 10px;
+  margin: 0;
   font-family: var(--ui);
   font-size: 0.75rem;
   color: var(--ink-mute);
@@ -520,22 +665,21 @@ input:focus-visible {
   }
 }
 
-@keyframes pulse {
+@keyframes blink {
   0%,
-  100% {
-    opacity: 0.35;
-    transform: translateY(0);
-  }
-  50% {
+  49% {
     opacity: 1;
-    transform: translateY(-2px);
+  }
+  50%,
+  100% {
+    opacity: 0;
   }
 }
 
 @keyframes sheet-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -546,14 +690,16 @@ input:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .ether i,
   .symbol,
-  .bubble.thinking span {
+  .caret {
     animation: none;
   }
 
   .dock,
-  .sheet {
+  .sheet,
+  .workspace {
     transition: none;
     animation: none;
+    transform: none;
   }
 }
 
@@ -575,9 +721,26 @@ input:focus-visible {
 }
 
 @media (max-width: 760px) {
+  :root {
+    --ask-h: clamp(250px, 38vh, 330px);
+    --steps-h: clamp(360px, 60vh, 560px);
+  }
+
   .app > main {
-    padding: 26px 20px 120px;
+    padding: 22px 20px 120px;
     align-items: flex-start;
+  }
+
+  .sheet-open > main {
+    padding-bottom: calc(var(--ask-h) + 18px);
+  }
+
+  .sheet-steps > main {
+    padding-bottom: calc(var(--steps-h) + 12px);
+  }
+
+  .sheet-steps .workspace {
+    transform: none;
   }
 
   .course {
@@ -587,52 +750,77 @@ input:focus-visible {
 
   .row {
     grid-template-columns: 1fr;
-    gap: 26px;
+    gap: 22px;
     justify-items: center;
   }
 
   .kicker {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     margin-bottom: 6px;
   }
 
   .context {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     max-width: 24ch;
   }
 
   .action {
-    font-size: clamp(2.2rem, 9.5vw, 3rem);
+    font-size: clamp(2rem, 9vw, 2.8rem);
     max-width: 17ch;
   }
 
   .constraints {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     max-width: 24ch;
   }
 
   .dock {
-    bottom: 18px;
+    bottom: 16px;
     max-width: 200px;
     height: 56px;
   }
 
   .dock.open {
     max-width: 100%;
-    height: min(72vh, 620px);
     bottom: 0;
   }
 
   .sheet {
-    padding: 14px 16px 0;
+    padding: 12px 16px 0;
   }
 
-  .bubble {
-    max-width: 94%;
+  .question {
+    font-size: 1.15rem;
+  }
+
+  .answer-line input {
+    height: 52px;
+    font-size: 1.1rem;
+  }
+
+  .steps li {
+    gap: 10px;
+    padding: 8px 10px;
+  }
+
+  .clarify {
+    right: 8px;
+    left: 8px;
+    bottom: 70px;
+    width: auto;
+  }
+
+  .step-text {
     font-size: 0.95rem;
+    padding-top: 6px;
   }
 
-  .sample-note {
-    margin-bottom: 8px;
+  .steps-foot {
+    gap: 10px;
+    padding: 10px 0 8px;
+  }
+
+  .back-to-lecture {
+    flex: 1;
   }
 }
