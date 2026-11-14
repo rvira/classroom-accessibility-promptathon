@@ -17,7 +17,7 @@ button {
 }
 
 button:focus-visible {
-  outline: 3px solid #1f5bd0;
+  outline: 3px solid #46820f;
   outline-offset: 3px;
 }
 
