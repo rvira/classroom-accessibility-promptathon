@@ -1,84 +1,104 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowRight, X } from 'lucide-react'
+import { ArrowLeftRight, ArrowRight, Equal, Info, MoveHorizontal, Sigma, X } from 'lucide-react'
 import '@fontsource/atkinson-hyperlegible/700.css'
 import './App.css'
 
-/* Sample state from one Math 2B (Calculus) lecture on substitution for
-   definite integrals. Synthetic, not a transcript, no model is called. */
+/* Sample state from one Math 2B (Calculus) lecture on integrals.
+   Synthetic, not a transcript, and no model is called. Copy is kept plain
+   on purpose: short words, no notation in the main line. */
 const lecture = {
-  course: 'Math 2B · Lecture 14 · Substitution',
-  where:
-    'Dr. Alvarez just wrote u = x² under ∫₀¹ 2x·e^(x²) dx. The class is rewriting the limits next.',
-  next: 'Rewrite the limits in terms of u.',
-  keep: 'du = 2x·dx. Change the limits — don’t substitute back to x. Exact value.',
+  course: 'Math 2B · Lecture 14 · Integrals',
+  where: 'The class is on one integral problem. They just renamed a messy part with the letter u.',
+  next: 'Change the start and end values.',
+  keep: 'Change them too — don’t switch back. Give the exact answer.',
 }
 
-const catchUpPoints = [
-  'The class is evaluating the definite integral ∫₀¹ 2x·e^(x²) dx.',
-  'Substitution is u = x², so du = 2x·dx — the 2x·dx is exactly what is left in the integrand.',
-  'The limits move with the variable: x = 0 gives u = 0, and x = 1 gives u = 1.',
-  'So the integral becomes ∫₀¹ e^u du, which is e^u evaluated from 0 to 1.',
-  'That gives e − 1 ≈ 1.718. Next up: integration by parts.',
+const catchUpSteps = [
+  {
+    icon: Sigma,
+    text: 'The class is solving one integral together.',
+    info: 'One worked example from today. You don’t need the earlier examples to follow this.',
+  },
+  {
+    icon: ArrowLeftRight,
+    text: 'They renamed a messy part of it with the letter u.',
+    info: 'The messy part was x². Calling it u means you work with one letter instead of a whole expression.',
+  },
+  {
+    icon: MoveHorizontal,
+    text: 'The start and end numbers change with it.',
+    info: 'The problem runs from a start value to an end value. When the letter changes, those two numbers change too.',
+  },
+  {
+    icon: Equal,
+    text: 'That left a much simpler problem to finish.',
+    info: 'After the swap it is one short, standard step. Nothing new to learn here.',
+  },
+  {
+    icon: ArrowRight,
+    text: 'The answer is about 1.7. A new method starts next.',
+    info: 'The value comes out around 1.7. Next the class moves to a different technique, so you can join there.',
+  },
 ]
 
-type Message = { role: 'guide' | 'user'; text: string; points?: string[] }
-
-const opening: Message = {
-  role: 'guide',
-  text: 'You’re in Math 2B, lecture 14 — substitution for definite integrals. What’s the last thing you remember?',
-}
+type Stage = 'ask' | 'steps'
 
 function App() {
   const [open, setOpen] = useState(false)
+  const [stage, setStage] = useState<Stage>('ask')
   const [draft, setDraft] = useState('')
-  const [thread, setThread] = useState<Message[]>([opening])
-  const [thinking, setThinking] = useState(false)
+  const [answer, setAnswer] = useState('')
+  const [openInfo, setOpenInfo] = useState<number | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const threadRef = useRef<HTMLDivElement>(null)
-  const timer = useRef<number | undefined>(undefined)
+
+  const close = () => {
+    setOpen(false)
+    setStage('ask')
+    setOpenInfo(null)
+  }
 
   useEffect(() => {
-    if (open) inputRef.current?.focus()
-  }, [open])
+    if (!open || stage !== 'ask') return
+    // Defer past the click that opened the sheet; otherwise the browser
+    // hands focus back to the body after the trigger unmounts.
+    const frame = requestAnimationFrame(() => inputRef.current?.focus())
+    return () => cancelAnimationFrame(frame)
+  }, [open, stage])
 
   useEffect(() => {
     if (!open) return
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false)
+      if (event.key !== 'Escape') return
+      if (openInfo !== null) {
+        setOpenInfo(null)
+        return
+      }
+      setOpen(false)
+      setStage('ask')
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [open])
+  }, [open, openInfo])
 
-  useEffect(() => {
-    const node = threadRef.current
-    if (node) node.scrollTop = node.scrollHeight
-  }, [thread, thinking])
-
-  useEffect(() => () => window.clearTimeout(timer.current), [])
-
-  const send = (event: React.FormEvent) => {
+  const submit = (event: React.FormEvent) => {
     event.preventDefault()
-    const answer = draft.trim()
-    if (!answer || thinking) return
-    setThread((prev) => [...prev, { role: 'user', text: answer }])
+    const value = draft.trim()
+    if (!value) return
+    setAnswer(value)
     setDraft('')
-    setThinking(true)
-    timer.current = window.setTimeout(() => {
-      setThread((prev) => [
-        ...prev,
-        {
-          role: 'guide',
-          text: 'Got it — you’re closer than you think. Here’s the thread to where the class is now:',
-          points: catchUpPoints,
-        },
-      ])
-      setThinking(false)
-    }, 700)
+    setStage('steps')
   }
 
+  const shell = ['app']
+  if (open) shell.push('sheet-open')
+  if (open && stage === 'steps') shell.push('sheet-steps')
+
+  const dock = ['dock']
+  if (open) dock.push('open')
+  if (open && stage === 'steps') dock.push('steps')
+
   return (
-    <div className={open ? 'app sheet-open' : 'app'}>
+    <div className={shell.join(' ')}>
       <div className="ether" aria-hidden="true">
         {Array.from({ length: 9 }, (_, i) => (
           <i key={i} />
@@ -116,71 +136,106 @@ function App() {
         </div>
       </main>
 
-      <div className={open ? 'dock open' : 'dock'}>
+      <div className={dock.join(' ')}>
         {!open ? (
           <button type="button" className="dock-trigger" onClick={() => setOpen(true)}>
             Catch me up
             <ArrowRight size={20} aria-hidden="true" />
           </button>
         ) : (
-          <div
-            className="sheet"
-            role="dialog"
-            aria-label="Catch me up"
-          >
+          <div className="sheet" role="dialog" aria-label="Catch me up">
             <div className="sheet-head">
               <span className="sheet-title">Catch me up</span>
               <button
                 type="button"
                 className="sheet-close"
-                onClick={() => setOpen(false)}
+                onClick={close}
                 aria-label="Close catch up"
               >
                 <X size={18} aria-hidden="true" />
               </button>
             </div>
 
-            <div className="thread" ref={threadRef} aria-live="polite">
-              {thread.map((message, index) => (
-                <div key={index} className={`bubble ${message.role}`}>
-                  <p>{message.text}</p>
-                  {message.points && (
-                    <ol>
-                      {message.points.map((point) => (
-                        <li key={point}>{point}</li>
-                      ))}
-                    </ol>
-                  )}
-                </div>
-              ))}
-              {thinking && (
-                <div className="bubble guide thinking">
-                  <span />
-                  <span />
-                  <span />
-                  <em>finding your place</em>
-                </div>
-              )}
-            </div>
+            {stage === 'ask' ? (
+              <form className="ask" onSubmit={submit}>
+                <p className="question">What’s the last thing you remember?</p>
 
-            <form className="composer" onSubmit={send}>
-              <label className="sr-only" htmlFor="remembered">
-                What’s the last thing you remember?
-              </label>
-              <input
-                id="remembered"
-                ref={inputRef}
-                value={draft}
-                onChange={(event) => setDraft(event.target.value)}
-                placeholder="e.g. the u = x² part…"
-                autoComplete="off"
-              />
-              <button type="submit" disabled={!draft.trim() || thinking}>
-                Send
-              </button>
-            </form>
+                <div className="answer-line">
+                  {draft === '' && <span className="caret" aria-hidden="true" />}
+                  <label className="sr-only" htmlFor="remembered">
+                    What’s the last thing you remember?
+                  </label>
+                  <input
+                    id="remembered"
+                    ref={inputRef}
+                    value={draft}
+                    onChange={(event) => setDraft(event.target.value)}
+                    autoComplete="off"
+                    spellCheck={false}
+                  />
+                </div>
 
-            <p className="sample-note">Sample script for the demo — not live AI.</p>
+                <p className="hint">Type it, then press Enter</p>
+                <p className="sample-note">Demo script, not live AI.</p>
+              </form>
+            ) : (
+              <>
+                <div className="steps-stage">
+                  <p className="remembered">You remembered: “{answer}”</p>
+                  <ol className="steps" aria-live="polite">
+                    {catchUpSteps.map((step, index) => {
+                      const Icon = step.icon
+                      return (
+                        <li key={step.text}>
+                          <span className="step-icon" aria-hidden="true">
+                            <Icon size={20} strokeWidth={2} />
+                          </span>
+                          <span className="step-text">
+                            <span className="step-num" aria-hidden="true">
+                              {index + 1}
+                            </span>
+                            {step.text}
+                          </span>
+                          <button
+                            type="button"
+                            className="step-info"
+                            aria-expanded={openInfo === index}
+                            aria-label={`Explain step ${index + 1}`}
+                            onClick={() => setOpenInfo(openInfo === index ? null : index)}
+                          >
+                            <Info size={14} aria-hidden="true" />
+                          </button>
+                        </li>
+                      )
+                    })}
+                  </ol>
+                </div>
+
+                {openInfo !== null && (
+                  <div className="clarify" role="status">
+                    <div className="clarify-head">
+                      <span>In plain words</span>
+                      <button
+                        type="button"
+                        className="clarify-close"
+                        onClick={() => setOpenInfo(null)}
+                        aria-label="Close explanation"
+                      >
+                        <X size={14} aria-hidden="true" />
+                      </button>
+                    </div>
+                    <p>{catchUpSteps[openInfo].info}</p>
+                  </div>
+                )}
+
+                <div className="steps-foot">
+                  <button type="button" className="back-to-lecture" onClick={close}>
+                    Back to the lecture
+                  </button>
+                  <p className="sample-note">Demo script, not live AI.</p>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>

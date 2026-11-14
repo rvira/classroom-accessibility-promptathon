@@ -28,6 +28,15 @@ Pitch name: **Now-First Design** is our coined synthesis, not a published clinic
 
 [Bold icons and font review](bold-icons-font-review.md): preserve black/white, strengthen the current-action headline, use only familiar icons paired with text, and retain Arial for the MVP pending user testing. W3C supports clear signposts and selective icons; no specific font is proven best for college students with ADHD. This review changes the design rationale, not the rendered app.
 
+## Plain-language catch-up revision (2026-11-14, 3:20 PM)
+
+- **Copy simplified everywhere:** the lecture lines, the five catch-up steps and the honesty note now avoid notation and long sentences. The steps name no symbols at all; the integral, the substitution and the limits appear only in the optional explanations. [W3C clear content](https://www.w3.org/WAI/WCAG2/supplemental/objectives/o3-clear-content/) supports plain wording; we have not tested comprehension with students, and simplifying can remove precision, so every step keeps a route to detail.
+- **`i` popovers:** each step has a 26 px info button that opens one small “In plain words” card for that step only. It is a popover, not a new screen or a chat turn; Escape closes the card first and the sheet second. The card is `role="status"` and the button reports `aria-expanded`.
+- **Sheet placement:** unchanged from the previous revision — desktop keeps the lecture fully visible above the band in the ask and steps states (measured 0 px overlap). On a 390 px phone the band overlaps the lower part of the stacked lecture because the two cannot both fit; this is a known limitation, not a solved case.
+- Still no model and no live lecture feed. The steps and explanations are scripted sample content and are labelled as such in the sheet.
+
+Verification: build passes; five steps with five `i` buttons, all visible without scrolling at 1600×900; popover opens, stays in the viewport, and Escape closes popover then sheet; step text survives reload; mobile popover stays in the viewport with no horizontal overflow.
+
 ## Horizontal serif revision (2026-11-14, 2:45 PM)
 
 - **Layout:** the three statements sit side by side in a three-column grid spanning up to 1560 px, with the labels sharing one baseline. The vertical stack was reported as cluttered; horizontal placement and wide gutters are a user preference, not a research finding.
