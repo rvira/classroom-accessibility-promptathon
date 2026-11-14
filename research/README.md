@@ -14,3 +14,5 @@ Please add source links, label observations versus assumptions, and avoid person
 - [Signal visual direction and mockup sequence](signal-visual-direction.md)
 
 - [Now-First Design philosophy and mockup status](now-first-design.md)
+
+- [Design evidence ledger, updated with each design commit](design-evidence-ledger.md)
