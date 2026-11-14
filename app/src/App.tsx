@@ -2,6 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import {
   ArrowLeftRight,
   ArrowRight,
+  CheckCircle,
+  ChevronLeft,
+  ChevronRight,
+  Compass,
   Equal,
   HelpCircle,
   Info,
@@ -52,6 +56,49 @@ const catchUpSteps = [
     icon: ArrowRight,
     text: 'The answer is about 1.7. A new method starts next.',
     info: 'The value comes out around 1.7. Next the class moves to a different technique, so you can join there.',
+  },
+]
+
+interface TourStep {
+  title: string
+  subtitle: string
+  description: string
+  tip?: string
+  icon: typeof Target
+}
+
+const tourSteps: TourStep[] = [
+  {
+    title: 'Welcome to Bullseye',
+    subtitle: 'A calmer, clearer classroom interface',
+    description:
+      'Lectures move fast. Bullseye strips away clutter and visual noise, distilling the room into three stable anchors: where the class is, what to do right now, and what constraints to keep.',
+    tip: 'Designed for executive-function, processing, and attention needs.',
+    icon: Target,
+  },
+  {
+    title: 'The 3-Part Horizon',
+    subtitle: 'Context, immediate action, and constraints',
+    description:
+      'Look across the screen: "Where we are" anchors the lecture context, "Next action" is your clear focal point, and "Keep in mind" lists the essential assignment rules.',
+    tip: 'No more searching across chaotic chat threads or multi-page slide decks.',
+    icon: Compass,
+  },
+  {
+    title: 'Inspect Exact Math Anytime',
+    subtitle: 'Plain words with full depth behind them',
+    description:
+      'Visible copy is kept plain and readable. Whenever you need the unabridged board formulas, substitution variables, or exact values, click any small info (i) button.',
+    tip: 'Every technical popover includes accessible screen-reader explanations.',
+    icon: Info,
+  },
+  {
+    title: 'Rejoin Whenever You Drift',
+    subtitle: 'No penalties, no lost time',
+    description:
+      'Lost the thread? Tap "Help me rejoin" at the bottom. Type the last thing you recall, and Bullseye provides a structured, chronological path right back to the current problem.',
+    tip: 'You can restart this tour anytime from the top bar or profile menu.',
+    icon: Sparkles,
   },
 ]
 
@@ -148,8 +195,43 @@ function App() {
   const [openInfo, setOpenInfo] = useState<number | null>(null)
   const [openTech, setOpenTech] = useState<BlockKey | null>(null)
   const [profileOpen, setProfileOpen] = useState(false)
+  const [tourOpen, setTourOpen] = useState(() => {
+    try {
+      return !localStorage.getItem('bullseye_tour_seen')
+    } catch {
+      return false
+    }
+  })
+  const [tourStep, setTourStep] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
   const profileRef = useRef<HTMLDivElement>(null)
+
+  const openTour = () => {
+    setTourStep(0)
+    setTourOpen(true)
+    setProfileOpen(false)
+  }
+
+  const closeTour = () => {
+    setTourOpen(false)
+    try {
+      localStorage.setItem('bullseye_tour_seen', 'true')
+    } catch {
+      // safe fallback
+    }
+  }
+
+  const nextTourStep = () => {
+    setTourStep((s) => {
+      if (s < tourSteps.length - 1) return s + 1
+      closeTour()
+      return s
+    })
+  }
+
+  const prevTourStep = () => {
+    setTourStep((s) => (s > 0 ? s - 1 : s))
+  }
 
   const close = () => {
     setOpen(false)
@@ -178,6 +260,29 @@ function App() {
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
+      if (tourOpen) {
+        if (event.key === 'Escape') {
+          closeTour()
+          return
+        }
+        if (event.key === 'ArrowRight') {
+          setTourStep((s) => {
+            if (s < tourSteps.length - 1) return s + 1
+            setTourOpen(false)
+            try {
+              localStorage.setItem('bullseye_tour_seen', 'true')
+            } catch {
+              // safe fallback
+            }
+            return s
+          })
+          return
+        }
+        if (event.key === 'ArrowLeft') {
+          setTourStep((s) => (s > 0 ? s - 1 : s))
+          return
+        }
+      }
       if (event.key !== 'Escape') return
       if (profileOpen) {
         setProfileOpen(false)
@@ -198,7 +303,7 @@ function App() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [open, openInfo, openTech, profileOpen])
+  }, [open, openInfo, openTech, profileOpen, tourOpen])
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault()
@@ -227,38 +332,58 @@ function App() {
     <div className={shell.join(' ')}>
       <header className="top-bar">
         <div className="top-brand">
-          <Target size={22} className="top-brand-icon" aria-hidden="true" />
+          <Target size={24} strokeWidth={2.8} className="top-brand-icon" aria-hidden="true" />
           <span className="top-brand-name">Bullseye</span>
         </div>
 
-        <div className="profile-container" ref={profileRef}>
+        <div className="top-actions">
           <button
             type="button"
-            className="profile-btn"
-            aria-expanded={profileOpen}
-            aria-haspopup="true"
-            aria-label="Account, profile and settings"
-            onClick={() => setProfileOpen((prev) => !prev)}
+            className="tour-pill-btn"
+            onClick={openTour}
+            aria-label="Start interactive welcome tour"
           >
-            <User size={18} aria-hidden="true" />
+            <Compass size={15} aria-hidden="true" />
+            <span>Welcome Tour</span>
           </button>
 
-          {profileOpen && (
-            <div className="profile-menu" role="menu" aria-label="Account menu">
-              <div className="profile-menu-header">
-                <span className="profile-name">Student Account</span>
-                <span className="profile-status">Math 2B · Active</span>
-              </div>
-              <hr className="profile-divider" />
-              <button
-                type="button"
-                role="menuitem"
-                className="profile-menu-item"
-                onClick={() => setProfileOpen(false)}
-              >
-                <User size={15} aria-hidden="true" />
-                <span>Profile</span>
-              </button>
+          <div className="profile-container" ref={profileRef}>
+            <button
+              type="button"
+              className="profile-btn"
+              aria-expanded={profileOpen}
+              aria-haspopup="true"
+              aria-label="Account, profile and settings"
+              onClick={() => setProfileOpen((prev) => !prev)}
+            >
+              <User size={18} aria-hidden="true" />
+            </button>
+
+            {profileOpen && (
+              <div className="profile-menu" role="menu" aria-label="Account menu">
+                <div className="profile-menu-header">
+                  <span className="profile-name">Student Account</span>
+                  <span className="profile-status">Math 2B · Active</span>
+                </div>
+                <hr className="profile-divider" />
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="profile-menu-item"
+                  onClick={openTour}
+                >
+                  <Compass size={15} aria-hidden="true" />
+                  <span>Welcome Tour</span>
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="profile-menu-item"
+                  onClick={() => setProfileOpen(false)}
+                >
+                  <User size={15} aria-hidden="true" />
+                  <span>Profile</span>
+                </button>
               <button
                 type="button"
                 role="menuitem"
@@ -299,7 +424,8 @@ function App() {
             </div>
           )}
         </div>
-      </header>
+      </div>
+    </header>
 
       <div className="ether" aria-hidden="true">
         {Array.from({ length: 9 }, (_, i) => (
@@ -310,12 +436,6 @@ function App() {
       <main>
         <div className="workspace">
           <p className="course">{lecture.course}</p>
-
-          <div className="symbol bullseye" aria-hidden="true">
-            <b />
-            <b />
-            <b />
-          </div>
 
           <section className="row" aria-label="Sample classroom activity">
             <div className="block">
@@ -498,6 +618,98 @@ function App() {
           </div>
         )}
       </div>
+
+      {tourOpen && (
+        <div className="tour-overlay" role="presentation" onClick={closeTour}>
+          <div
+            className="tour-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tour-title"
+            aria-describedby="tour-desc"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="tour-card-header">
+              <span className="tour-badge">
+                Step {tourStep + 1} of {tourSteps.length}
+              </span>
+              <button
+                type="button"
+                className="tour-close-btn"
+                onClick={closeTour}
+                aria-label="Close welcome tour"
+              >
+                <X size={16} aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="tour-body">
+              <div className="tour-icon-wrap" aria-hidden="true">
+                {(() => {
+                  const Icon = tourSteps[tourStep].icon
+                  return <Icon size={26} />
+                })()}
+              </div>
+
+              <h2 id="tour-title" className="tour-title">
+                {tourSteps[tourStep].title}
+              </h2>
+              <p className="tour-subtitle">{tourSteps[tourStep].subtitle}</p>
+
+              <p id="tour-desc" className="tour-description">
+                {tourSteps[tourStep].description}
+              </p>
+
+              {tourSteps[tourStep].tip && (
+                <div className="tour-tip">
+                  <span className="tour-tip-tag">Guide Note:</span> {tourSteps[tourStep].tip}
+                </div>
+              )}
+            </div>
+
+            <div className="tour-footer">
+              <div className="tour-dots" aria-label="Tour navigation dots">
+                {tourSteps.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className={`tour-dot ${i === tourStep ? 'active' : ''}`}
+                    onClick={() => setTourStep(i)}
+                    aria-label={`Jump to tour step ${i + 1}`}
+                  />
+                ))}
+              </div>
+
+              <div className="tour-buttons">
+                {tourStep > 0 && (
+                  <button
+                    type="button"
+                    className="tour-btn tour-btn-secondary"
+                    onClick={prevTourStep}
+                  >
+                    <ChevronLeft size={16} aria-hidden="true" />
+                    <span>Back</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="tour-btn tour-btn-primary"
+                  onClick={nextTourStep}
+                >
+                  <span>
+                    {tourStep === tourSteps.length - 1 ? 'Get Started' : 'Next'}
+                  </span>
+                  {tourStep === tourSteps.length - 1 ? (
+                    <CheckCircle size={16} aria-hidden="true" />
+                  ) : (
+                    <ChevronRight size={16} aria-hidden="true" />
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
