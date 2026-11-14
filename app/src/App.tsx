@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   Activity,
+  ArrowLeft,
   ArrowLeftRight,
   ArrowRight,
   CheckCircle,
+  CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  Clock,
   Compass,
   Equal,
   HelpCircle,
@@ -28,12 +31,65 @@ import './App.css'
 /* Sample state from one Math 2B (Calculus) lecture on integrals.
    Synthetic, not a transcript, and no model is called. The visible copy is
    plain on purpose; the exact maths lives behind each small i button. */
-const lecture = {
-  course: 'Math 2B · Lecture 14 · Integrals',
-  where: 'The class is on one integral problem. They just renamed a messy part with the letter u.',
-  next: 'Change the start and end values.',
-  keep: 'Change them too — don’t switch back. Give the exact answer.',
+interface Topic {
+  id: string
+  title: string
+  subtitle: string
+  summary: string
+  status: 'completed' | 'live' | 'upcoming'
+  timeBadge: string
+  lectureData: {
+    course: string
+    where: string
+    next: string
+    keep: string
+  }
 }
+
+const lectureTopics: Topic[] = [
+  {
+    id: 'topic-1',
+    title: '1. Setting up Substitution: Choosing u = x²',
+    subtitle: 'Part 1 · Foundational substitution',
+    summary: 'Renaming the inner quadratic expression and finding the differential du = 2x·dx.',
+    status: 'completed',
+    timeBadge: 'Completed · 12 mins ago',
+    lectureData: {
+      course: 'Math 2B · Lecture 14 · Topic 1',
+      where: 'The class identified 2x as the derivative of x² and substituted u = x².',
+      next: 'Verify that du replaces 2x dx in the integrand.',
+      keep: 'Write down both u and du explicitly in your margins before integrating.',
+    },
+  },
+  {
+    id: 'topic-2',
+    title: '2. Definite Integrals: Changing Lower & Upper Limits',
+    subtitle: 'Part 2 · Active in-class problem',
+    summary: 'Evaluating from 0 to 1 in terms of u so x never needs to be substituted back.',
+    status: 'live',
+    timeBadge: 'Live Now · Step 2 of 3',
+    lectureData: {
+      course: 'Math 2B · Lecture 14 · Topic 2',
+      where: 'The class is on one integral problem. They just renamed a messy part with the letter u.',
+      next: 'Change the start and end values.',
+      keep: 'Change them too — don’t switch back. Give the exact answer.',
+    },
+  },
+  {
+    id: 'topic-3',
+    title: '3. Integration by Parts: Introduction & Strategy',
+    subtitle: 'Part 3 · Next topic preview',
+    summary: 'Previewing product integrals for exponential and polynomial terms using ∫ u dv = uv - ∫ v du.',
+    status: 'upcoming',
+    timeBadge: 'Upcoming · Next 15 mins',
+    lectureData: {
+      course: 'Math 2B · Lecture 14 · Topic 3',
+      where: 'The professor is introducing product rules when substitution fails.',
+      next: 'Identify which term is u using the LIATE rule.',
+      keep: 'Differentiate u to find du, and integrate dv to find v.',
+    },
+  },
+]
 
 const catchUpSteps = [
   {
@@ -209,6 +265,7 @@ function App() {
   const [tourStep, setTourStep] = useState(0)
   const [recordingActive, setRecordingActive] = useState(true)
   const [liveDetailsOpen, setLiveDetailsOpen] = useState(false)
+  const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const profileRef = useRef<HTMLDivElement>(null)
   const liveMenuRef = useRef<HTMLDivElement>(null)
@@ -527,61 +584,127 @@ function App() {
       </div>
 
       <main>
-        <div className="workspace">
-          <p className="course">{lecture.course}</p>
-
-          <section className="row" aria-label="Sample classroom activity">
-            <div className="block card">
-              <div className="kicker-row">
-                <h2 className="kicker">{blocks[0].label}</h2>
-                <button
-                  type="button"
-                  className="block-info"
-                  aria-expanded={openTech === 'where'}
-                  aria-label="Show the technical version of where we are"
-                  onClick={() => setOpenTech(openTech === 'where' ? null : 'where')}
-                >
-                  <Info size={15} aria-hidden="true" />
-                </button>
-              </div>
-              <p className="context">{lecture.where}</p>
+        {selectedTopicId === null ? (
+          <div className="workspace topics-workspace">
+            <div className="topics-header">
+              <p className="course">Math 2B · Lecture 14 · Integrals</p>
+              <h1 className="topics-main-title">Select a Lecture Topic</h1>
+              <p className="topics-sub-title">
+                Choose an active checkpoint below to enter the three-part problem horizon.
+              </p>
             </div>
 
-            <div className="block card card-primary">
-              <div className="kicker-row">
-                <h2 className="kicker">{blocks[1].label}</h2>
-                <button
-                  type="button"
-                  className="block-info"
-                  aria-expanded={openTech === 'next'}
-                  aria-label="Show the technical version of the next step"
-                  onClick={() => setOpenTech(openTech === 'next' ? null : 'next')}
-                >
-                  <Info size={15} aria-hidden="true" />
-                </button>
-              </div>
-              <h1 className="action" aria-live="polite">
-                {lecture.next}
-              </h1>
-            </div>
+            <div className="topic-cards-grid" role="list">
+              {lectureTopics.map((topic) => {
+                const isLive = topic.status === 'live'
+                const isDone = topic.status === 'completed'
+                return (
+                  <article
+                    key={topic.id}
+                    className={`topic-card ${isLive ? 'topic-live-card' : ''} ${isDone ? 'topic-done-card' : ''}`}
+                    role="listitem"
+                  >
+                    <div className="topic-card-top">
+                      <span className={`topic-status-badge ${topic.status}`}>
+                        {isLive && <span className="topic-live-pulse" aria-hidden="true" />}
+                        {isDone && <CheckCircle2 size={13} aria-hidden="true" />}
+                        {topic.status === 'upcoming' && <Clock size={13} aria-hidden="true" />}
+                        {topic.timeBadge}
+                      </span>
+                      <span className="topic-card-sub">{topic.subtitle}</span>
+                    </div>
 
-            <div className="block card">
-              <div className="kicker-row">
-                <h2 className="kicker">{blocks[2].label}</h2>
-                <button
-                  type="button"
-                  className="block-info"
-                  aria-expanded={openTech === 'keep'}
-                  aria-label="Show the technical version of what to keep in mind"
-                  onClick={() => setOpenTech(openTech === 'keep' ? null : 'keep')}
-                >
-                  <Info size={15} aria-hidden="true" />
-                </button>
-              </div>
-              <p className="constraints">{lecture.keep}</p>
+                    <h2 className="topic-card-title">{topic.title}</h2>
+                    <p className="topic-card-summary">{topic.summary}</p>
+
+                    <div className="topic-card-foot">
+                      <button
+                        type="button"
+                        className={`topic-select-btn ${isLive ? 'topic-btn-primary' : 'topic-btn-secondary'}`}
+                        onClick={() => setSelectedTopicId(topic.id)}
+                      >
+                        <span>{isLive ? 'Enter Live Workspace' : isDone ? 'Review Checkpoint' : 'Preview Topic'}</span>
+                        <ArrowRight size={16} aria-hidden="true" />
+                      </button>
+                    </div>
+                  </article>
+                )
+              })}
             </div>
-          </section>
-        </div>
+          </div>
+        ) : (
+          (() => {
+            const currentTopic = lectureTopics.find((t) => t.id === selectedTopicId) ?? lectureTopics[1]
+            return (
+              <div className="workspace">
+                <div className="workspace-nav">
+                  <button
+                    type="button"
+                    className="back-to-topics-btn"
+                    onClick={() => setSelectedTopicId(null)}
+                    aria-label="Back to all lecture topics"
+                  >
+                    <ArrowLeft size={16} aria-hidden="true" />
+                    <span>All Lecture Topics</span>
+                  </button>
+                  <p className="course">{currentTopic.lectureData.course}</p>
+                </div>
+
+                <section className="row" aria-label="Sample classroom activity">
+                  <div className="block card">
+                    <div className="kicker-row">
+                      <h2 className="kicker">{blocks[0].label}</h2>
+                      <button
+                        type="button"
+                        className="block-info"
+                        aria-expanded={openTech === 'where'}
+                        aria-label="Show the technical version of where we are"
+                        onClick={() => setOpenTech(openTech === 'where' ? null : 'where')}
+                      >
+                        <Info size={15} aria-hidden="true" />
+                      </button>
+                    </div>
+                    <p className="context">{currentTopic.lectureData.where}</p>
+                  </div>
+
+                  <div className="block card card-primary">
+                    <div className="kicker-row">
+                      <h2 className="kicker">{blocks[1].label}</h2>
+                      <button
+                        type="button"
+                        className="block-info"
+                        aria-expanded={openTech === 'next'}
+                        aria-label="Show the technical version of the next step"
+                        onClick={() => setOpenTech(openTech === 'next' ? null : 'next')}
+                      >
+                        <Info size={15} aria-hidden="true" />
+                      </button>
+                    </div>
+                    <h1 className="action" aria-live="polite">
+                      {currentTopic.lectureData.next}
+                    </h1>
+                  </div>
+
+                  <div className="block card">
+                    <div className="kicker-row">
+                      <h2 className="kicker">{blocks[2].label}</h2>
+                      <button
+                        type="button"
+                        className="block-info"
+                        aria-expanded={openTech === 'keep'}
+                        aria-label="Show the technical version of what to keep in mind"
+                        onClick={() => setOpenTech(openTech === 'keep' ? null : 'keep')}
+                      >
+                        <Info size={15} aria-hidden="true" />
+                      </button>
+                    </div>
+                    <p className="constraints">{currentTopic.lectureData.keep}</p>
+                  </div>
+                </section>
+              </div>
+            )
+          })()
+        )}
       </main>
 
       {openTech !== null && (
