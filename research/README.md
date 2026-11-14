@@ -8,3 +8,5 @@ Please add source links, label observations versus assumptions, and avoid person
 - [Deeper impact priorities and teammate AI handoff](impact-priorities.md)
 
 - [Signal candidate brief, demo fixture, and validation plan](signal-candidate-brief.md)
+
+- [Signal research appendix: citations, evidence map, and full source inventory](appendix/README.md)
