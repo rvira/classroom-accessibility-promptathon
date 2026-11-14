@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import {
+  Activity,
   ArrowLeftRight,
   ArrowRight,
   CheckCircle,
@@ -10,7 +11,9 @@ import {
   HelpCircle,
   Info,
   LogOut,
+  Mic,
   MoveHorizontal,
+  Radio,
   Settings,
   Sigma,
   Sparkles,
@@ -204,8 +207,11 @@ function App() {
     }
   })
   const [tourStep, setTourStep] = useState(0)
+  const [recordingActive, setRecordingActive] = useState(true)
+  const [liveDetailsOpen, setLiveDetailsOpen] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const profileRef = useRef<HTMLDivElement>(null)
+  const liveMenuRef = useRef<HTMLDivElement>(null)
 
   const openTour = () => {
     setTourStep(0)
@@ -260,6 +266,17 @@ function App() {
   }, [profileOpen])
 
   useEffect(() => {
+    if (!liveDetailsOpen) return
+    const onPointerDown = (event: PointerEvent) => {
+      if (liveMenuRef.current && !liveMenuRef.current.contains(event.target as Node)) {
+        setLiveDetailsOpen(false)
+      }
+    }
+    window.addEventListener('pointerdown', onPointerDown)
+    return () => window.removeEventListener('pointerdown', onPointerDown)
+  }, [liveDetailsOpen])
+
+  useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (tourOpen) {
         if (event.key === 'Escape') {
@@ -285,6 +302,10 @@ function App() {
         }
       }
       if (event.key !== 'Escape') return
+      if (liveDetailsOpen) {
+        setLiveDetailsOpen(false)
+        return
+      }
       if (profileOpen) {
         setProfileOpen(false)
         return
@@ -304,7 +325,7 @@ function App() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [open, openInfo, openTech, profileOpen, tourOpen])
+  }, [open, openInfo, openTech, profileOpen, liveDetailsOpen, tourOpen])
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault()
@@ -339,6 +360,76 @@ function App() {
         </div>
 
         <div className="top-actions">
+          <div className="live-recorder-container" ref={liveMenuRef}>
+            <button
+              type="button"
+              className={`live-recorder-btn ${recordingActive ? 'active' : 'paused'}`}
+              aria-expanded={liveDetailsOpen}
+              aria-haspopup="true"
+              aria-label="Teacher live progress and audio recording details"
+              onClick={() => setLiveDetailsOpen((prev) => !prev)}
+            >
+              <span className="live-pulse-dot" aria-hidden="true" />
+              <Mic size={14} className="live-mic-icon" aria-hidden="true" />
+              <span className="live-label">
+                {recordingActive ? 'Teacher Live' : 'Recording Paused'}
+              </span>
+              <span className="live-wave" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+              </span>
+            </button>
+
+            {liveDetailsOpen && (
+              <div
+                className="live-details-popover"
+                role="dialog"
+                aria-label="Real-time lecture recording details"
+              >
+                <div className="live-details-head">
+                  <div className="live-details-title-row">
+                    <span className="live-badge">Live Capture</span>
+                    <span className="live-timer">34:12</span>
+                  </div>
+                  <h3 className="live-stream-title">Professor Mic Stream</h3>
+                  <p className="live-stream-sub">Real-time lecture extraction &amp; progress sync</p>
+                </div>
+
+                <div className="live-progress-bar-wrap">
+                  <div className="live-progress-labels">
+                    <span>Lecture Progress</span>
+                    <span>Step 2 of 3</span>
+                  </div>
+                  <div className="live-progress-track">
+                    <div className="live-progress-fill" style={{ width: '66%' }} />
+                  </div>
+                </div>
+
+                <div className="live-details-meta">
+                  <div className="live-meta-item">
+                    <Activity size={14} aria-hidden="true" />
+                    <span>Topic: Rewrite limits in terms of u</span>
+                  </div>
+                  <div className="live-meta-item">
+                    <Radio size={14} aria-hidden="true" />
+                    <span>Audio Stream: 48kHz stereo · 42ms sync</span>
+                  </div>
+                </div>
+
+                <div className="live-details-foot">
+                  <button
+                    type="button"
+                    className="live-toggle-btn"
+                    onClick={() => setRecordingActive((prev) => !prev)}
+                  >
+                    {recordingActive ? 'Pause Stream' : 'Resume Stream'}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
           <button
             type="button"
             className="tour-pill-btn"
