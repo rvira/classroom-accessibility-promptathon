@@ -1,6 +1,6 @@
 # Signal UI and slide standard · v1.1
 
-Proposed reference, 14 November 2026. Scope: the Signal classroom-instruction candidate. This does not record team selection, clinical benefit, or WCAG certification. The existing app has not yet been migrated to this standard.
+Proposed reference, 14 November 2026. Scope: the Signal classroom-instruction candidate. This does not record team selection, clinical benefit, or WCAG certification. The Math 2B sample now adopts the visual foundations; the full proposed product flow remains future work. See [UI reconciliation](ui-reconciliation.md) for decisions and scope.
 
 **Design intent:** warm off-white canvas, white reading surfaces, dark ink text and a deep-teal primary action. Pale mint anchors the current step; lavender distinguishes original-source detail. UI and slides share these semantic roles, Arial typography, borders, shapes, vocabulary and hierarchy. At the user's direction, this revision sets aside the earlier monochrome constraint in [the font review](bold-icons-font-review.md). “Now-First” remains the team's design philosophy, not a validated intervention.
 
@@ -86,6 +86,8 @@ Controls: 8px radius. Cards: 16px. Small status badges: pill radius, never mista
 
 ## 2. Components
 
+Current sample extension: an inline catch-up disclosure uses a native summary, a visibly labeled input, a 48px submit button and a polite result region. It displays an explicitly fixed recap at the same checkpoint as the main card. Sample-source disclosure is synthetic, never labeled teacher-verified. See [scope and decisions](ui-reconciliation.md).
+
 This is the complete v1 inventory for the proposed paste → review → rejoin flow. Add a specification before introducing a new component. These are implementation requirements; the reference is not a full component library.
 
 | Component / anatomy | Variants and sizes | Required states and behavior |
@@ -141,7 +143,7 @@ Lead with **Where we are / What matters / Your next step**. Say `Your saved step
 
 No shame, diagnostic labels, streak penalties, confetti, forced timers or automatic progression. The eight-minute discussion in the fixture remains a visible instruction; it does not require a countdown. Errors describe the problem and recovery; avoid `Invalid`, `Oops!`, or blaming the student. Show failures near their cause. Use a polite live region for non-blocking updates; reserve interruptive alerts for urgent failures. [W3C status messages](https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html).
 
-Requirement preservation is a release check: pair/solo exception; paragraphs 2–3; one explanation; two text details; no outside sources; eight-minute discussion; one response per pair; before-class-ends deadline; unresolved upload destination. No requirement may exist only in a closed source panel.
+For the historical discussion-task fixture, requirement preservation is a release check (the current Math 2B fixture is separate): pair/solo exception; paragraphs 2–3; one explanation; two text details; no outside sources; eight-minute discussion; one response per pair; before-class-ends deadline; unresolved upload destination. No requirement may exist only in a closed source panel.
 
 ## 5. Accessibility acceptance
 
@@ -174,6 +176,6 @@ See side-by-side specimens in the [visual reference](../design-system/reference.
 
 ## Adoption and verification status
 
-The reference and tokens establish a reusable target. Keep the existing prototype intact until a deliberate implementation slice: replace hardcoded CSS; raise 10–13px labels; enlarge utility targets; remove decorative drifting particles; align source-component colors; show all fixture constraints; fix final-step completion and persistence error handling. The current app uses Arial and a monochrome palette; migrate it to the new semantic color roles as a separate implementation slice.
+The Math 2B sample now imports the shared tokens and uses Arial, teal actions, mint context, lavender sample-source detail and a centered reading column. Catch-up is an inline native disclosure. Decorative motion and the floating dialog are removed. The sample is explicitly synthetic, has no saved progress and is not teacher-verified. Full paste/review, step completion, persistence and teacher-source workflows remain planned. See [UI reconciliation](ui-reconciliation.md) and the verification record for scope and evidence.
 
 Before a slide handoff, compare slide and UI against tokens.json, not an old screenshot. Change token values centrally, regenerate CSS and contrast report with `python3 design-system/build_tokens.py`, update specimens and log a version. Record completed browser checks in [verification](../design-system/VERIFICATION.md). Unrun checks remain explicitly pending.

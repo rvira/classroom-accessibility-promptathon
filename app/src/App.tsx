@@ -1,191 +1,77 @@
-import { useEffect, useRef, useState } from 'react'
-import { ArrowRight, X } from 'lucide-react'
-import '@fontsource/atkinson-hyperlegible/700.css'
+import { useState } from 'react'
+import { ArrowRight, BookOpen, Compass } from 'lucide-react'
 import './App.css'
 
-/* Sample state from one Math 2B (Calculus) lecture on substitution for
-   definite integrals. Synthetic, not a transcript, no model is called. */
+// Synthetic fixture: never presented as teacher-authored or a live classroom feed.
 const lecture = {
-  course: 'Math 2B · Lecture 14 · Substitution',
-  where:
-    'Dr. Alvarez just wrote u = x² under ∫₀¹ 2x·e^(x²) dx. The class is rewriting the limits next.',
+  course: 'Math 2B · Lecture 14',
+  where: 'In this example, u = x² has been chosen for ∫₀¹ 2x·e^(x²) dx. The next step is to rewrite the limits.',
   next: 'Rewrite the limits in terms of u.',
-  keep: 'du = 2x·dx. Change the limits — don’t substitute back to x. Exact value.',
+  keep: 'du = 2x·dx. Change the limits — don’t substitute back to x. Give an exact value.',
 }
-
-const catchUpPoints = [
-  'The class is evaluating the definite integral ∫₀¹ 2x·e^(x²) dx.',
-  'Substitution is u = x², so du = 2x·dx — the 2x·dx is exactly what is left in the integrand.',
-  'The limits move with the variable: x = 0 gives u = 0, and x = 1 gives u = 1.',
-  'So the integral becomes ∫₀¹ e^u du, which is e^u evaluated from 0 to 1.',
-  'That gives e − 1 ≈ 1.718. Next up: integration by parts.',
+const recap = [
+  'The example begins with the definite integral ∫₀¹ 2x·e^(x²) dx.',
+  'The chosen substitution is u = x², so du = 2x·dx.',
+  'The factor 2x·dx is replaced by du. The limits still need to be expressed in u.',
+  'Your next action is to work out u at x = 0 and at x = 1.',
 ]
 
-type Message = { role: 'guide' | 'user'; text: string; points?: string[] }
-
-const opening: Message = {
-  role: 'guide',
-  text: 'You’re in Math 2B, lecture 14 — substitution for definite integrals. What’s the last thing you remember?',
-}
-
 function App() {
-  const [open, setOpen] = useState(false)
   const [draft, setDraft] = useState('')
-  const [thread, setThread] = useState<Message[]>([opening])
-  const [thinking, setThinking] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const threadRef = useRef<HTMLDivElement>(null)
-  const timer = useRef<number | undefined>(undefined)
-
-  useEffect(() => {
-    if (open) inputRef.current?.focus()
-  }, [open])
-
-  useEffect(() => {
-    if (!open) return
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false)
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [open])
-
-  useEffect(() => {
-    const node = threadRef.current
-    if (node) node.scrollTop = node.scrollHeight
-  }, [thread, thinking])
-
-  useEffect(() => () => window.clearTimeout(timer.current), [])
-
-  const send = (event: React.FormEvent) => {
-    event.preventDefault()
-    const answer = draft.trim()
-    if (!answer || thinking) return
-    setThread((prev) => [...prev, { role: 'user', text: answer }])
-    setDraft('')
-    setThinking(true)
-    timer.current = window.setTimeout(() => {
-      setThread((prev) => [
-        ...prev,
-        {
-          role: 'guide',
-          text: 'Got it — you’re closer than you think. Here’s the thread to where the class is now:',
-          points: catchUpPoints,
-        },
-      ])
-      setThinking(false)
-    }, 700)
-  }
+  const [submitted, setSubmitted] = useState<string | null>(null)
 
   return (
-    <div className={open ? 'app sheet-open' : 'app'}>
-      <div className="ether" aria-hidden="true">
-        {Array.from({ length: 9 }, (_, i) => (
-          <i key={i} />
-        ))}
-      </div>
-
-      <main>
-        <div className="workspace">
-          <p className="course">{lecture.course}</p>
-
-          <div className="symbol" aria-hidden="true">
-            <b />
-            <b />
-            <b />
-          </div>
-
-          <section className="row" aria-label="Sample classroom activity">
-            <div className="block">
-              <h2 className="kicker">Where we are</h2>
-              <p className="context">{lecture.where}</p>
-            </div>
-
-            <div className="block">
-              <h2 className="kicker">Next</h2>
-              <h1 className="action" aria-live="polite">
-                {lecture.next}
-              </h1>
-            </div>
-
-            <div className="block">
-              <h2 className="kicker">Keep in mind</h2>
-              <p className="constraints">{lecture.keep}</p>
-            </div>
-          </section>
+    <div className="app">
+      <a className="skip-link" href="#activity">Skip to activity</a>
+      <header className="site-header">
+        <span className="wordmark"><Compass size={24} aria-hidden="true" /> Signal</span>
+        <span className="header-note">A clear place to begin again</span>
+      </header>
+      <main id="activity" tabIndex={-1}>
+        <div className="activity-heading">
+          <p className="eyebrow">{lecture.course}</p>
+          <p className="sample-badge">Sample activity · prewritten content</p>
         </div>
-      </main>
-
-      <div className={open ? 'dock open' : 'dock'}>
-        {!open ? (
-          <button type="button" className="dock-trigger" onClick={() => setOpen(true)}>
-            Catch me up
-            <ArrowRight size={20} aria-hidden="true" />
-          </button>
-        ) : (
-          <div
-            className="sheet"
-            role="dialog"
-            aria-label="Catch me up"
-          >
-            <div className="sheet-head">
-              <span className="sheet-title">Catch me up</span>
-              <button
-                type="button"
-                className="sheet-close"
-                onClick={() => setOpen(false)}
-                aria-label="Close catch up"
-              >
-                <X size={18} aria-hidden="true" />
-              </button>
-            </div>
-
-            <div className="thread" ref={threadRef} aria-live="polite">
-              {thread.map((message, index) => (
-                <div key={index} className={`bubble ${message.role}`}>
-                  <p>{message.text}</p>
-                  {message.points && (
-                    <ol>
-                      {message.points.map((point) => (
-                        <li key={point}>{point}</li>
-                      ))}
-                    </ol>
-                  )}
+        <article className="activity-card" aria-labelledby="next-action">
+          <section className="orientation" aria-labelledby="orientation-title">
+            <h2 id="orientation-title">Where we are</h2>
+            <p>{lecture.where}</p>
+          </section>
+          <div className="task-body">
+            <p className="eyebrow">Your next step</p>
+            <h1 id="next-action">{lecture.next}</h1>
+            <section className="requirements" aria-labelledby="requirements-title">
+              <h2 id="requirements-title">What matters</h2>
+              <p>{lecture.keep}</p>
+            </section>
+            <details className="catch-up">
+              <summary>Help me rejoin <ArrowRight size={20} aria-hidden="true" /></summary>
+              <div className="catch-up-content">
+                <h2>A quick recap</h2>
+                <p id="recap-hint">This demo shows the same prewritten recap for every response. It does not interpret your message or track a live class.</p>
+                <form onSubmit={(event) => { event.preventDefault(); if (draft.trim()) setSubmitted(draft.trim()) }}>
+                  <label htmlFor="remembered">What’s the last thing you remember?</label>
+                  <input id="remembered" value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="For example, choosing u = x²" aria-describedby="recap-hint" />
+                  <button type="submit" disabled={!draft.trim()}>Show sample recap <ArrowRight size={20} aria-hidden="true" /></button>
+                </form>
+                <div role="status" aria-atomic="true">
+                  {submitted !== null && <div className="recap-result"><p><strong>You noted:</strong> {submitted}</p><ol>{recap.map(point => <li key={point}>{point}</li>)}</ol><p className="recap-end">You’re back at the checkpoint shown above: rewrite the limits in terms of u.</p></div>}
                 </div>
-              ))}
-              {thinking && (
-                <div className="bubble guide thinking">
-                  <span />
-                  <span />
-                  <span />
-                  <em>finding your place</em>
-                </div>
-              )}
-            </div>
-
-            <form className="composer" onSubmit={send}>
-              <label className="sr-only" htmlFor="remembered">
-                What’s the last thing you remember?
-              </label>
-              <input
-                id="remembered"
-                ref={inputRef}
-                value={draft}
-                onChange={(event) => setDraft(event.target.value)}
-                placeholder="e.g. the u = x² part…"
-                autoComplete="off"
-              />
-              <button type="submit" disabled={!draft.trim() || thinking}>
-                Send
-              </button>
-            </form>
-
-            <p className="sample-note">Sample script for the demo — not live AI.</p>
+              </div>
+            </details>
+            <details className="source">
+              <summary><BookOpen size={20} aria-hidden="true" /> View sample source text</summary>
+              <div className="source-content">
+                <p className="source-label">Synthetic fixture · version 1 · not teacher-verified</p>
+                <blockquote><p>{lecture.where}</p><p>{lecture.next}</p><p>{lecture.keep}</p></blockquote>
+                <p>This is the exact sample text used above, not a classroom transcript. Teacher-source ingestion and verification are planned features.</p>
+              </div>
+            </details>
           </div>
-        )}
-      </div>
+        </article>
+        <footer className="activity-footer">Your pace. Your next step.<span>Demo only · no live AI · nothing saved</span></footer>
+      </main>
     </div>
   )
 }
-
 export default App

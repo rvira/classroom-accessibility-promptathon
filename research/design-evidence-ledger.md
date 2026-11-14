@@ -1,5 +1,16 @@
 # Signal design evidence ledger
 
+## Current UI · 14 November 2026
+
+The [UI reconciliation](ui-reconciliation.md) supersedes the experiments below for implementation decisions. The current sample uses shared design tokens, Arial, a narrow reading column, static surfaces, inline catch-up and inspectable synthetic source text. The recap and main card share one checkpoint. A persistent visible sample label states its status.
+
+No live classroom feed, teacher verification, model calls, saved progress or four-step navigation is implemented. The sample-source disclosure is not a teacher transcript. Current check outcomes are recorded in [verification](../design-system/VERIFICATION.md). No student benefit or WCAG conformance is claimed.
+
+## Historical experiments — superseded
+
+The following entries describe earlier versions. Their references to “current”, controls, persistence, typography and browser checks apply only to those versions; they do not verify the present app. Kept for provenance.
+
+
 Branch: `design/now-first`. Update this file in every design commit that adds or changes a visible component or interaction. Status as of 2026-11-14: local sample mockup, not validated with students. **Research-informed** means the source supports the general design principle; it does not prove this particular implementation helps ADHD.
 
 | Component / feature | Decision in current mockup | Research or origin | Evidence boundary / test |
