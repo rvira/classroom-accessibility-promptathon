@@ -10,6 +10,7 @@ import {
   Settings,
   Sigma,
   Sparkles,
+  Target,
   User,
   X,
 } from 'lucide-react'
@@ -225,6 +226,11 @@ function App() {
   return (
     <div className={shell.join(' ')}>
       <header className="top-bar">
+        <div className="top-brand">
+          <Target size={22} className="top-brand-icon" aria-hidden="true" />
+          <span className="top-brand-name">Bullseye</span>
+        </div>
+
         <div className="profile-container" ref={profileRef}>
           <button
             type="button"
