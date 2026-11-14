@@ -1,5 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowLeftRight, ArrowRight, Equal, Info, MoveHorizontal, Sigma, X } from 'lucide-react'
+import {
+  ArrowLeftRight,
+  ArrowRight,
+  Equal,
+  HelpCircle,
+  Info,
+  LogOut,
+  MoveHorizontal,
+  Settings,
+  Sigma,
+  Sparkles,
+  User,
+  X,
+} from 'lucide-react'
 import '@fontsource/atkinson-hyperlegible/700.css'
 import './App.css'
 
@@ -133,7 +146,9 @@ function App() {
   const [answer, setAnswer] = useState('')
   const [openInfo, setOpenInfo] = useState<number | null>(null)
   const [openTech, setOpenTech] = useState<BlockKey | null>(null)
+  const [profileOpen, setProfileOpen] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const profileRef = useRef<HTMLDivElement>(null)
 
   const close = () => {
     setOpen(false)
@@ -150,8 +165,23 @@ function App() {
   }, [open, stage])
 
   useEffect(() => {
+    if (!profileOpen) return
+    const onPointerDown = (event: PointerEvent) => {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setProfileOpen(false)
+      }
+    }
+    window.addEventListener('pointerdown', onPointerDown)
+    return () => window.removeEventListener('pointerdown', onPointerDown)
+  }, [profileOpen])
+
+  useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return
+      if (profileOpen) {
+        setProfileOpen(false)
+        return
+      }
       if (openInfo !== null) {
         setOpenInfo(null)
         return
@@ -167,7 +197,7 @@ function App() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [open, openInfo, openTech])
+  }, [open, openInfo, openTech, profileOpen])
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault()
@@ -194,6 +224,77 @@ function App() {
 
   return (
     <div className={shell.join(' ')}>
+      <header className="top-bar">
+        <div className="profile-container" ref={profileRef}>
+          <button
+            type="button"
+            className="profile-btn"
+            aria-expanded={profileOpen}
+            aria-haspopup="true"
+            aria-label="Account, profile and settings"
+            onClick={() => setProfileOpen((prev) => !prev)}
+          >
+            <User size={18} aria-hidden="true" />
+          </button>
+
+          {profileOpen && (
+            <div className="profile-menu" role="menu" aria-label="Account menu">
+              <div className="profile-menu-header">
+                <span className="profile-name">Student Account</span>
+                <span className="profile-status">Math 2B · Active</span>
+              </div>
+              <hr className="profile-divider" />
+              <button
+                type="button"
+                role="menuitem"
+                className="profile-menu-item"
+                onClick={() => setProfileOpen(false)}
+              >
+                <User size={15} aria-hidden="true" />
+                <span>Profile</span>
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                className="profile-menu-item"
+                onClick={() => setProfileOpen(false)}
+              >
+                <Settings size={15} aria-hidden="true" />
+                <span>Settings</span>
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                className="profile-menu-item"
+                onClick={() => setProfileOpen(false)}
+              >
+                <Sparkles size={15} aria-hidden="true" />
+                <span>Accessibility Preferences</span>
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                className="profile-menu-item"
+                onClick={() => setProfileOpen(false)}
+              >
+                <HelpCircle size={15} aria-hidden="true" />
+                <span>Help &amp; Resources</span>
+              </button>
+              <hr className="profile-divider" />
+              <button
+                type="button"
+                role="menuitem"
+                className="profile-menu-item profile-logout"
+                onClick={() => setProfileOpen(false)}
+              >
+                <LogOut size={15} aria-hidden="true" />
+                <span>Sign Out</span>
+              </button>
+            </div>
+          )}
+        </div>
+      </header>
+
       <div className="ether" aria-hidden="true">
         {Array.from({ length: 9 }, (_, i) => (
           <i key={i} />
