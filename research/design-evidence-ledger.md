@@ -23,3 +23,7 @@ Branch: `design/now-first`. Update this file in every design commit that adds or
 | Reset sample | Reversible demo control | Demonstration convenience; [W3C undo guidance](https://www.w3.org/WAI/WCAG2/supplemental/patterns/o4p02-back-undo/) | Not a student workflow requirement. |
 
 Pitch name: **Now-First Design** is our coined synthesis, not a published clinical intervention. See [philosophy](now-first-design.md) and [source appendix](appendix/README.md). No measured ADHD benefit, comprehension improvement or WCAG conformance claim yet.
+
+## Reference and typography decision (2026-11-14)
+
+[Bold icons and font review](bold-icons-font-review.md): preserve black/white, strengthen the current-action headline, use only familiar icons paired with text, and retain Arial for the MVP pending user testing. W3C supports clear signposts and selective icons; no specific font is proven best for college students with ADHD. This review changes the design rationale, not the rendered app.
