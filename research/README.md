@@ -6,3 +6,5 @@
 Please add source links, label observations versus assumptions, and avoid personal student information without consent. No product idea has been selected yet. Share teammates' research branches or PRs so the team can compare and integrate without overwriting contributions.
 
 - [Deeper impact priorities and teammate AI handoff](impact-priorities.md)
+
+- [Signal candidate brief, demo fixture, and validation plan](signal-candidate-brief.md)
