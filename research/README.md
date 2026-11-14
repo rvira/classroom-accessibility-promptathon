@@ -12,3 +12,5 @@ Please add source links, label observations versus assumptions, and avoid person
 - [Signal research appendix: citations, evidence map, and full source inventory](appendix/README.md)
 
 - [Signal visual direction and mockup sequence](signal-visual-direction.md)
+
+- [Now-First Design philosophy and mockup status](now-first-design.md)
