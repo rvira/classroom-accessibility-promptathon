@@ -75,44 +75,51 @@
   color: var(--ink-mute);
 }
 
-.symbol {
+.symbol,
+.bullseye {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   margin: 0 auto clamp(14px, 2.2vh, 26px);
-  border: 1px solid rgba(20, 22, 26, 0.3);
+  border: 2px solid var(--accent);
   border-radius: 50%;
   box-shadow:
-    0 0 0 8px rgba(70, 130, 15, 0.03),
-    0 0 40px 9px rgba(70, 130, 15, 0.07);
+    0 0 0 7px rgba(70, 130, 15, 0.05),
+    0 0 28px rgba(70, 130, 15, 0.1);
   animation: breathe 14s ease-in-out infinite alternate;
 }
 
-.symbol b {
+.symbol b,
+.bullseye b {
   position: absolute;
   border-radius: 50%;
-  background: var(--ink);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-.symbol b:first-child {
-  width: 11px;
-  height: 11px;
-  left: 16px;
-  top: 16px;
+/* Concentric rings forming the bullseye target */
+.symbol b:first-child,
+.bullseye b:first-child {
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid rgba(70, 130, 15, 0.45);
+  background: transparent;
 }
 
-.symbol b:nth-child(2) {
-  width: 4px;
-  height: 4px;
-  left: 8px;
-  top: 9px;
+.symbol b:nth-child(2),
+.bullseye b:nth-child(2) {
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(70, 130, 15, 0.35);
+  background: transparent;
 }
 
-.symbol b:nth-child(3) {
-  width: 4px;
-  height: 4px;
-  right: 8px;
-  bottom: 8px;
+.symbol b:nth-child(3),
+.bullseye b:nth-child(3) {
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
 }
 
 /* ---------- three statements, side by side ---------- */
@@ -845,6 +852,7 @@ input:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .ether i,
   .symbol,
+  .bullseye,
   .caret {
     animation: none;
   }
