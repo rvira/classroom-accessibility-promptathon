@@ -1,8 +1,8 @@
-# Signal UI and slide standard · v1.0
+# Signal UI and slide standard · v1.1
 
 Proposed reference, 14 November 2026. Scope: the Signal classroom-instruction candidate. This does not record team selection, clinical benefit, or WCAG certification. The existing app has not yet been migrated to this standard.
 
-**Design intent:** a quiet white surface, strong black next-action heading, readable supporting requirements, and student-controlled detail. UI and slides share the same colors, Arial typography, borders, shapes, vocabulary and hierarchy. The latest [monochrome direction](bold-icons-font-review.md) takes precedence over the earlier teal exploration. “Now-First” is the team's design philosophy, not a validated intervention.
+**Design intent:** warm off-white canvas, white reading surfaces, dark ink text and a deep-teal primary action. Pale mint anchors the current step; lavender distinguishes original-source detail. UI and slides share these semantic roles, Arial typography, borders, shapes, vocabulary and hierarchy. At the user's direction, this revision sets aside the earlier monochrome constraint in [the font review](bold-icons-font-review.md). “Now-First” remains the team's design philosophy, not a validated intervention.
 
 ## Start here
 
@@ -20,23 +20,45 @@ Goal: enable another teammate to design a screen or slide without inventing anot
 
 ### Color
 
-Use a monochrome brand. Reserve semantic color for error, clarification and saved status. A black primary button provides emphasis; blue indicates keyboard focus, not a second brand accent. Always accompany semantic color with words.
+Use color to distinguish action, orientation and evidence. Deep teal is the brand/action color; mint supports orientation; lavender identifies original instructions. Keep the task heading in dark ink, so the whole reading experience does not become a wall of colored text. Status colors remain reserved for named states. These are original design decisions, not evidence that particular hues improve attention.
 
 | Token | Hex | RGB | Purpose |
 |---|---|---|---|
-| canvas / surface | #FFFFFF | 255, 255, 255 | Page and cards |
-| surface-subtle | #F5F5F5 | 245, 245, 245 | Supporting regions / source |
-| text / action | #171717 | 23, 23, 23 | Headings, body, primary fill |
-| text-secondary | #525252 | 82, 82, 82 | Context and supporting copy |
-| border | #737373 | 115, 115, 115 | Input and interactive boundaries |
-| divider | #D4D4D4 | 212, 212, 212 | Decorative separators only |
-| action-hover / active | #333333 / #000000 | 51, 51, 51 / 0, 0, 0 | Primary hover / press |
-| on-action | #FFFFFF | 255, 255, 255 | Primary label |
-| focus | #185FCA | 24, 95, 202 | 3px outline, 3px surface gap |
-| error / error-surface | #B42318 / #FEF3F2 | 180, 35, 24 / 254, 243, 242 | Error message and surface |
-| warning / warning-surface | #854D0E / #FFFBEB | 133, 77, 14 / 255, 251, 235 | Clarification required |
-| success / success-surface | #166534 / #F0FDF4 | 22, 101, 52 / 240, 253, 244 | Saved / complete |
-| disabled-text / disabled-surface | #525252 / #E5E5E5 | 82, 82, 82 / 229, 229, 229 | Unavailable action with explanation |
+| canvas | #F7F8F5 | 247, 248, 245 | Page background; warm neutral |
+| surface | #FFFFFF | 255, 255, 255 | Reading cards and inputs |
+| surface-subtle | #EEF2F0 | 238, 242, 240 | Secondary controls and neutral supporting regions |
+| text | #172B32 | 23, 43, 50 | Primary headings and body |
+| text-secondary | #4B6066 | 75, 96, 102 | Context and supporting copy |
+| border | #6B7E80 | 107, 126, 128 | Essential control boundaries |
+| divider | #CEDBD7 | 206, 219, 215 | Decorative separators only |
+| action | #00695C | 0, 105, 92 | Brand, primary controls and current-step marker |
+| action-hover | #00574C | 0, 87, 76 | Primary hover |
+| action-active | #00483F | 0, 72, 63 | Primary press |
+| on-action | #FFFFFF | 255, 255, 255 | Label on filled primary controls |
+| focus | #185FCA | 24, 95, 202 | Keyboard outline, with a 3px surface gap |
+| brand-surface | #E2F3EC | 226, 243, 236 | Current-step context and selected-step surface |
+| source | #5B4488 | 91, 68, 136 | Source-panel heading and source link |
+| source-surface | #F0EBF8 | 240, 235, 248 | Original-instruction region |
+| error | #B42318 | 180, 35, 24 | Error text and indicator |
+| error-surface | #FEF3F2 | 254, 243, 242 | Error region |
+| warning | #854D0E | 133, 77, 14 | Clarification text and indicator |
+| warning-surface | #FFFBEB | 255, 251, 235 | Clarification region |
+| success | #166534 | 22, 101, 52 | Saved/completed text and indicator |
+| success-surface | #F0FDF4 | 240, 253, 244 | Saved/completed region |
+| disabled-text | #4B6066 | 75, 96, 102 | Unavailable control label |
+| disabled-surface | #E2E9E5 | 226, 233, 229 | Unavailable control fill |
+
+#### Color placement rules
+
+- **Canvas and reading:** warm neutral surrounds white cards. Keep long instructions on white or a pale approved surface; no full-page saturated reading background.
+- **Primary action:** teal fill, white label. Secondary actions use white with a visible border. Keep one filled primary action per task region.
+- **Current position:** mint context strip plus a teal rule and explicit `Your saved step` or `Current step` label. Selected steps also need a marker and programmatic state; mint alone is insufficient.
+- **Source evidence:** lavender background, plum heading and dark body text. Use this treatment consistently for original wording, not generic decoration or generated summaries. A source-colored panel is not a verification badge.
+- **Status:** amber clarification, red error and green saved/completed state, each with text and a symbol where helpful. Teal action color must never be used as the only completion cue.
+- **Keyboard focus:** blue ring plus a surface-colored gap. Do not reuse this blue for selected states; check ring visibility on each surface.
+- **Slides:** repeat the warm canvas, teal brand and mint current-step card. Use lavender only when showing source material. Evidence slides may use the source treatment; ordinary content slides should not imply source provenance.
+
+The palette supports a recognizable identity without assigning a different hue to every component. Use white/neutral for most reading space and place color where it explains a relationship. Do not enforce a decorative color quota or use pastel text on pastel surfaces.
 
 Use the exact approved pairs in the [contrast report](../design-system/contrast-report.md). Text requires 4.5:1; large text can meet 3:1 under WCAG, but Signal keeps 4.5:1 for all normal content. Essential boundaries and state indicators require 3:1. These are pair-specific checks, not properties of a color alone. [W3C contrast](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html), [non-text contrast](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html).
 
@@ -68,7 +90,7 @@ This is the complete v1 inventory for the proposed paste → review → rejoin f
 
 | Component / anatomy | Variants and sizes | Required states and behavior |
 |---|---|---|
-| Button: optional icon + verb label | Primary black; secondary white with border; tertiary underlined text; destructive only for data removal. Default min-height 48px; compact 44px; horizontal padding 16/24px | Rest, hover, pressed, focus, disabled, busy. Primary hover #333333, pressed #000000; secondary/tertiary hover #F5F5F5, pressed #E5E5E5. All keep visible focus. Disabled uses explicit tokens, not group opacity. Busy preserves width, says `Creating steps…`, and prevents duplicate submission. One primary per task region. |
+| Button: optional icon + verb label | Primary deep teal; secondary white with border; tertiary underlined text; destructive only for data removal. Default min-height 48px; compact 44px; horizontal padding 16/24px | Rest, hover, pressed, focus, disabled, busy. Primary hover #00574C, pressed #00483F; secondary/tertiary hover #EEF2F0, pressed #E2E9E5. All keep visible focus. Disabled uses explicit tokens, not group opacity. Busy preserves width, says `Creating steps…`, and prevents duplicate submission. One primary per task region. |
 | Input / textarea: persistent label + hint + field + message | Single-line min-height 48px; multiline min-height 144px; full available width, vertical resize | Empty, filled, hover, focus, invalid, disabled, read-only. 1px border at rest, dark border on hover; focus outline; invalid 2px error border plus text. Label and error linked by `for`, `id`, `aria-describedby`; set `aria-invalid`. Placeholder is an example, never the only label. |
 | Selection: native checkbox / radio + label | 20px visible control within 48px clickable label row; checkbox for completion/preferences; radios for mutually exclusive views | Unchecked, checked, hover, focus, disabled. Checkmark/selection dot supplements color. Space selects; native radio arrow behavior. Group with fieldset and legend. |
 | Current-step card: context + step count + heading + requirements + actions | One-step view, overview, completed view; max 680px | Current, saved, outdated instructions, complete. Distinguish saved student step from teacher-confirmed stage. Card is not itself clickable. Essential requirements remain visible. |
@@ -148,10 +170,10 @@ See side-by-side specimens in the [visual reference](../design-system/reference.
 | Show `Work alone if your partner is absent` beside the task | Hide the exception only in collapsed source | Shortening must preserve instructions |
 | `Your saved step: 2 of 4` | `Your class is on step 2` without supplied evidence | Separate progress from live classroom state |
 | Completion words + symbol + undo | Green dot alone / disappearing undo | Makes state understandable and reversible |
-| Same Arial, black button and 16px panel shape in slides | Introduce a different gradient, font and color palette in the pitch | Keeps the demo and deck recognizable as one product |
+| Same Arial, teal action color, mint context and 16px panel shape in slides | Introduce a different gradient, font and color palette in the pitch | Keeps the demo and deck recognizable as one product |
 
 ## Adoption and verification status
 
-The reference and tokens establish a reusable target. Keep the existing prototype intact until a deliberate implementation slice: replace hardcoded CSS; raise 10–13px labels; enlarge utility targets; remove decorative drifting particles; align source-component colors; show all fixture constraints; fix final-step completion and persistence error handling. The current app already uses Arial and black/white but does not meet every rule above.
+The reference and tokens establish a reusable target. Keep the existing prototype intact until a deliberate implementation slice: replace hardcoded CSS; raise 10–13px labels; enlarge utility targets; remove decorative drifting particles; align source-component colors; show all fixture constraints; fix final-step completion and persistence error handling. The current app uses Arial and a monochrome palette; migrate it to the new semantic color roles as a separate implementation slice.
 
 Before a slide handoff, compare slide and UI against tokens.json, not an old screenshot. Change token values centrally, regenerate CSS and contrast report with `python3 design-system/build_tokens.py`, update specimens and log a version. Record completed browser checks in [verification](../design-system/VERIFICATION.md). Unrun checks remain explicitly pending.

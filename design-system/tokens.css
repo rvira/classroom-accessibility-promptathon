@@ -1,15 +1,15 @@
-/* Signal 1.0 — generated from tokens.json by build_tokens.py. */
+/* Signal 1.1.0 — generated from tokens.json by build_tokens.py. */
 :root {
-  --signal-canvas: #FFFFFF;
+  --signal-canvas: #F7F8F5;
   --signal-surface: #FFFFFF;
-  --signal-surface-subtle: #F5F5F5;
-  --signal-text: #171717;
-  --signal-text-secondary: #525252;
-  --signal-border: #737373;
-  --signal-divider: #D4D4D4;
-  --signal-action: #171717;
-  --signal-action-hover: #333333;
-  --signal-action-active: #000000;
+  --signal-surface-subtle: #EEF2F0;
+  --signal-text: #172B32;
+  --signal-text-secondary: #4B6066;
+  --signal-border: #6B7E80;
+  --signal-divider: #CEDBD7;
+  --signal-action: #00695C;
+  --signal-action-hover: #00574C;
+  --signal-action-active: #00483F;
   --signal-on-action: #FFFFFF;
   --signal-focus: #185FCA;
   --signal-error: #B42318;
@@ -18,8 +18,11 @@
   --signal-warning-surface: #FFFBEB;
   --signal-success: #166534;
   --signal-success-surface: #F0FDF4;
-  --signal-disabled-text: #525252;
-  --signal-disabled-surface: #E5E5E5;
+  --signal-disabled-text: #4B6066;
+  --signal-disabled-surface: #E2E9E5;
+  --signal-brand-surface: #E2F3EC;
+  --signal-source: #5B4488;
+  --signal-source-surface: #F0EBF8;
   --signal-font: Arial, Helvetica, sans-serif;
   --signal-type-display: 3rem;
   --signal-type-h1: 2rem;
