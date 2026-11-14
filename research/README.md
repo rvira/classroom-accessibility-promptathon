@@ -26,4 +26,4 @@ Please add source links, label observations versus assumptions, and avoid person
 - [Visual reference: components, classroom UI, slide example, do/don’t](../design-system/reference.html)
 - [Canonical tokens and adoption instructions](../design-system/README.md)
 
-Proposed v1.0, 2026-11-14. Uses the latest monochrome direction. Existing app migration and accessibility validation remain separate work.
+Proposed v1.1, 2026-11-14. Uses teal actions, mint orientation, lavender source panels and a warm neutral canvas. Existing app migration and accessibility validation remain separate work.

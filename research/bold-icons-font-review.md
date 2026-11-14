@@ -1,5 +1,7 @@
 # Bold icons and typography review — 2026-11-14
 
+**Palette update, 2026-11-14:** the user has set aside this note’s monochrome restriction. Follow [UI standard v1.1](ui-standard.md) for the current teal/mint/lavender direction. The original review below is retained as history; its typography findings remain relevant.
+
 ## Reference read
 
 User's [Canva School Habits presentation](https://www.canva.com/design/DAHa7QS00Io/WLIPWcZh9BWu60qorYHYRg/edit): the visible cover uses an oversized heavy headline, a large browser-window motif and repeated simple dots. The color palette is not a direction for Signal. Proposed adaptation: one emphatic black headline for the next action, one clear icon beside a meaningful label, and monochrome geometry sparingly. Do not repeat icons/dots until the task area becomes noisy.

@@ -2,7 +2,7 @@
 
 **Now-First Design: help a student find their place, understand what matters, and choose the next action.**
 
-Version 1.0 · 14 November 2026 · Proposed philosophy for the Signal classroom-accessibility candidate.
+Version 1.1 · 14 November 2026 · Proposed philosophy for the Signal classroom-accessibility candidate.
 
 This document explains the reasoning behind the [UI and slide standard](ui-standard.md). It expands the original [Now-First note](now-first-design.md). Use this document for design decisions and presentation narratives; use the standard and [shared tokens](../design-system/tokens.json) for implementation values. These are product principles to validate, not claims of clinical effectiveness.
 
@@ -48,11 +48,11 @@ Keep original teacher wording within reach. Associate a proposed step with its s
 
 ## 5. Use visual hierarchy to support reading
 
-Our proposed expression is white surfaces, dark text, a bold next-action heading and restrained borders. Arial, consistent spacing and a narrow reading column create a repeatable visual language. Semantic colors identify named states; color never carries meaning alone.
+Our proposed expression combines a warm off-white canvas, white reading surfaces, dark ink text and a deep-teal primary action. Mint anchors the current step; lavender distinguishes original instructions. Color gives the interface identity and helps establish relationships, while labels make those relationships explicit. Arial, consistent spacing and a narrow reading column create a repeatable visual language. Semantic colors identify named states; color never carries meaning alone.
 
 Essential supporting text deserves readable size and contrast. A minimal screen with tiny pale requirements fails this principle. Decorative movement should not compete with the task. The proposed standard has no background animation and no required motion.
 
-These are design choices that support our intended experience. Black and white, a particular font, or an 8px spacing scale are not treatments for disability. User feedback and access testing may justify changing them.
+These are design choices that support our intended experience. A teal palette, a particular font, or an 8px spacing scale are not treatments for disability. User feedback and access testing may justify changing them.
 
 **Design question:** Does each visual choice help someone locate, read or act on information?
 
@@ -71,6 +71,22 @@ A design is incomplete until people can operate and understand its implemented s
 Automated checks and native controls help, but do not replace testing the actual journey. Measure whether students can recover their place and preserve the teacher's requirements. Record limitations alongside successes. Do not turn a proposed WCAG target into a conformance claim.
 
 **Design question:** What observed evidence supports saying this interaction is usable and accessible?
+
+## Typography: Arial across UI and slides
+
+**Primary font: Arial.** Use `Arial, Helvetica, sans-serif` in the UI and select Arial explicitly in slide masters. Use regular (400) for body copy and bold (700) for headings and important controls. Keep the same family across both formats; change the size to suit reading on a screen or viewing a presentation.
+
+Arial is our practical default for a familiar, consistent presentation and a prototype that does not require a downloaded web font. We are not choosing it as a clinically superior font for ADHD or dyslexia. Readability also depends on size, spacing, contrast, line length and the wording itself. Respect user font overrides, and verify wrapping when a fallback font is used.
+
+| Role | UI | Slides |
+|---|---|---|
+| Main heading | 32px desktop / 28px mobile, bold | 36pt, bold |
+| Section heading | 24px, bold | 28pt, bold |
+| Body | 18px, regular; 1.6 line height | 24pt, regular; 1.3 line height |
+| Controls / labels | 16px; bold for key actions | 20pt |
+| Metadata / citations | 14px | 16pt minimum for citations |
+
+Use sentence case and left-aligned paragraphs. Avoid tightly tracked headings, long all-caps labels and tiny supporting instructions. Do not shrink required content to fit a card or slide: let the UI grow, or split the slide. The complete hierarchy and exceptions live in [the typography standard](ui-standard.md#typography).
 
 ## One identity across UI and slides
 
