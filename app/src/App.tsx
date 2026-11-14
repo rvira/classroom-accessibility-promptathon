@@ -204,7 +204,7 @@ function App() {
         <div className="workspace">
           <p className="course">{lecture.course}</p>
 
-          <div className="symbol" aria-hidden="true">
+          <div className="symbol bullseye" aria-hidden="true">
             <b />
             <b />
             <b />
