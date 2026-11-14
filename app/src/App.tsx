@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { ArrowLeft, ArrowRight, ChevronDown, Pause, Play, RotateCcw } from 'lucide-react'
+import '@fontsource/atkinson-hyperlegible/400.css'
+import '@fontsource/atkinson-hyperlegible/700.css'
 import './App.css'
 const original = 'Work in pairs. Read paragraphs 2 and 3 of the case. Choose ONE explanation for the outcome and cite two details from the text. Do not use outside sources. Discuss for eight minutes. Submit one response per pair before class ends. If your partner is absent, work alone. Upload it to the usual place.'
 const steps = [
