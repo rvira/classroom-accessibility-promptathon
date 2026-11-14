@@ -3,7 +3,7 @@
 - [Disability prevalence, existing supports, and evidence limits](disability-evidence.md)
 - [Product strategy and idea comparison](product-strategy.md)
 
-Please add source links, label observations versus assumptions, and avoid personal student information without consent. No product idea has been selected yet. Share teammates' research branches or PRs so the team can compare and integrate without overwriting contributions.
+Please add source links, label observations versus assumptions, and avoid personal student information without consent. Signal is the current working prototype; product effectiveness remains unvalidated. Share teammates' research branches or PRs so the team can compare and integrate without overwriting contributions.
 
 - [Deeper impact priorities and teammate AI handoff](impact-priorities.md)
 
@@ -26,4 +26,4 @@ Please add source links, label observations versus assumptions, and avoid person
 - [Visual reference: components, classroom UI, slide example, do/don’t](../design-system/reference.html)
 - [Canonical tokens and adoption instructions](../design-system/README.md)
 
-Proposed v1.1, 2026-11-14. Uses teal actions, mint orientation, lavender source panels and a warm neutral canvas. Existing app migration and accessibility validation remain separate work.
+Proposed v1.1, 2026-11-14. Uses teal actions, mint orientation, lavender source panels and a warm neutral canvas. The current sample adopts these visual foundations. Full product features and accessibility validation remain separate work. See [UI reconciliation](ui-reconciliation.md) for chosen and superseded decisions.

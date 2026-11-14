@@ -1,5 +1,19 @@
 # Verification · 14 November 2026
 
+## Current app UI reconciliation
+
+- Production build (`npm run build --prefix app`) passed after the UI replacement.
+- Lint (`npm run lint --prefix app`) passed; `git diff --check` passed.
+- Static review: shared token import, one H1, persistent visible sample status, labeled input, native inline disclosures, 48px controls, fixed recap at the same checkpoint and inspectable synthetic fixture.
+- No gradients, particles, custom modal, fixed overlay or simulated thinking remain in the current screen.
+- Browser QA attempted through the browser tool: “The browser access host is unavailable.” Desktop/mobile rendering, real keyboard walkthrough, enlarged text, screen readers and student usability are **not verified**. The responsive CSS is implemented, but a browser pass is still required.
+- No backend, adaptive AI, teacher verification or saved progress was added. See [decisions and acceptance](../research/ui-reconciliation.md).
+
+## Historical reference verification
+
+The records below apply to earlier reference-only work, before the current app migration; “unchanged app” statements are historical.
+
+
 ## Completed
 
 - Generated tokens.css and contrast-report.md from tokens.json using Python 3.
