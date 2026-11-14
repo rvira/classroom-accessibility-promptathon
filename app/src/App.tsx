@@ -531,7 +531,7 @@ function App() {
           <p className="course">{lecture.course}</p>
 
           <section className="row" aria-label="Sample classroom activity">
-            <div className="block">
+            <div className="block card">
               <div className="kicker-row">
                 <h2 className="kicker">{blocks[0].label}</h2>
                 <button
@@ -547,7 +547,7 @@ function App() {
               <p className="context">{lecture.where}</p>
             </div>
 
-            <div className="block">
+            <div className="block card card-primary">
               <div className="kicker-row">
                 <h2 className="kicker">{blocks[1].label}</h2>
                 <button
@@ -565,7 +565,7 @@ function App() {
               </h1>
             </div>
 
-            <div className="block">
+            <div className="block card">
               <div className="kicker-row">
                 <h2 className="kicker">{blocks[2].label}</h2>
                 <button
