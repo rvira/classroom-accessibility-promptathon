@@ -19,6 +19,7 @@ import {
   X,
 } from 'lucide-react'
 import '@fontsource/atkinson-hyperlegible/700.css'
+import { InteractiveBackground } from './components/InteractiveBackground'
 import './App.css'
 
 /* Sample state from one Math 2B (Calculus) lecture on integrals.
@@ -330,6 +331,7 @@ function App() {
 
   return (
     <div className={shell.join(' ')}>
+      <InteractiveBackground />
       <header className="top-bar">
         <div className="top-brand">
           <Target size={24} strokeWidth={2.8} className="top-brand-icon" aria-hidden="true" />
