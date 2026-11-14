@@ -1,6 +1,6 @@
 # Signal · Differentiating Features
 
-Status: Product specification (2026-11-14). Aligned with **Now-First Design** principles and the `design/now-first` visual direction.
+Status: Future product specification (2026-11-14), not implemented capabilities. The current UI is a synthetic Math 2B sample with a fixed recap; it has no teacher verification, adaptive AI or saved progress. See [UI reconciliation](../research/ui-reconciliation.md). Aligned with **Now-First Design** principles and the `design/now-first` visual direction.
 
 **Core Value Proposition:** Help students rejoin an active classroom task without losing constraints, exceptions, or source context. Unlike general task splitters (Goblin Tools) or reading aids (Immersive Reader), Signal anchors every action to verified teacher instructions and surfaces classroom ambiguity rather than guessing.
 

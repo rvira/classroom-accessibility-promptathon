@@ -25,7 +25,7 @@ Import `../../../design-system/tokens.css` from a component under `app/src/compo
 }
 ```
 
-Tokens do not supply component behavior or certify accessibility. The current app is intentionally not migrated as part of this reference task. Follow the implementation gap list in the standard.
+Tokens do not supply component behavior or certify accessibility. The current Math 2B sample imports these tokens and adopts the visual foundations. See [UI reconciliation](../research/ui-reconciliation.md) for implementation scope; the complete product flow remains planned.
 
 ## Use in slides
 

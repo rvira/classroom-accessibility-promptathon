@@ -14,6 +14,8 @@ Coined by the Signal team on 2026-11-14 as our research-informed design philosop
 
 The interface also draws on [exploratory co-design with university students with ADHD](https://arxiv.org/abs/2602.09381). These sources inform our choices; they do not prove Signal improves learning or attention. [W3C's ADHD review](https://www.w3.org/TR/coga-user-research/) warns that evidence for specific assistive design techniques is often limited. Test the mockup with students before claiming effectiveness.
 
-## Current mockup
+## Historical mockup — superseded
+
+For the current Math 2B UI and selected decisions, see [UI reconciliation](ui-reconciliation.md). The checks below apply only to the earlier version.
 
 React/Vite app in `app/`. Sample Biology case activity, current-step card, full overview, source disclosure, local step persistence, motion pause. No live AI or classroom state feed. Visual references are Google's spacious surfaces and color accents; this is an original Signal interface. Build verified; initial browser check verified overview, step advance and source disclosure. Browser review at narrow viewport showed content reflow. Further user feedback should guide revisions.
