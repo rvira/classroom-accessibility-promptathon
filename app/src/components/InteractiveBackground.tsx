@@ -8,29 +8,30 @@ interface Particle {
   vx: number
   vy: number
   angle: number
-  length: number
-  width: number
+  radius: number
   color: string
   opacity: number
 }
 
-// Aligned with the Signal / Bullseye design system tokens:
-// Forest/Sage green, Teal, Mint, Soft Slate, and subtle warm amber/lavender accents
-function getStandardPaletteColor(angle: number, ringIndex: number): string {
+// Google Antigravity dot palette mapped in a gentle radial spectrum
+function getAntigravityDotColor(angle: number, ringIndex: number): string {
   const a = ((angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2)
   const deg = (a * 180) / Math.PI
 
-  // Curated harmonious tones that preserve UI dignity and high legibility
-  if (deg >= 45 && deg < 135) {
-    return '#46820f' // Primary olive/sage green
-  } else if (deg >= 135 && deg < 210) {
-    return ringIndex % 2 === 0 ? '#005f60' : '#107e7d' // Deep Teal
-  } else if (deg >= 210 && deg < 280) {
-    return '#4f6b52' // Muted forest
-  } else if (deg >= 280 && deg < 340) {
-    return '#6b7280' // Slate ink mute
+  // Left to Top-Left: Crisp Google Blue & Cyan
+  // Top & Top-Right: Warm Amber & Coral Red
+  // Right & Bottom-Right: Soft Violet & Purple
+  // Bottom: Mint & Sage Green
+  if (deg >= 40 && deg < 110) {
+    return ringIndex % 2 === 0 ? '#FBBC04' : '#F29900' // Amber / Warm gold
+  } else if (deg >= 110 && deg < 190) {
+    return ringIndex % 2 === 0 ? '#34A853' : '#46820F' // Green / Sage
+  } else if (deg >= 190 && deg < 270) {
+    return ringIndex % 2 === 0 ? '#4285F4' : '#1A73E8' // Google Blue / Cyan
+  } else if (deg >= 270 && deg < 330) {
+    return ringIndex % 2 === 0 ? '#A142F4' : '#8430CE' // Purple / Violet
   } else {
-    return ringIndex % 2 === 0 ? '#5a9e1e' : '#2d7a6e' // Bright sage & teal transition
+    return ringIndex % 2 === 0 ? '#EA4335' : '#D93025' // Coral / Red
   }
 }
 
@@ -66,36 +67,35 @@ export function InteractiveBackground() {
 
       particles = []
 
-      // Elliptical Antigravity radial field
-      const ringCount = 13
-      // Wide central clearance to guarantee that the 3-column workspace remains 100% legible
-      const minRadiusX = Math.min(displayW * 0.42, 460)
-      const minRadiusY = Math.min(displayH * 0.38, 280)
-      const maxRadiusX = Math.max(displayW * 0.85, 900)
-      const maxRadiusY = Math.max(displayH * 0.85, 750)
+      // Concentric rings of clean circular dots
+      const ringCount = 14
+      // Safe boundary ensuring reading area is 100% clean and legible
+      const minRadiusX = Math.min(displayW * 0.44, 490)
+      const minRadiusY = Math.min(displayH * 0.38, 290)
+      const maxRadiusX = Math.max(displayW * 0.88, 920)
+      const maxRadiusY = Math.max(displayH * 0.88, 760)
 
       for (let r = 0; r < ringCount; r++) {
         const t = r / (ringCount - 1)
         const radX = minRadiusX + t * (maxRadiusX - minRadiusX)
         const radY = minRadiusY + t * (maxRadiusY - minRadiusY)
 
-        // Denser in the periphery, gracefully sparser near the center
-        const count = Math.floor(16 + r * 11)
+        // Denser in the periphery, sparser towards the center
+        const count = Math.floor(18 + r * 13)
 
         for (let i = 0; i < count; i++) {
-          const theta = (i / count) * Math.PI * 2 + (r % 2 ? 0.1 : 0) + (Math.random() - 0.5) * 0.04
-          const rx = radX + (Math.random() - 0.5) * 16
-          const ry = radY + (Math.random() - 0.5) * 16
+          const theta = (i / count) * Math.PI * 2 + (r % 2 ? 0.08 : 0) + (Math.random() - 0.5) * 0.05
+          const rx = radX + (Math.random() - 0.5) * 18
+          const ry = radY + (Math.random() - 0.5) * 18
 
           const bx = cx + Math.cos(theta) * rx
           const by = cy + Math.sin(theta) * ry
 
-          // Tangential swirl orientation
-          const tangent = theta + Math.PI / 2 + 0.14 + (Math.random() - 0.5) * 0.08
-          const color = getStandardPaletteColor(theta, r)
-
-          // Subdued, calming opacities per UI standards (0.18 to 0.48)
-          const opacity = 0.18 + t * 0.3
+          const color = getAntigravityDotColor(theta, r)
+          // Circular dots between 1.6px and 2.8px radius
+          const radius = 1.6 + Math.random() * 1.2
+          // Calming opacity
+          const opacity = 0.22 + t * 0.32
 
           particles.push({
             baseX: bx,
@@ -104,9 +104,8 @@ export function InteractiveBackground() {
             currY: by,
             vx: 0,
             vy: 0,
-            angle: tangent,
-            length: 4 + Math.random() * 3.5,
-            width: 2 + Math.random() * 0.6,
+            angle: theta,
+            radius,
             color,
             opacity,
           })
@@ -165,12 +164,12 @@ export function InteractiveBackground() {
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i]
 
-        // Gentle, calm ambient drift
-        const breathe = Math.sin(ambientTime + i * 0.25) * 1.2
+        // Gentle, calm ambient floating
+        const breathe = Math.sin(ambientTime + i * 0.25) * 1.4
         const targetX = p.baseX + parallaxX + breathe * Math.cos(p.angle)
         const targetY = p.baseY + parallaxY + breathe * Math.sin(p.angle)
 
-        // Interactive mouse response: gentle deflection
+        // Interactive mouse deflection
         if (mouseX > -9000) {
           const dx = p.currX - mouseX
           const dy = p.currY - mouseY
@@ -179,14 +178,14 @@ export function InteractiveBackground() {
 
           if (distSq < maxDist * maxDist && distSq > 0) {
             const dist = Math.sqrt(distSq)
-            const force = (1 - dist / maxDist) * 14
+            const force = (1 - dist / maxDist) * 15
             const pushAngle = Math.atan2(dy, dx)
             p.vx += Math.cos(pushAngle) * force * 0.15
             p.vy += Math.sin(pushAngle) * force * 0.15
           }
         }
 
-        // Return to home position with smooth damping
+        // Return with smooth damping
         p.vx += (targetX - p.currX) * 0.07
         p.vy += (targetY - p.currY) * 0.07
         p.vx *= 0.8
@@ -195,22 +194,12 @@ export function InteractiveBackground() {
         p.currX += p.vx
         p.currY += p.vy
 
-        // Render rounded dash
-        ctx.save()
-        ctx.translate(p.currX, p.currY)
-        ctx.rotate(p.angle)
-
+        // Render clean, anti-aliased circular dot
         ctx.beginPath()
-        ctx.lineCap = 'round'
-        ctx.lineWidth = p.width
-        ctx.strokeStyle = p.color
+        ctx.arc(p.currX, p.currY, p.radius, 0, Math.PI * 2)
+        ctx.fillStyle = p.color
         ctx.globalAlpha = p.opacity
-
-        ctx.moveTo(-p.length / 2, 0)
-        ctx.lineTo(p.length / 2, 0)
-        ctx.stroke()
-
-        ctx.restore()
+        ctx.fill()
       }
     }
 

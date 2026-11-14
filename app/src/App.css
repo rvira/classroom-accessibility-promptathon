@@ -58,6 +58,235 @@
   gap: 12px;
 }
 
+/* ---------- live teacher recorder indicator ---------- */
+
+.live-recorder-container {
+  position: relative;
+}
+
+.live-recorder-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid #fed7d7;
+  background: #fff5f5;
+  color: #c53030;
+  font-family: var(--ui);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 4px rgba(229, 62, 62, 0.08);
+}
+
+.live-recorder-btn:hover {
+  background: #ffe3e3;
+  border-color: #feb2b2;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(229, 62, 62, 0.15);
+}
+
+.live-recorder-btn:focus-visible {
+  outline: 3px solid #e53e3e;
+  outline-offset: 2px;
+}
+
+.live-recorder-btn.paused {
+  background: #f7fafc;
+  border-color: #e2e8f0;
+  color: #718096;
+}
+
+.live-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e53e3e;
+  display: inline-block;
+  box-shadow: 0 0 0 rgba(229, 62, 62, 0.7);
+  animation: live-pulse 1.8s infinite;
+}
+
+.live-recorder-btn.paused .live-pulse-dot {
+  background: #a0aec0;
+  animation: none;
+  box-shadow: none;
+}
+
+@keyframes live-pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 6px rgba(229, 62, 62, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(229, 62, 62, 0);
+  }
+}
+
+.live-wave {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.live-wave i {
+  display: block;
+  width: 2.5px;
+  border-radius: 2px;
+  background: currentColor;
+  height: 4px;
+}
+
+.live-recorder-btn.active .live-wave i:nth-child(1) {
+  animation: wave-bar 0.9s ease-in-out infinite alternate;
+}
+.live-recorder-btn.active .live-wave i:nth-child(2) {
+  animation: wave-bar 0.9s ease-in-out infinite 0.25s alternate;
+}
+.live-recorder-btn.active .live-wave i:nth-child(3) {
+  animation: wave-bar 0.9s ease-in-out infinite 0.5s alternate;
+}
+
+@keyframes wave-bar {
+  0% { height: 4px; }
+  100% { height: 12px; }
+}
+
+.live-details-popover {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 290px;
+  background: #ffffff;
+  border: 1px solid rgba(20, 22, 26, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 16px 36px rgba(20, 22, 26, 0.14), 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 18px;
+  z-index: 50;
+  animation: profile-fade 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.live-details-head {
+  display: flex;
+  flex-direction: column;
+}
+
+.live-details-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.live-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #c53030;
+  background: #fff5f5;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid #feb2b2;
+}
+
+.live-timer {
+  font-family: monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.live-stream-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.live-stream-sub {
+  margin: 2px 0 12px;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+.live-progress-bar-wrap {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background: #f7fafc;
+  border-radius: 10px;
+  border: 1px solid #edf2f7;
+}
+
+.live-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.live-progress-track {
+  width: 100%;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.live-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #e53e3e, #46820f);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.live-details-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.live-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+.live-details-foot {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.live-toggle-btn {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.live-toggle-btn:hover {
+  background: #f7fafc;
+  border-color: #cbd5e0;
+}
+
 .tour-pill-btn {
   display: inline-flex;
   align-items: center;
@@ -1288,6 +1517,8 @@ input:focus-visible {
   .tour-overlay,
   .tour-card,
   .tour-btn,
+  .live-pulse-dot,
+  .live-wave i,
   .caret {
     animation: none;
     transition: none;
