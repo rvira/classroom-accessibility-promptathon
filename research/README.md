@@ -10,3 +10,5 @@ Please add source links, label observations versus assumptions, and avoid person
 - [Signal candidate brief, demo fixture, and validation plan](signal-candidate-brief.md)
 
 - [Signal research appendix: citations, evidence map, and full source inventory](appendix/README.md)
+
+- [Signal visual direction and mockup sequence](signal-visual-direction.md)
