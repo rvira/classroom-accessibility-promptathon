@@ -1,5 +1,7 @@
 # Now-First Design
 
+The expanded [Signal design philosophy](design-philosophy.md) is the current companion to the [UI and slide standard](ui-standard.md). This original note preserves the early principles and historical mockup status; its color-accent and motion references do not override the current color-role and motion-free standard.
+
 Coined by the Signal team on 2026-11-14 as our research-informed design philosophy, not a published clinical method.
 
 **One-line pitch:** Signal puts the present first: where the class is, what matters, and one next action, while keeping original instructions and progress within reach.
