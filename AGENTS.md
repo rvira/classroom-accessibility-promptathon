@@ -7,3 +7,5 @@ Jatin authorizes Ares to choose when to use available subagents: delegate bounde
 
 ## Project workflow
 For each meaningful slice, record the goal, constraints and observable acceptance checks. Implement a cohesive slice and verify the actual user journey in a browser where applicable. Keep a concise current-state/next-steps note when useful; check the code and tests as the source of truth. Scale documentation to project complexity.
+
+Save meaningful research and decisions in research/ with primary-source links and uncertainty labels. Jatin authorizes scoped commits and pushes of project research and handoffs without repeated reminders. Preserve collaborators' changes and exclude secrets or private student information.
