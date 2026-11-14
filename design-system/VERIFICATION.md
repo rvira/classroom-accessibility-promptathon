@@ -23,3 +23,11 @@
 3. Repeat with text resize, zoom, text-spacing overrides and reduced motion. Inspect the deliberately failing do/don't specimen separately from actual UI content.
 4. Test landmarks, headings, labels, state and disclosure announcements with a screen reader. Record browser/AT versions and findings; native controls alone are not proof of compatibility.
 5. On implementation, separately test saved progress, undo, final completion, storage failures, draft review and preservation of source requirements.
+
+## Palette revision v1.1 · 14 November 2026
+
+- Replaced the monochrome brand with teal actions, mint current-step context, lavender original-source panels, warm neutral canvas and dark ink text.
+- Regenerated CSS and calculated contrast report: all 26 specified pairs pass their stated thresholds, including source/current-step surfaces and keyboard focus on those surfaces.
+- Updated the visual reference, slide example, philosophy, standard, research index and historical-note precedence together.
+- Rechecked browser availability: the browser host remains unavailable. This revision has not received rendered visual QA or assistive-technology testing.
+- App code remains unchanged; this revision updates the reusable design standard and its specimens.

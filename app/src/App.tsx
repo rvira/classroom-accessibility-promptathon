@@ -1,19 +1,191 @@
-import { useState } from 'react'
-import { ArrowLeft, ArrowRight, ChevronDown, Pause, Play, RotateCcw } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { ArrowRight, X } from 'lucide-react'
+import '@fontsource/atkinson-hyperlegible/700.css'
 import './App.css'
-const original = 'Work in pairs. Read paragraphs 2 and 3 of the case. Choose ONE explanation for the outcome and cite two details from the text. Do not use outside sources. Discuss for eight minutes. Submit one response per pair before class ends. If your partner is absent, work alone. Upload it to the usual place.'
-const steps = [
-  { action: 'Read paragraphs 2 and 3.', where: 'The class is reading the case.', source: 'Read paragraphs 2 and 3 of the case.' },
-  { action: 'Choose one explanation for the outcome.', where: 'Your group is choosing an explanation.', source: 'Choose ONE explanation for the outcome and cite two details from the text.' },
-  { action: 'Find two details in the case that support it.', where: 'You have one explanation. Now find evidence.', source: 'Choose ONE explanation for the outcome and cite two details from the text.' },
-  { action: 'Discuss, then submit one response.', where: 'Your group has an explanation and evidence.', source: 'Discuss for eight minutes. Submit one response per pair before class ends.' },
-]
-function App() {
-  const [step, setStep] = useState(() => { const stored = localStorage.getItem('signal-mockup-step'); const n = Number(stored); return stored !== null && Number.isInteger(n) && n >= 0 && n < 4 ? n : 1 })
-  const [overview, setOverview] = useState(false)
-  const [source, setSource] = useState(false)
-  const [paused, setPaused] = useState(false)
-  const go = (n: number) => { const next = Math.max(0, Math.min(3, n)); setStep(next); localStorage.setItem('signal-mockup-step', String(next)); setOverview(false); setSource(false) }
-  return <div className={paused ? 'app paused' : 'app'}><header><div className="brand"><span className="brand-icon" aria-hidden="true">✳</span> signal</div><span>Classroom · sample</span></header><main><div className="particles" aria-hidden="true"><i/><i/><i/><i/><i/><i/></div><div className="workspace"><div className="course">● &nbsp; BIOLOGY 101 &nbsp; / &nbsp; CASE DISCUSSION</div><section className="surface" aria-label="Current classroom activity"><div className="topline"><span>{overview ? 'ACTIVITY OVERVIEW' : `NOW · STEP ${step + 1} OF 4`}</span><button onClick={() => setOverview(!overview)}>{overview ? 'Back to now' : 'All steps'} <ArrowRight size={16}/></button></div>{overview ? <><h1>All steps.</h1><div className="step-list">{steps.map((item, index) => <button key={item.action} onClick={() => go(index)} className={index === step ? 'selected' : ''}><span>{index + 1}</span>{item.action}<ArrowRight size={16}/></button>)}</div><p className="note">“The usual place” is unclear. Ask your instructor where to upload.</p></> : <><div className="symbol" aria-hidden="true"><b/><b/><b/></div><div className="label">WHERE WE ARE</div><p className="where">{steps[step].where}</p><hr/><div className="label">DO THIS NEXT</div><h1>{steps[step].action}</h1><div className="keep"><strong>Keep in mind</strong><p>Use only the case text. Cite two details. One response per pair, before class ends.</p></div><div className="actions"><button className="primary" onClick={() => go(step + 1)} disabled={step === 3}>{step === 3 ? 'Final step' : 'Done, next step'} <ArrowRight size={18}/></button>{step > 0 && <button className="back" onClick={() => go(step - 1)} aria-label="Previous step"><ArrowLeft size={18}/></button>}</div></>}<button className="source-button" aria-expanded={source} onClick={() => setSource(!source)}>See the teacher’s words <ChevronDown size={16}/></button>{source && <div className="source"><strong>{overview ? 'Original instructions' : 'For this step'}</strong><p>{overview ? original : `“${steps[step].source}”`}</p>{!overview && <><strong>Full activity</strong><p>{original}</p></>}</div>}</section><div className="utilities"><button onClick={() => setPaused(!paused)}>{paused ? <Play size={14}/> : <Pause size={14}/>} {paused ? 'Resume motion' : 'Pause motion'}</button><button onClick={() => go(1)}><RotateCcw size={14}/> Reset sample</button></div></div></main></div>
+
+/* Sample state from one Math 2B (Calculus) lecture on substitution for
+   definite integrals. Synthetic, not a transcript, no model is called. */
+const lecture = {
+  course: 'Math 2B · Lecture 14 · Substitution',
+  where:
+    'Dr. Alvarez just wrote u = x² under ∫₀¹ 2x·e^(x²) dx. The class is rewriting the limits next.',
+  next: 'Rewrite the limits in terms of u.',
+  keep: 'du = 2x·dx. Change the limits — don’t substitute back to x. Exact value.',
 }
+
+const catchUpPoints = [
+  'The class is evaluating the definite integral ∫₀¹ 2x·e^(x²) dx.',
+  'Substitution is u = x², so du = 2x·dx — the 2x·dx is exactly what is left in the integrand.',
+  'The limits move with the variable: x = 0 gives u = 0, and x = 1 gives u = 1.',
+  'So the integral becomes ∫₀¹ e^u du, which is e^u evaluated from 0 to 1.',
+  'That gives e − 1 ≈ 1.718. Next up: integration by parts.',
+]
+
+type Message = { role: 'guide' | 'user'; text: string; points?: string[] }
+
+const opening: Message = {
+  role: 'guide',
+  text: 'You’re in Math 2B, lecture 14 — substitution for definite integrals. What’s the last thing you remember?',
+}
+
+function App() {
+  const [open, setOpen] = useState(false)
+  const [draft, setDraft] = useState('')
+  const [thread, setThread] = useState<Message[]>([opening])
+  const [thinking, setThinking] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const threadRef = useRef<HTMLDivElement>(null)
+  const timer = useRef<number | undefined>(undefined)
+
+  useEffect(() => {
+    if (open) inputRef.current?.focus()
+  }, [open])
+
+  useEffect(() => {
+    if (!open) return
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
+
+  useEffect(() => {
+    const node = threadRef.current
+    if (node) node.scrollTop = node.scrollHeight
+  }, [thread, thinking])
+
+  useEffect(() => () => window.clearTimeout(timer.current), [])
+
+  const send = (event: React.FormEvent) => {
+    event.preventDefault()
+    const answer = draft.trim()
+    if (!answer || thinking) return
+    setThread((prev) => [...prev, { role: 'user', text: answer }])
+    setDraft('')
+    setThinking(true)
+    timer.current = window.setTimeout(() => {
+      setThread((prev) => [
+        ...prev,
+        {
+          role: 'guide',
+          text: 'Got it — you’re closer than you think. Here’s the thread to where the class is now:',
+          points: catchUpPoints,
+        },
+      ])
+      setThinking(false)
+    }, 700)
+  }
+
+  return (
+    <div className={open ? 'app sheet-open' : 'app'}>
+      <div className="ether" aria-hidden="true">
+        {Array.from({ length: 9 }, (_, i) => (
+          <i key={i} />
+        ))}
+      </div>
+
+      <main>
+        <div className="workspace">
+          <p className="course">{lecture.course}</p>
+
+          <div className="symbol" aria-hidden="true">
+            <b />
+            <b />
+            <b />
+          </div>
+
+          <section className="row" aria-label="Sample classroom activity">
+            <div className="block">
+              <h2 className="kicker">Where we are</h2>
+              <p className="context">{lecture.where}</p>
+            </div>
+
+            <div className="block">
+              <h2 className="kicker">Next</h2>
+              <h1 className="action" aria-live="polite">
+                {lecture.next}
+              </h1>
+            </div>
+
+            <div className="block">
+              <h2 className="kicker">Keep in mind</h2>
+              <p className="constraints">{lecture.keep}</p>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <div className={open ? 'dock open' : 'dock'}>
+        {!open ? (
+          <button type="button" className="dock-trigger" onClick={() => setOpen(true)}>
+            Catch me up
+            <ArrowRight size={20} aria-hidden="true" />
+          </button>
+        ) : (
+          <div
+            className="sheet"
+            role="dialog"
+            aria-label="Catch me up"
+          >
+            <div className="sheet-head">
+              <span className="sheet-title">Catch me up</span>
+              <button
+                type="button"
+                className="sheet-close"
+                onClick={() => setOpen(false)}
+                aria-label="Close catch up"
+              >
+                <X size={18} aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="thread" ref={threadRef} aria-live="polite">
+              {thread.map((message, index) => (
+                <div key={index} className={`bubble ${message.role}`}>
+                  <p>{message.text}</p>
+                  {message.points && (
+                    <ol>
+                      {message.points.map((point) => (
+                        <li key={point}>{point}</li>
+                      ))}
+                    </ol>
+                  )}
+                </div>
+              ))}
+              {thinking && (
+                <div className="bubble guide thinking">
+                  <span />
+                  <span />
+                  <span />
+                  <em>finding your place</em>
+                </div>
+              )}
+            </div>
+
+            <form className="composer" onSubmit={send}>
+              <label className="sr-only" htmlFor="remembered">
+                What’s the last thing you remember?
+              </label>
+              <input
+                id="remembered"
+                ref={inputRef}
+                value={draft}
+                onChange={(event) => setDraft(event.target.value)}
+                placeholder="e.g. the u = x² part…"
+                autoComplete="off"
+              />
+              <button type="submit" disabled={!draft.trim() || thinking}>
+                Send
+              </button>
+            </form>
+
+            <p className="sample-note">Sample script for the demo — not live AI.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default App

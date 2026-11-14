@@ -1,4 +1,4 @@
-# Signal reference system · v1.0
+# Signal reference system · v1.1
 
 A proposed shared standard for classroom UI and presentation slides. Read [the specification](../research/ui-standard.md) first. Open [reference.html](reference.html) in a modern browser for visual specimens. This is local documentation; it is not a hosted site or a production component library.
 
@@ -40,3 +40,7 @@ python3 design-system/build_tokens.py
 ```
 
 Edit tokens.json first. Regenerate CSS and contrast, then update any affected reference layouts and tables in the specification. Typography and spacing demonstrations are explicit examples rather than a generated UI library. Do not edit generated files independently. Changing colors requires checking every newly used pair, not just the approved list.
+
+## Palette revision · v1.1
+
+Teal now identifies primary actions and brand; mint anchors current context; lavender identifies original source material. White cards sit on a warm neutral canvas. See the standard for placement rules. The previous monochrome restriction is superseded by the user’s direction.
