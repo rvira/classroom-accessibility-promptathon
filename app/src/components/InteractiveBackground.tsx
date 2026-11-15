@@ -35,7 +35,7 @@ function getAntigravityDotColor(angle: number, ringIndex: number): string {
   }
 }
 
-export function InteractiveBackground() {
+export function InteractiveBackground({ calm = false }: { calm?: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export function InteractiveBackground() {
     let targetMouseY = -9999
     let particles: Particle[] = []
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const prefersReducedMotion = calm || window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     const initParticles = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -219,7 +219,7 @@ export function InteractiveBackground() {
       window.removeEventListener('pointerleave', onPointerLeave)
       cancelAnimationFrame(animId)
     }
-  }, [])
+  }, [calm])
 
   return (
     <canvas
