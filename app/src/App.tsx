@@ -112,18 +112,17 @@ const scheduleData: Record<string, ScheduledClass[]> = {
       isLive: false,
       canvasSync: 'Homework 3 Graded',
       outline: {
-        unit: 'Unit 2: Techniques of Integration',
-        summary: 'Introduction to the differential substitution rule for indefinite integrals, identifying derivative patterns g\'(x)dx, and change of variables.',
+        unit: 'Substitution Rule Intro',
+        summary: 'Learn how to simplify messy integrals using the u-substitution method.',
         keyConcepts: [
-          'Differential substitution theorem: ∫ f(g(x))g\'(x)dx = ∫ f(u)du',
-          'Pattern recognition for inner composite functions u = g(x)',
-          'Accounting for constant multipliers when solving for dx',
-          'Converting expressions back to original variable x (+ C)',
+          'Find inside parts: u = g(x)',
+          'Swap dx for du to make it easy',
+          'Add + C at the end',
         ],
-        reading: 'Stewart Calculus 8th Ed, Section 5.5 (pp. 410–418)',
-        assignments: 'Homework 3 (Graded: 20/20) · Worksheet 12 due in discussion',
-        rubricConstraint: 'Must always write the arbitrary constant + C for indefinite integrals',
-        officeHours: 'Prof. Chen · Mon/Wed 2:00–3:30 PM (Rowland Hall 214)',
+        reading: 'Stewart Calculus · Sec 5.5',
+        assignments: 'Homework 3 (Done) · Worksheet 12',
+        rubricConstraint: 'Always include + C for indefinite integrals.',
+        officeHours: 'Prof. Chen · Mon/Wed 2:00 PM (RH 214)',
       },
     },
     {
@@ -137,18 +136,17 @@ const scheduleData: Record<string, ScheduledClass[]> = {
       isLive: false,
       canvasSync: 'Lab 2 Submitted',
       outline: {
-        unit: 'Unit 2: Oscillations and Mechanical Waves',
-        summary: 'Kinematics of ideal harmonic oscillators, Hooke\'s Law linear restoring forces, phase angles, and conservation of mechanical energy.',
+        unit: 'Simple Harmonic Motion',
+        summary: 'How springs and pendulums move back and forth continuously.',
         keyConcepts: [
-          'Position trajectory x(t) = A cos(ωt + φ)',
-          'Angular frequency ω = √(k/m), Period T = 2π/ω',
-          'Total mechanical energy E = 1/2 k A² = constant',
-          'Velocity leads displacement by π/2 radians',
+          'Motion repeats in smooth waves',
+          'Energy swaps between motion and stored energy',
+          'Stiffer springs bounce faster',
         ],
-        reading: 'Giancoli Physics for Scientists & Engineers, Chapter 14.1–14.3',
-        assignments: 'Lab 2: Air Track Oscillations (Submitted, pending rubric grading)',
-        rubricConstraint: 'All state vectors must explicitly include SI units (rad/s, m/s²)',
-        officeHours: 'Prof. Robertson · Tue 10:00–11:30 AM (PSLH 142)',
+        reading: 'Giancoli Physics · Ch 14.1–14.3',
+        assignments: 'Lab 2 (Submitted)',
+        rubricConstraint: 'Always write units (meters, seconds, rad/s).',
+        officeHours: 'Prof. Robertson · Tue 10:00 AM (PSLH 142)',
       },
     },
   ],
@@ -164,18 +162,17 @@ const scheduleData: Record<string, ScheduledClass[]> = {
       isLive: false,
       canvasSync: 'Quiz 3 Completed',
       outline: {
-        unit: 'Unit 2: Divide-and-Conquer Recurrences',
-        summary: 'Asymptotic analysis of recursive branch algorithms using the Master Method across subproblem division and recombination costs.',
+        unit: 'Master Theorem Shortcut',
+        summary: 'A quick 3-rule shortcut to see how fast recursive code runs.',
         keyConcepts: [
-          'General recurrence T(n) = a T(n/b) + f(n)',
-          'Critical exponent comparison log_b(a) vs. polynomial degree of f(n)',
-          'Case 1 (leaf heavy), Case 2 (balanced tree), Case 3 (root heavy)',
-          'Regularity condition verification a f(n/b) ≤ c f(n)',
+          'Compare branching work vs combining work',
+          'Pick which part grows faster',
+          '3 simple cases to check',
         ],
-        reading: 'CLRS Algorithms 3rd Ed, Chapter 4.5 (pp. 93–106)',
-        assignments: 'Quiz 3: Recurrence Trees (Score: 10/10) · Problem Set 2 assigned',
-        rubricConstraint: 'Must explicitly prove the regularity condition holds when applying Case 3',
-        officeHours: 'Prof. Shindler · Tue/Thu 1:00–2:30 PM (DBH 4022)',
+        reading: 'CLRS Algorithms · Ch 4.5',
+        assignments: 'Quiz 3 (Done) · Problem Set 2',
+        rubricConstraint: 'State which of the 3 cases applies.',
+        officeHours: 'Prof. Shindler · Tue/Thu 1:00 PM (DBH 4022)',
       },
     },
   ],
@@ -191,17 +188,17 @@ const scheduleData: Record<string, ScheduledClass[]> = {
       isLive: false,
       canvasSync: 'Worksheet 13 Submitted',
       outline: {
-        unit: 'Unit 2: Advanced Integration Techniques',
-        summary: 'Higher-degree substitutions, completing the square in quadratic denominators, and algebraic manipulation prior to variable substitution.',
+        unit: 'Algebraic Substitutions',
+        summary: 'Easy tricks to rewrite hard fractions before integrating.',
         keyConcepts: [
-          'Completing the square: ax² + bx + c → a(x - h)² + k',
-          'Standard forms yielding arcsin(u/a) and (1/a) arctan(u/a)',
-          'Rationalizing substitutions for root expressions u = √(g(x))',
+          'Complete the square to match simple formulas',
+          'Spot arcsin and arctan shapes',
+          'Clean up algebra before substituting',
         ],
-        reading: 'Stewart Calculus 8th Ed, Section 5.5 (pp. 418–425)',
-        assignments: 'Worksheet 13 (Submitted) · Canvas Prep for Lecture 14',
-        rubricConstraint: 'State the domain constraints when introducing inverse trigonometric transformations',
-        officeHours: 'Prof. Chen · Mon/Wed 2:00–3:30 PM (Rowland Hall 214)',
+        reading: 'Stewart Calculus · Sec 5.5',
+        assignments: 'Worksheet 13 (Done)',
+        rubricConstraint: 'Show your step-by-step algebra.',
+        officeHours: 'Prof. Chen · Mon/Wed 2:00 PM (RH 214)',
       },
     },
     {
@@ -215,18 +212,17 @@ const scheduleData: Record<string, ScheduledClass[]> = {
       isLive: false,
       canvasSync: 'Homework 4 Due',
       outline: {
-        unit: 'Unit 3: Driven Oscillatory Systems',
-        summary: 'Harmonically driven damped systems, steady-state vs. transient solutions, phase shifts, and mechanical resonance peaks.',
+        unit: 'Resonance & Driven Waves',
+        summary: 'What happens when an outside push matches the natural rhythm.',
         keyConcepts: [
-          'Driving force F(t) = F₀ cos(ω t)',
-          'Steady-state amplitude A(ω) = F₀ / √((k - mω²)² + b²ω²)',
-          'Resonance peak condition ω_res = √(ω₀² - 2γ²)',
-          'Phase lag δ(ω) between driving force and system velocity',
+          'Pushing in rhythm makes waves much bigger',
+          'Small gentle taps can build large motion',
+          'Friction turns excess energy into heat',
         ],
-        reading: 'Giancoli Physics, Chapter 14.7–14.8',
-        assignments: 'Homework 4: Resonance Curves (Due 11:59 PM tonight on Canvas)',
-        rubricConstraint: 'Derive the maximum amplitude formula before substituting numerical values',
-        officeHours: 'Prof. Robertson · Wed 3:00–4:30 PM (PSLH 142)',
+        reading: 'Giancoli Physics · Ch 14.7',
+        assignments: 'Homework 4 (Due 11:59 PM)',
+        rubricConstraint: 'Show the max amplitude formula before plugging numbers in.',
+        officeHours: 'Prof. Robertson · Wed 3:00 PM (PSLH 142)',
       },
     },
     {
@@ -240,17 +236,17 @@ const scheduleData: Record<string, ScheduledClass[]> = {
       isLive: false,
       canvasSync: 'No submission required',
       outline: {
-        unit: 'Unit 3: Greedy Choice Paradigm',
-        summary: 'Proving optimality of greedy choices using inductive exchange arguments and earliest-deadline-first ordering.',
+        unit: 'Greedy Algorithms',
+        summary: 'Making the best choice right now without looking back.',
         keyConcepts: [
-          'Earliest finish time first selection',
-          'Greedy-stays-ahead induction proof structure',
-          'Interval partitioning and graph coloring lower bounds',
+          'Pick the task that finishes earliest',
+          'Greedy choice never falls behind',
+          'Fast and low memory',
         ],
-        reading: 'Kleinberg & Tardos Algorithm Design, Chapter 4.1–4.2',
-        assignments: 'Practice Worksheet · Ungraded in-class collaboration',
-        rubricConstraint: 'Inductive step must explicitly map the difference between greedy solution G and optimal solution O',
-        officeHours: 'TA Jessica · Fri 11:00 AM–1:00 PM (ICS 248)',
+        reading: 'Kleinberg & Tardos · Ch 4.1',
+        assignments: 'In-class practice (Ungraded)',
+        rubricConstraint: 'Explain why greedy choice beats any other step.',
+        officeHours: 'TA Jessica · Fri 11:00 AM (ICS 248)',
       },
     },
   ],
@@ -266,18 +262,17 @@ const scheduleData: Record<string, ScheduledClass[]> = {
       isLive: false,
       canvasSync: 'Quiz 4 Prep Available',
       outline: {
-        unit: 'Unit 4: Dynamic Programming Principles',
-        summary: 'Characterizing optimal substructure, overlapping subproblems, top-down memoization arrays, and bottom-up iterative tabulation.',
+        unit: 'Dynamic Programming Intro',
+        summary: 'Save answers to smaller steps so you never repeat work.',
         keyConcepts: [
-          'Bellman principle of optimality',
-          'Memoization cache: trade O(n) memory for polynomial time',
-          'Weighted Interval Scheduling: OPT(j) = max(v_j + OPT(p(j)), OPT(j-1))',
-          'Pre-computing predecessor array p(j) via binary search in O(n log n)',
+          'Remember past answers in a table',
+          'Repeated subproblems get solved only once',
+          'Trades a little memory for huge speed',
         ],
-        reading: 'Kleinberg & Tardos, Chapter 6.1–6.2 (pp. 251–260)',
-        assignments: 'Quiz 4 Prep Module (Available on Canvas)',
-        rubricConstraint: 'Always specify the exact base cases and topological evaluation order of the DP table',
-        officeHours: 'Prof. Shindler · Tue/Thu 1:00–2:30 PM (DBH 4022)',
+        reading: 'Kleinberg & Tardos · Ch 6.1',
+        assignments: 'Quiz 4 Prep (Canvas)',
+        rubricConstraint: 'Clearly write down the first simple starting cases.',
+        officeHours: 'Prof. Shindler · Tue/Thu 1:00 PM (DBH 4022)',
       },
     },
   ],
@@ -293,18 +288,17 @@ const scheduleData: Record<string, ScheduledClass[]> = {
       isLive: true,
       canvasSync: 'Lab 14 Worksheet (Due 10:50 AM)',
       outline: {
-        unit: 'Unit 2: Definite Integrals & Fundamental Theorem',
-        summary: 'Transforming integration bounds when executing change-of-variables: evaluating bounds directly in the u-domain without converting back to original variable x.',
+        unit: 'Definite Integrals & Bounds',
+        summary: 'Change the numbers at the top and bottom of the integral into u-numbers.',
         keyConcepts: [
-          'Integration by Substitution Theorem: ∫_a^b f(g(x))g\'(x)dx = ∫_{g(a)}^{g(b)} f(u)du',
-          'Direct boundary evaluation: u(0) = 0² = 0, u(1) = 1² = 1',
-          'Evaluation on board: [e^u]_0^1 = e¹ - e⁰ = e - 1 exact',
-          'Never convert back to x for definite integrals (+ C is not needed)',
+          'Convert x-bounds to u-bounds right away',
+          'Solve numbers directly: e¹ − e⁰ = e − 1',
+          'Never switch back to x at the end',
         ],
-        reading: 'Stewart Calculus 8th Ed, Section 5.5 (pp. 418–422)',
-        assignments: 'Lab 14 In-Class Worksheet (Submit to Canvas by 10:50 AM sharp)',
-        rubricConstraint: 'Canvas Invariant: Exact fractions and mathematical constants only (write "e - 1", do not evaluate to decimal 1.718)',
-        officeHours: 'Prof. Chen · Mon/Wed 2:00–3:30 PM (Rowland Hall 214)',
+        reading: 'Stewart Calculus · Sec 5.5',
+        assignments: 'Lab 14 Worksheet (Due 10:50 AM today)',
+        rubricConstraint: 'Exact numbers only: write "e − 1" (do not round to 1.718).',
+        officeHours: 'Prof. Chen · Mon/Wed 2:00 PM (RH 214)',
       },
     },
     {
@@ -318,19 +312,17 @@ const scheduleData: Record<string, ScheduledClass[]> = {
       isLive: false,
       canvasSync: 'Lab 3 Opens at 1:00 PM',
       outline: {
-        unit: 'Unit 3: Damped Oscillatory Systems',
-        summary: 'Linear drag forces proportional to velocity, characteristic quadratic auxiliary equation, and the three physical damping regimes.',
+        unit: 'Damped Oscillations',
+        summary: 'How friction and air drag slow down swinging objects over time.',
         keyConcepts: [
-          'Differential equation of motion: m d²x/dt² + b dx/dt + k x = 0',
-          'Characteristic roots: r = -γ ± √(γ² - ω₀²), where γ = b / 2m',
-          'Underdamped (γ < ω₀): oscillatory decay with envelope A e^{-γt}',
-          'Critically damped (γ = ω₀): fastest return to equilibrium without oscillation',
-          'Overdamped (γ > ω₀): sluggish non-oscillatory return governed by slower exponential',
+          'Energy drains away into gentle heat',
+          '3 speeds: light oscillation, quick stop, slow drag',
+          'Real example: car shock absorbers',
         ],
-        reading: 'Giancoli Physics, Chapter 14.4–14.6 (pp. 385–392)',
-        assignments: 'Lab 3: Viscous Damping Sensors (Opens 1:00 PM, due next Monday 11:59 PM, 20 pts)',
-        rubricConstraint: 'Canvas Invariant: Clearly distinguish angular frequency ω_d = √(ω₀² - γ²) from undamped natural frequency ω₀',
-        officeHours: 'Prof. Robertson · Wed 3:00–4:30 PM (PSLH 142)',
+        reading: 'Giancoli Physics · Ch 14.4',
+        assignments: 'Lab 3 (Opens 1:00 PM, 20 pts)',
+        rubricConstraint: 'Clearly distinguish damped frequency from natural frequency.',
+        officeHours: 'Prof. Robertson · Wed 3:00 PM (PSLH 142)',
       },
     },
     {
@@ -344,18 +336,17 @@ const scheduleData: Record<string, ScheduledClass[]> = {
       isLive: false,
       canvasSync: 'In-Class Quiz #4',
       outline: {
-        unit: 'Unit 4: Dynamic Programming - Shortest Paths',
-        summary: 'Single-source shortest paths on directed graphs with arbitrary or negative edge weights, and detecting negative-weight cycles.',
+        unit: 'Shortest Paths (Bellman-Ford)',
+        summary: 'Find the quickest route on a map even when shortcuts give bonuses or penalties.',
         keyConcepts: [
-          'Bellman-Ford recurrence: OPT(i, v) = min(OPT(i-1, v), min_{w ∈ V} (OPT(i-1, w) + c_{wv}))',
-          'Shortest simple path has at most |V|-1 edges',
-          'Negative cycle detection: if values change on iteration |V|, a negative cycle exists',
-          'Space optimization from O(|V|²) down to O(|V|) with standard predecessor pointers',
+          'Check routes step by step (up to N-1 times)',
+          'Catch infinite loops automatically',
+          'A bit slower than Dijkstra, but handles negative costs safely',
         ],
-        reading: 'Kleinberg & Tardos Algorithm Design, Section 6.8 (pp. 288–299)',
-        assignments: 'In-Class Quiz #4 (Completed on Canvas Lockdown Browser, 15 pts)',
-        rubricConstraint: 'Canvas Invariant: Must prove absence of negative cycles before reconstructing the shortest path tree',
-        officeHours: 'Prof. Shindler · Tue/Thu 1:00–2:30 PM (DBH 4022)',
+        reading: 'Kleinberg & Tardos · Sec 6.8',
+        assignments: 'In-Class Quiz #4 (15 pts on Canvas)',
+        rubricConstraint: 'Verify there are no infinite negative loops.',
+        officeHours: 'Prof. Shindler · Tue/Thu 1:00 PM (DBH 4022)',
       },
     },
   ],
@@ -1041,20 +1032,20 @@ export default function App() {
                         </div>
                       </div>
 
-                      {/* INLINE RICH LECTURE DATA (NO MODAL/DIALOG BOX) */}
+                      {/* INLINE BITE-SIZED LECTURE DATA (ACCESSIBLE & CALM) */}
                       {isExpanded && cls.outline && (
                         <div className="class-outline-drawer" role="region" aria-label="Course outline details">
                           <div className="outline-grid">
-                            {/* Unit & Summary Box */}
+                            {/* Topic Box */}
                             <div className="outline-box">
-                              <span className="outline-box-title">Course Unit & Scope</span>
+                              <span className="outline-box-title">What You'll Learn</span>
                               <strong className="outline-unit-name">{cls.outline.unit}</strong>
                               <p className="outline-summary-text">{cls.outline.summary}</p>
                             </div>
 
-                            {/* Key Concepts & Mathematical Formulas */}
+                            {/* Key Points */}
                             <div className="outline-box">
-                              <span className="outline-box-title">Key Core Concepts</span>
+                              <span className="outline-box-title">Key Points (Quick Read)</span>
                               <ul className="outline-concepts-list">
                                 {cls.outline.keyConcepts.map((concept, i) => (
                                   <li key={i}>{concept}</li>
@@ -1062,20 +1053,20 @@ export default function App() {
                               </ul>
                             </div>
 
-                            {/* Reading & Preparation */}
+                            {/* Reading & Help */}
                             <div className="outline-box">
-                              <span className="outline-box-title">Assigned Reading & Textbook</span>
+                              <span className="outline-box-title">Reading & Office Hours</span>
                               <p className="outline-reading-text">📖 {cls.outline.reading}</p>
                               {cls.outline.officeHours && (
                                 <p className="outline-office-hours">🕒 {cls.outline.officeHours}</p>
                               )}
                             </div>
 
-                            {/* Canvas Assignment & Grading Invariant */}
+                            {/* Canvas Due & Rule */}
                             <div className="outline-box rubric-box">
-                              <span className="outline-box-title">Canvas LMS Rubric Constraint</span>
+                              <span className="outline-box-title">Canvas Rule</span>
                               <div className="outline-rubric-note">
-                                ⚖️ {cls.outline.rubricConstraint}
+                                📌 {cls.outline.rubricConstraint}
                               </div>
                               <p className="outline-assignment-meta">
                                 📋 {cls.outline.assignments}
@@ -1089,7 +1080,7 @@ export default function App() {
                               className="btn-launch-course-horizon"
                               onClick={() => handleJoinClass(cls.code, cls.topic)}
                             >
-                              <span>Enter {cls.code} Focus Horizon</span>
+                              <span>Open {cls.code} Focus Mode</span>
                               <ArrowRight size={13} aria-hidden="true" />
                             </button>
                           </div>
