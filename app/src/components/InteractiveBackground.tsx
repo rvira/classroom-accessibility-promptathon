@@ -35,8 +35,15 @@ function getAntigravityDotColor(angle: number, ringIndex: number): string {
   }
 }
 
-export function InteractiveBackground({ calm = false }: { calm?: boolean }) {
+interface InteractiveBackgroundProps {
+  calm?: boolean
+  isCalm?: boolean
+}
+
+export function InteractiveBackground({ calm = false, isCalm = false }: InteractiveBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const particlesRef = useRef<Particle[]>([])
+  const effectiveCalm = calm || isCalm
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -50,9 +57,9 @@ export function InteractiveBackground({ calm = false }: { calm?: boolean }) {
     let mouseY = -9999
     let targetMouseX = -9999
     let targetMouseY = -9999
-    let particles: Particle[] = []
 
-    const prefersReducedMotion = calm || window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const isMotionReduced = () => effectiveCalm || mediaQuery.matches
 
     const initParticles = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -65,9 +72,9 @@ export function InteractiveBackground({ calm = false }: { calm?: boolean }) {
       const cx = displayW / 2
       const cy = displayH / 2
 
-      particles = []
+      const newParticles: Particle[] = []
 
-      // Concentric rings of clean circular dots
+      // Concentric rings of clean circular dots & sensory nodes
       const ringCount = 14
       // Safe boundary ensuring reading area is 100% clean and legible
       const minRadiusX = Math.min(displayW * 0.44, 490)
@@ -97,7 +104,7 @@ export function InteractiveBackground({ calm = false }: { calm?: boolean }) {
           // Calming opacity
           const opacity = 0.22 + t * 0.32
 
-          particles.push({
+          newParticles.push({
             baseX: bx,
             baseY: by,
             currX: bx,
@@ -111,18 +118,139 @@ export function InteractiveBackground({ calm = false }: { calm?: boolean }) {
           })
         }
       }
+
+      particlesRef.current = newParticles
     }
 
-    initParticles()
-
-    const onResize = () => {
+    // Initialize only if empty or on resize
+    if (particlesRef.current.length === 0) {
       initParticles()
-      if (prefersReducedMotion) {
-        drawFrame(0)
+    } else {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      canvas.width = window.innerWidth * dpr
+      canvas.height = window.innerHeight * dpr
+      ctx.scale(dpr, dpr)
+    }
+
+    const drawFrame = (time: number) => {
+      const displayW = window.innerWidth
+      const displayH = window.innerHeight
+
+      ctx.clearRect(0, 0, displayW, displayH)
+
+      const particles = particlesRef.current
+      const motionReduced = isMotionReduced()
+
+      // When calm mode is active, freeze velocities to 0 immediately
+      if (motionReduced) {
+        for (let i = 0; i < particles.length; i++) {
+          particles[i].vx = 0
+          particles[i].vy = 0
+        }
+      } else {
+        if (targetMouseX > -9000) {
+          if (mouseX < -9000) {
+            mouseX = targetMouseX
+            mouseY = targetMouseY
+          } else {
+            mouseX += (targetMouseX - mouseX) * 0.1
+            mouseY += (targetMouseY - mouseY) * 0.1
+          }
+        } else {
+          mouseX = -9999
+          mouseY = -9999
+        }
+      }
+
+      const cx = displayW / 2
+      const cy = displayH / 2
+      const parallaxX = !motionReduced && mouseX > -9000 ? (mouseX - cx) * 0.012 : 0
+      const parallaxY = !motionReduced && mouseY > -9000 ? (mouseY - cy) * 0.012 : 0
+      const ambientTime = time * 0.0008
+
+      // Draw subtle connecting sensory node lines between close neighbors
+      const connectionDist = 72
+      const connectionDistSq = connectionDist * connectionDist
+      ctx.lineWidth = 0.75
+
+      // Sample a subset for delicate performance and clean visual balance
+      for (let i = 0; i < particles.length; i += 2) {
+        const p1 = particles[i]
+        for (let j = i + 1; j < Math.min(i + 7, particles.length); j++) {
+          const p2 = particles[j]
+          const dx = p1.currX - p2.currX
+          const dy = p1.currY - p2.currY
+          const dSq = dx * dx + dy * dy
+
+          if (dSq < connectionDistSq) {
+            const distRatio = 1 - Math.sqrt(dSq) / connectionDist
+            ctx.beginPath()
+            ctx.moveTo(p1.currX, p1.currY)
+            ctx.lineTo(p2.currX, p2.currY)
+            ctx.strokeStyle = p1.color
+            ctx.globalAlpha = distRatio * (motionReduced ? 0.04 : 0.09)
+            ctx.stroke()
+          }
+        }
+      }
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i]
+
+        if (!motionReduced) {
+          // Gentle, calm ambient floating
+          const breathe = Math.sin(ambientTime + i * 0.25) * 1.4
+          const targetX = p.baseX + parallaxX + breathe * Math.cos(p.angle)
+          const targetY = p.baseY + parallaxY + breathe * Math.sin(p.angle)
+
+          // Interactive mouse deflection
+          if (mouseX > -9000) {
+            const dx = p.currX - mouseX
+            const dy = p.currY - mouseY
+            const distSq = dx * dx + dy * dy
+            const maxDist = 130
+
+            if (distSq < maxDist * maxDist && distSq > 0) {
+              const dist = Math.sqrt(distSq)
+              const force = (1 - dist / maxDist) * 15
+              const pushAngle = Math.atan2(dy, dx)
+              p.vx += Math.cos(pushAngle) * force * 0.15
+              p.vy += Math.sin(pushAngle) * force * 0.15
+            }
+          }
+
+          // Return with smooth damping
+          p.vx += (targetX - p.currX) * 0.07
+          p.vy += (targetY - p.currY) * 0.07
+          p.vx *= 0.8
+          p.vy *= 0.8
+
+          p.currX += p.vx
+          p.currY += p.vy
+        } else {
+          // When motion is reduced or calm, clamp directly to base coordinates smoothly
+          p.currX = p.baseX
+          p.currY = p.baseY
+          p.vx = 0
+          p.vy = 0
+        }
+
+        // Render clean circular sensory node dot
+        ctx.beginPath()
+        ctx.arc(p.currX, p.currY, p.radius, 0, Math.PI * 2)
+        ctx.fillStyle = p.color
+        ctx.globalAlpha = motionReduced ? p.opacity * 0.5 : p.opacity
+        ctx.fill()
       }
     }
 
+    const onResize = () => {
+      initParticles()
+      drawFrame(0)
+    }
+
     const onPointerMove = (e: PointerEvent) => {
+      if (isMotionReduced()) return
       targetMouseX = e.clientX
       targetMouseY = e.clientY
     }
@@ -136,74 +264,12 @@ export function InteractiveBackground({ calm = false }: { calm?: boolean }) {
     window.addEventListener('pointermove', onPointerMove, { passive: true })
     window.addEventListener('pointerleave', onPointerLeave)
 
-    const drawFrame = (time: number) => {
-      const displayW = window.innerWidth
-      const displayH = window.innerHeight
-
-      ctx.clearRect(0, 0, displayW, displayH)
-
-      if (targetMouseX > -9000) {
-        if (mouseX < -9000) {
-          mouseX = targetMouseX
-          mouseY = targetMouseY
-        } else {
-          mouseX += (targetMouseX - mouseX) * 0.1
-          mouseY += (targetMouseY - mouseY) * 0.1
-        }
-      } else {
-        mouseX = -9999
-        mouseY = -9999
+    if (isMotionReduced()) {
+      // Freeze immediately: zero velocity and single calm static frame
+      for (const p of particlesRef.current) {
+        p.vx = 0
+        p.vy = 0
       }
-
-      const cx = displayW / 2
-      const cy = displayH / 2
-      const parallaxX = mouseX > -9000 ? (mouseX - cx) * 0.012 : 0
-      const parallaxY = mouseY > -9000 ? (mouseY - cy) * 0.012 : 0
-      const ambientTime = time * 0.0008
-
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i]
-
-        // Gentle, calm ambient floating
-        const breathe = Math.sin(ambientTime + i * 0.25) * 1.4
-        const targetX = p.baseX + parallaxX + breathe * Math.cos(p.angle)
-        const targetY = p.baseY + parallaxY + breathe * Math.sin(p.angle)
-
-        // Interactive mouse deflection
-        if (mouseX > -9000) {
-          const dx = p.currX - mouseX
-          const dy = p.currY - mouseY
-          const distSq = dx * dx + dy * dy
-          const maxDist = 130
-
-          if (distSq < maxDist * maxDist && distSq > 0) {
-            const dist = Math.sqrt(distSq)
-            const force = (1 - dist / maxDist) * 15
-            const pushAngle = Math.atan2(dy, dx)
-            p.vx += Math.cos(pushAngle) * force * 0.15
-            p.vy += Math.sin(pushAngle) * force * 0.15
-          }
-        }
-
-        // Return with smooth damping
-        p.vx += (targetX - p.currX) * 0.07
-        p.vy += (targetY - p.currY) * 0.07
-        p.vx *= 0.8
-        p.vy *= 0.8
-
-        p.currX += p.vx
-        p.currY += p.vy
-
-        // Render clean, anti-aliased circular dot
-        ctx.beginPath()
-        ctx.arc(p.currX, p.currY, p.radius, 0, Math.PI * 2)
-        ctx.fillStyle = p.color
-        ctx.globalAlpha = p.opacity
-        ctx.fill()
-      }
-    }
-
-    if (prefersReducedMotion) {
       drawFrame(0)
     } else {
       const loop = (time: number) => {
@@ -219,7 +285,7 @@ export function InteractiveBackground({ calm = false }: { calm?: boolean }) {
       window.removeEventListener('pointerleave', onPointerLeave)
       cancelAnimationFrame(animId)
     }
-  }, [calm])
+  }, [effectiveCalm])
 
   return (
     <canvas

@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import '@fontsource/atkinson-hyperlegible/700.css'
 import { InteractiveBackground } from './components/InteractiveBackground'
+import { CanvasLogo, EdStemLogo } from './components/BrandLogos'
 import './App.css'
 
 /* Sample state from one Math 2B (Calculus) lecture on integrals.
@@ -549,6 +550,35 @@ export default function App() {
               <span>{currentCourse}</span>
               <span className="crumb-arrow">▼</span>
             </button>
+
+            {/* Real-time Teacher Sync Live Audio Waveform & Mic Pulse */}
+            <div
+              className={`header-live-waveform-pill ${recordingActive ? 'active' : 'paused'} ${calmMode ? 'calm' : ''}`}
+              title={recordingActive ? 'Prof. Chen microphone streaming live (34:12)' : 'Mic paused'}
+              aria-label="Real-time teacher audio synchronization"
+              onClick={() => setLiveDetailsOpen((prev) => !prev)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  setLiveDetailsOpen((prev) => !prev)
+                }
+              }}
+            >
+              <span className="live-mic-pulse-beacon" aria-hidden="true" />
+              <div className="live-audio-waveform-bars" aria-hidden="true">
+                <span className="wave-bar bar-1" />
+                <span className="wave-bar bar-2" />
+                <span className="wave-bar bar-3" />
+                <span className="wave-bar bar-4" />
+                <span className="wave-bar bar-5" />
+              </div>
+              <span className="live-waveform-label">
+                {recordingActive ? 'LIVE SYNC' : 'PAUSED'}
+              </span>
+            </div>
+
             <span className="revamped-crumb-dot">·</span>
             <span className="revamped-topic-crumb">{currentTopic}</span>
           </div>
@@ -589,7 +619,8 @@ export default function App() {
             title="EdStem live questions for this lecture"
           >
             <span className="edstem-pulse-dot" />
-            <span>💬 EdStem ({edstemQuestions.length})</span>
+            <EdStemLogo size={14} className="header-edstem-icon" />
+            <span>EdStem ({edstemQuestions.length})</span>
           </button>
 
           {/* Live Teacher Recorder Pill */}
@@ -626,7 +657,9 @@ export default function App() {
                     <span>Step {activeStepNumber} of 4</span>
                   </div>
                   <div className="live-progress-track">
-                    <div className="live-progress-fill" style={{ width: stepCompleted ? '75%' : '50%' }} />
+                    <div className="live-progress-fill" style={{ width: stepCompleted ? '75%' : '50%' }}>
+                      <span className="step-flow-shimmer" aria-hidden="true" />
+                    </div>
                   </div>
                 </div>
                 <div className="live-details-meta">
@@ -774,6 +807,90 @@ export default function App() {
             onMouseMove={handleArenaMouseMove}
             onMouseLeave={handleArenaMouseLeave}
           >
+            {/* HORIZON STEP PROGRESS FLOW BAR */}
+            <div className="horizon-step-flow-bar" role="region" aria-label="Step progress horizon">
+              <div className="step-flow-header">
+                <div className="step-flow-badge-wrap">
+                  <span className="step-flow-badge">
+                    <span className="step-flow-beacon" aria-hidden="true" />
+                    <span>Step {activeStepNumber} of 4</span>
+                  </span>
+                  <span className="step-flow-desc">
+                    {activeStepNumber === 2
+                      ? 'Change the start and end values (Integration limits)'
+                      : activeStepNumber === 3
+                      ? 'Integrate directly with respect to u'
+                      : 'Activity Progress'}
+                  </span>
+                </div>
+                <div className="step-flow-meta">
+                  <span className="step-flow-canvas-tag">
+                    <CanvasLogo size={13} />
+                    <span>Canvas Worksheet Sync</span>
+                  </span>
+                  <span className="step-flow-pct">
+                    {stepCompleted ? '75% Complete' : '50% Complete'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Animated Flowing Progress Track */}
+              <div className="step-flow-track-wrap">
+                <div className="step-flow-track">
+                  <div
+                    className="step-flow-fill"
+                    style={{ width: stepCompleted ? '75%' : '50%' }}
+                  >
+                    <span className="step-flow-shimmer" aria-hidden="true" />
+                    <span className="step-flow-head" aria-hidden="true" />
+                  </div>
+                </div>
+
+                {/* 4 Interactive Step Milestones */}
+                <div className="step-milestones-row">
+                  <button
+                    type="button"
+                    className="step-milestone-chip done"
+                    onClick={() => setActiveView('overview')}
+                    title="View Step 1: Identify inner u = g(x) (Completed)"
+                  >
+                    <span className="milestone-num"><Check size={12} strokeWidth={3} /></span>
+                    <span className="milestone-text">1. Set u = 2x+1</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`step-milestone-chip ${stepCompleted ? 'done' : 'active'}`}
+                    onClick={() => setActiveView('now')}
+                    title="Step 2: Change limits [0,4] to [1,9] (Current Focus)"
+                  >
+                    <span className="milestone-num">{stepCompleted ? <Check size={12} strokeWidth={3} /> : '2'}</span>
+                    <span className="milestone-text">2. Change Limits</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`step-milestone-chip ${stepCompleted ? 'active' : 'upcoming'}`}
+                    onClick={toggleStepCompletion}
+                    title="Step 3: Integrate with u (Click to advance/undo)"
+                  >
+                    <span className="milestone-num">3</span>
+                    <span className="milestone-text">3. Integrate in u</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="step-milestone-chip upcoming"
+                    onClick={() => setActiveView('overview')}
+                    title="View Step 4: Final exact fraction to Canvas"
+                  >
+                    <span className="milestone-num">4</span>
+                    <span className="milestone-text">4. Canvas Submit</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <div ref={cardsRowRef} className="now-cards-row">
               
               {/* LEFT CARD: WHERE WE ARE (DIMMED ORIENTATION) */}
@@ -863,7 +980,9 @@ export default function App() {
 
                 {/* Canvas Verified Deadline */}
                 <div className="card-canvas-badge">
+                  <CanvasLogo size={16} />
                   <span>Canvas Due: 10:50 AM today</span>
+                  <span className="canvas-badge-sync-dot" aria-hidden="true" />
                 </div>
               </div>
 
@@ -894,7 +1013,9 @@ export default function App() {
             {/* In-Context EdStem Thread Banner */}
             <div className="edstem-context-banner">
               <div className="edstem-context-info">
-                <span className="edstem-icon-badge" aria-hidden="true">💬</span>
+                <span className="edstem-icon-badge" aria-hidden="true">
+                  <EdStemLogo size={16} />
+                </span>
                 <span>
                   <strong>EdStem Thread #412:</strong> "Do limits flip if u(0) &gt; u(4)?"
                 </span>
@@ -925,11 +1046,26 @@ export default function App() {
             <div className="overview-header">
               <div>
                 <h2 className="overview-title">In-Class Activity: Definite Integral via Substitution</h2>
-                <p className="overview-sub">4 total steps · Synced with Canvas Assignment requirements</p>
+                <div className="overview-sub-row">
+                  <CanvasLogo size={14} className="sync-canvas-icon" />
+                  <p className="overview-sub">4 total steps · Synced with Canvas Assignment requirements</p>
+                </div>
               </div>
               <span className="overview-badge">
                 {stepCompleted ? '2 Completed · 1 In Progress' : '1 Completed · 1 In Progress'}
               </span>
+            </div>
+
+            <div className="overview-progress-bar-wrap">
+              <div className="step-flow-track">
+                <div
+                  className="step-flow-fill"
+                  style={{ width: stepCompleted ? '75%' : '50%' }}
+                >
+                  <span className="step-flow-shimmer" aria-hidden="true" />
+                  <span className="step-flow-head" aria-hidden="true" />
+                </div>
+              </div>
             </div>
 
             <ol className="overview-step-list">
@@ -1082,7 +1218,9 @@ export default function App() {
             </div>
             <div className="edstem-header">
               <div className="edstem-title-wrap">
-                <div className="edstem-badge-icon" aria-hidden="true">Ed</div>
+                <div className="edstem-badge-icon" aria-hidden="true">
+                  <EdStemLogo size={24} />
+                </div>
                 <div>
                   <h2 className="edstem-title">EdStem Live Discussion · Math 2B</h2>
                   <p className="edstem-sub">Live questions asked by classmates right now during Lecture 14</p>
@@ -1259,7 +1397,10 @@ export default function App() {
             <div className="weekly-date-nav">
               <div className="weekly-header">
                 <span>WEEK OF NOV 10 – NOV 16, 2026</span>
-                <span className="sync-note">Canvas LMS Connected ✓</span>
+                <span className="sync-note">
+                  <CanvasLogo size={14} className="sync-canvas-icon" />
+                  <span>Canvas LMS Connected ✓</span>
+                </span>
               </div>
 
               <div className="date-pills-row">
@@ -1299,7 +1440,10 @@ export default function App() {
                     <div className="class-info">
                       <div className="class-status-line">
                         {cls.isLive ? (
-                          <span className="badge-live-now">● LIVE NOW</span>
+                          <span className="badge-live-now">
+                            <span className="live-broadcast-indicator" aria-hidden="true" />
+                            ● LIVE NOW
+                          </span>
                         ) : (
                           <span className="badge-upcoming">UPCOMING</span>
                         )}
@@ -1310,7 +1454,10 @@ export default function App() {
                       <p className="class-topic">
                         <strong>Topic:</strong> {cls.topic}
                       </p>
-                      <span className="class-canvas-sync">{cls.canvasSync}</span>
+                      <div className="class-canvas-pill">
+                        <CanvasLogo size={13} />
+                        <span className="class-canvas-sync">{cls.canvasSync}</span>
+                      </div>
                     </div>
 
                     <div className="class-action-wrap">
@@ -1451,9 +1598,15 @@ export default function App() {
         <div className="footer-left">
           <span>✨ <strong>Bullseye Accessible Classroom Standard</strong></span>
           <span className="footer-dot">•</span>
-          <span>Canvas LMS API Connected</span>
+          <span className="footer-brand-pill">
+            <CanvasLogo size={13} className="sync-canvas-icon" />
+            <span>Canvas LMS API Connected</span>
+          </span>
           <span className="footer-dot">•</span>
-          <span>EdStem Q&amp;A Live Sync</span>
+          <span className="footer-brand-pill">
+            <EdStemLogo size={13} className="header-edstem-icon" />
+            <span>EdStem Q&amp;A Live Sync</span>
+          </span>
           <span className="footer-dot">•</span>
           <span>WCAG 2.2 AA Contrast Checked</span>
         </div>
