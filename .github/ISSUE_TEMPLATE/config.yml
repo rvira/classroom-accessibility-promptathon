@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Bullseye Community Discussions
+    url: https://github.com/jgundara07-afk/classroom-accessibility-promptathon/discussions
+    about: Ask questions, share ideas, or discuss classroom accessibility strategies.
+  - name: Security Vulnerability Disclosure
+    url: https://github.com/jgundara07-afk/classroom-accessibility-promptathon/security/advisories
+    about: Privately report a security vulnerability.

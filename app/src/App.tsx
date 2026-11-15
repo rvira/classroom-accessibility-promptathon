@@ -1,42 +1,32 @@
 import { useEffect, useRef, useState } from 'react'
 import {
-  Activity,
   AlertTriangle,
   ArrowRight,
-  BookOpen,
-  Calendar,
   Check,
   CheckCircle,
   ChevronLeft,
   ChevronRight,
   Compass,
+  Globe,
   Info,
   LogOut,
-  MessageSquare,
-  Mic,
-  Radio,
+  Menu,
   RotateCcw,
   Sparkles,
   Target,
-  User,
   X,
 } from 'lucide-react'
 import '@fontsource/atkinson-hyperlegible/700.css'
 import { InteractiveBackground } from './components/InteractiveBackground'
 import { CanvasLogo, EdStemLogo } from './components/BrandLogos'
+import { SideNav, type ViewMode } from './components/SideNav'
+import {
+  translations,
+  type SupportedLanguage,
+  SUPPORTED_LANGUAGES,
+  type Translations,
+} from './i18n'
 import './App.css'
-
-/* Sample state from one Math 2B (Calculus) lecture on integrals.
-   Synthetic, not a transcript, and no model is called. The visible copy is
-   focused and accessible; technical derivation details live behind each info trigger. */
-const lecture = {
-  course: 'Math 2B · Lecture 14 · Integrals',
-  where: 'Definite integration via substitution. Preceding step established parameter u = 2x + 1.',
-  next: 'Transform integration limits in terms of u.',
-  keep: 'Retain transformed limits throughout evaluation; do not back-substitute. Express solution as an exact fraction.',
-}
-
-type ViewMode = 'now' | 'overview' | 'rejoin' | 'edstem' | 'source' | 'calendar'
 
 interface EdstemQuestion {
   id: string
@@ -241,14 +231,14 @@ const tourSteps: TourStep[] = [
     description:
       'Bullseye syncs with your Canvas modules for exact submission deadlines, and surfaces live EdStem discussion threads tagged directly to your current lecture problem.',
     tip: 'One click lets you ask a question auto-tagged with your problem step.',
-    icon: MessageSquare,
+    icon: Compass,
   },
   {
     title: 'Rejoin Whenever You Drift',
     subtitle: 'No penalties, no lost time',
     description:
       'Lost the thread? Tap "Help me rejoin" at the top. Type what you recall, and Bullseye provides a safe 10-second recap grounded in the current step.',
-    tip: 'You can restart this tour anytime from the top bar or profile menu.',
+    tip: 'You can restart this tour anytime from the top bar or side navigation.',
     icon: Sparkles,
   },
 ]
@@ -270,11 +260,11 @@ function Integral({ lower, upper, children }: { lower: string; upper: string; ch
   )
 }
 
-function Technical({ block }: { block: BlockKey }) {
+function Technical({ block, t }: { block: BlockKey; t: Translations }) {
   if (block === 'where') {
     return (
       <>
-        <p className="tech-label">On the board</p>
+        <p className="tech-label">{t.onTheBoard}</p>
         <p className="math-line" aria-hidden="true">
           <Integral lower="0" upper="1">
             2x·e<sup>x²</sup> dx
@@ -294,7 +284,7 @@ function Technical({ block }: { block: BlockKey }) {
   if (block === 'next') {
     return (
       <>
-        <p className="tech-label">On the board</p>
+        <p className="tech-label">{t.onTheBoard}</p>
         <p className="math-line" aria-hidden="true">
           x = 0 → u = 0
           <br />x = 1 → u = 1
@@ -314,7 +304,7 @@ function Technical({ block }: { block: BlockKey }) {
 
   return (
     <>
-      <p className="tech-label">On the board</p>
+      <p className="tech-label">{t.onTheBoard}</p>
       <p className="math-line" aria-hidden="true">
         [e<sup>u</sup>] from 0 to 1 = e¹ − e⁰
       </p>
@@ -330,11 +320,29 @@ function Technical({ block }: { block: BlockKey }) {
 }
 
 export default function App() {
-  const [activeView, setActiveView] = useState<ViewMode>('now')
+  // Requirement 4: On initial load, default to Calendar Schedule & Live Class Selection
+  const [activeView, setActiveView] = useState<ViewMode>('calendar')
   const [openTech, setOpenTech] = useState<BlockKey | null>(null)
   const [profileOpen, setProfileOpen] = useState(false)
-  const [liveDetailsOpen, setLiveDetailsOpen] = useState(false)
   const [recordingActive, setRecordingActive] = useState(true)
+
+  // Side Navigation Drawer State
+  const [drawerOpen, setDrawerOpen] = useState(false)
+
+  // Language & i18n State
+  const [language, setLanguage] = useState<SupportedLanguage>(() => {
+    try {
+      const saved = localStorage.getItem('bullseye_language') as SupportedLanguage
+      if (saved && ['en', 'es', 'zh', 'hi'].includes(saved)) {
+        return saved
+      }
+    } catch {
+      // ignore
+    }
+    return 'en'
+  })
+
+  const t = translations[language]
 
   // Sensory & Accessibility Toolbar State
   const [calmMode, setCalmMode] = useState<boolean>(() => {
@@ -376,7 +384,6 @@ export default function App() {
   const [tourStep, setTourStep] = useState<number>(0)
 
   const profileRef = useRef<HTMLDivElement | null>(null)
-  const liveMenuRef = useRef<HTMLDivElement | null>(null)
   const cardsRowRef = useRef<HTMLDivElement | null>(null)
   const arenaRef = useRef<HTMLDivElement | null>(null)
 
@@ -388,6 +395,15 @@ export default function App() {
       // ignore
     }
   }, [calmMode])
+
+  // Persist language
+  useEffect(() => {
+    try {
+      localStorage.setItem('bullseye_language', language)
+    } catch {
+      // ignore
+    }
+  }, [language])
 
   // Apply font scale to document
   useEffect(() => {
@@ -409,7 +425,7 @@ export default function App() {
     }
   }
 
-  // Keyboard navigation
+  // Keyboard navigation & Esc listener
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       // Ignore when typing in an input
@@ -421,8 +437,8 @@ export default function App() {
       }
 
       if (event.key === 'Escape') {
+        setDrawerOpen(false)
         setNewQuestionModalOpen(false)
-        setLiveDetailsOpen(false)
         setProfileOpen(false)
         setOpenTech(null)
         if (tourOpen) closeTour()
@@ -456,9 +472,6 @@ export default function App() {
     const onDocClick = (e: MouseEvent) => {
       if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
         setProfileOpen(false)
-      }
-      if (liveMenuRef.current && !liveMenuRef.current.contains(e.target as Node)) {
-        setLiveDetailsOpen(false)
       }
     }
     document.addEventListener('click', onDocClick)
@@ -523,11 +536,32 @@ export default function App() {
     <div className={`app ${calmMode ? 'calm-mode' : ''}`}>
       <InteractiveBackground calm={calmMode} />
 
+      {/* ================= SIDE NAVIGATION DRAWER ================= */}
+      <SideNav
+        isOpen={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        activeView={activeView}
+        onSelectView={(v) => setActiveView(v)}
+        onOpenTour={openTour}
+        edstemCount={edstemQuestions.length}
+        t={t}
+      />
+
       {/* ================= TOP APPLICATION HEADER ================= */}
       <header className="revamped-top-bar" role="banner">
-        
-        {/* Left: Brand & Classroom Course Switcher */}
+        {/* Left: Sleek Hamburger Drawer Toggle + Brand & Course Crumb */}
         <div className="revamped-brand-row">
+          <button
+            type="button"
+            className="hamburger-btn"
+            onClick={() => setDrawerOpen(true)}
+            aria-label={t.menu}
+            aria-expanded={drawerOpen}
+            title={t.navigation}
+          >
+            <Menu size={20} strokeWidth={2.4} aria-hidden="true" />
+          </button>
+
           <button
             type="button"
             className="revamped-brand-btn"
@@ -535,7 +569,7 @@ export default function App() {
             title="Open Class Schedule & Hub"
           >
             <Target size={22} strokeWidth={2.8} className="revamped-brand-icon" aria-hidden="true" />
-            <span className="revamped-brand-name">Bullseye</span>
+            <span className="revamped-brand-name">{t.appName}</span>
           </button>
 
           <span className="revamped-crumb-divider">/</span>
@@ -551,174 +585,51 @@ export default function App() {
               <span className="crumb-arrow">▼</span>
             </button>
 
-            {/* Real-time Teacher Sync Live Audio Waveform & Mic Pulse */}
-            <div
-              className={`header-live-waveform-pill ${recordingActive ? 'active' : 'paused'} ${calmMode ? 'calm' : ''}`}
-              title={recordingActive ? 'Prof. Chen microphone streaming live (34:12)' : 'Mic paused'}
-              aria-label="Real-time teacher audio synchronization"
-              onClick={() => setLiveDetailsOpen((prev) => !prev)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  setLiveDetailsOpen((prev) => !prev)
-                }
-              }}
-            >
-              <span className="live-mic-pulse-beacon" aria-hidden="true" />
-              <div className="live-audio-waveform-bars" aria-hidden="true">
-                <span className="wave-bar bar-1" />
-                <span className="wave-bar bar-2" />
-                <span className="wave-bar bar-3" />
-                <span className="wave-bar bar-4" />
-                <span className="wave-bar bar-5" />
-              </div>
-              <span className="live-waveform-label">
-                {recordingActive ? 'LIVE SYNC' : 'PAUSED'}
-              </span>
-            </div>
-
             <span className="revamped-crumb-dot">·</span>
             <span className="revamped-topic-crumb">{currentTopic}</span>
+            <span className="live-crumb-badge" title="Live lecture in session">
+              <span className="live-mic-pulse-beacon" aria-hidden="true" />
+              LIVE
+            </span>
           </div>
         </div>
 
-        {/* Center: Simplified 2-Mode Segmented Pill */}
-        <div className="center-view-selector" role="tablist" aria-label="Core view mode">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeView === 'now'}
-            className={`center-tab-btn ${activeView === 'now' ? 'active' : ''}`}
-            onClick={() => setActiveView('now')}
-          >
-            <span aria-hidden="true">🎯</span>
-            <span>Now Focus</span>
-          </button>
-
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeView === 'overview'}
-            className={`center-tab-btn ${activeView === 'overview' ? 'active' : ''}`}
-            onClick={() => setActiveView('overview')}
-          >
-            <span aria-hidden="true">📋</span>
-            <span>All Steps (4)</span>
-          </button>
-        </div>
-
-        {/* Right: Essential Action Controls */}
+        {/* Right: Essential, Focused Action Controls (Strict Single-Home Placement) */}
         <div className="revamped-actions-row">
-          {/* EdStem Discussion Pill */}
+          {/* Live Audio Telemetry Pill (Single Home for Audio Controls) */}
           <button
             type="button"
-            className={`header-edstem-pill ${activeView === 'edstem' ? 'active' : ''}`}
-            onClick={() => setActiveView(activeView === 'edstem' ? 'now' : 'edstem')}
-            title="EdStem live questions for this lecture"
+            className={`header-live-waveform-pill ${recordingActive ? 'active' : 'paused'}`}
+            onClick={() => setRecordingActive((prev) => !prev)}
+            title={`Teacher Audio Stream: Prof. Chen · Live Sync (${recordingActive ? 'Click to Pause' : 'Click to Resume'})`}
+            aria-label={`Teacher audio stream ${recordingActive ? 'live 48kHz' : 'paused'}`}
           >
-            <span className="edstem-pulse-dot" />
-            <EdStemLogo size={14} className="header-edstem-icon" />
-            <span>EdStem ({edstemQuestions.length})</span>
+            <span className="live-mic-pulse-beacon" aria-hidden="true" />
+            <div className="live-audio-waveform-bars" aria-hidden="true">
+              <span className="wave-bar bar-1" />
+              <span className="wave-bar bar-2" />
+              <span className="wave-bar bar-3" />
+              <span className="wave-bar bar-4" />
+              <span className="wave-bar bar-5" />
+            </div>
+            <span className="live-waveform-label">
+              {recordingActive ? '48kHz LIVE' : 'AUDIO PAUSED'}
+            </span>
           </button>
 
-          {/* Live Teacher Recorder Pill */}
-          <div className="live-recorder-container" ref={liveMenuRef}>
-            <button
-              type="button"
-              className={`live-recorder-btn ${recordingActive ? 'active' : 'paused'}`}
-              aria-expanded={liveDetailsOpen}
-              aria-haspopup="true"
-              aria-label="Teacher live progress and audio recording details"
-              onClick={() => setLiveDetailsOpen((prev) => !prev)}
-            >
-              <span className="live-pulse-dot" aria-hidden="true" />
-              <Mic size={14} className="live-mic-icon" aria-hidden="true" />
-              <span className="live-label">
-                {recordingActive ? 'Prof. Chen' : 'Paused'}
-              </span>
-              <span className="live-time-chip">34:12</span>
-            </button>
-
-            {liveDetailsOpen && (
-              <div className="live-details-popover" role="dialog" aria-label="Real-time lecture recording details">
-                <div className="live-details-head">
-                  <div className="live-details-title-row">
-                    <span className="live-badge">Live Extract</span>
-                    <span className="live-timer">34:12</span>
-                  </div>
-                  <h3 className="live-stream-title">Professor Mic Stream</h3>
-                  <p className="live-stream-sub">Real-time lecture extraction &amp; progress sync</p>
-                </div>
-                <div className="live-progress-bar-wrap">
-                  <div className="live-progress-labels">
-                    <span>Lecture Progress</span>
-                    <span>Step {activeStepNumber} of 4</span>
-                  </div>
-                  <div className="live-progress-track">
-                    <div className="live-progress-fill" style={{ width: stepCompleted ? '75%' : '50%' }}>
-                      <span className="step-flow-shimmer" aria-hidden="true" />
-                    </div>
-                  </div>
-                </div>
-                <div className="live-details-meta">
-                  <div className="live-meta-item">
-                    <Activity size={14} aria-hidden="true" />
-                    <span>Topic: Rewrite limits in terms of u</span>
-                  </div>
-                  <div className="live-meta-item">
-                    <Radio size={14} aria-hidden="true" />
-                    <span>Audio Stream: 48kHz stereo · 42ms sync</span>
-                  </div>
-                </div>
-                <div className="live-details-foot">
-                  <button
-                    type="button"
-                    className="live-toggle-btn"
-                    onClick={() => setRecordingActive((prev) => !prev)}
-                  >
-                    {recordingActive ? 'Pause Stream' : 'Resume Stream'}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Calm Mode Toggle */}
+          {/* Sensory Calm Mode Toggle (Single Home for Quick Neurodivergent Freeze) */}
           <button
             type="button"
             className={`toolbar-btn calm-btn ${calmMode ? 'calm-active' : ''}`}
             onClick={() => setCalmMode((prev) => !prev)}
-            title="Calm Mode (key: c): pauses background motion"
+            title={t.calmModeTitle}
             aria-pressed={calmMode}
           >
             <span aria-hidden="true">🕊️</span>
-            <span className="calm-btn-label">{calmMode ? 'Calm: On' : 'Calm'}</span>
+            <span className="calm-btn-label">{calmMode ? t.calmOn : t.calmMode}</span>
           </button>
 
-          <div className="font-scale-group" aria-label="Text size adjusters">
-            <button
-              type="button"
-              className="scale-btn"
-              onClick={() => setFontScale((s) => Math.max(0.85, s - 0.08))}
-              title="Decrease font size"
-              aria-label="Decrease text size"
-            >
-              A-
-            </button>
-            <button
-              type="button"
-              className="scale-btn"
-              onClick={() => setFontScale((s) => Math.min(1.3, s + 0.08))}
-              title="Increase font size"
-              aria-label="Increase text size"
-            >
-              A+
-            </button>
-          </div>
-
-          {/* Profile Menu */}
+          {/* Profile & User Settings Menu (Single Home for Secondary Settings) */}
           <div className="profile-container" ref={profileRef}>
             <button
               type="button"
@@ -728,16 +639,86 @@ export default function App() {
               aria-label="Account, profile and settings"
               onClick={() => setProfileOpen((prev) => !prev)}
             >
-              <User size={18} aria-hidden="true" />
+              <span className="profile-btn-avatar">S</span>
             </button>
 
             {profileOpen && (
-              <div className="profile-menu" role="menu" aria-label="Account menu">
+              <div className="profile-menu" role="menu" aria-label="User settings and account menu">
+                {/* User Identity Header */}
                 <div className="profile-menu-header">
-                  <span className="profile-name">Student Account</span>
-                  <span className="profile-status">Math 2B · Active</span>
+                  <div className="profile-user-row">
+                    <span className="profile-avatar-circle">S</span>
+                    <div className="profile-user-meta">
+                      <span className="profile-name">{t.studentAccount}</span>
+                      <span className="profile-status">{currentCourse} · {t.activeStatus}</span>
+                    </div>
+                  </div>
                 </div>
+
                 <hr className="profile-divider" />
+
+                {/* Language Settings (Single Home for Language) */}
+                <div className="profile-settings-group">
+                  <div className="profile-group-label">
+                    <div className="profile-group-label-left">
+                      <Globe size={13} aria-hidden="true" />
+                      <span>{t.language}</span>
+                    </div>
+                  </div>
+                  <div className="profile-lang-grid" role="radiogroup" aria-label={t.language}>
+                    {SUPPORTED_LANGUAGES.map((l) => {
+                      const isSelected = language === l.code
+                      return (
+                        <button
+                          key={l.code}
+                          type="button"
+                          role="radio"
+                          aria-checked={isSelected}
+                          className={`profile-lang-pill ${isSelected ? 'active' : ''}`}
+                          onClick={() => setLanguage(l.code)}
+                          title={l.nativeName}
+                        >
+                          <span className="profile-lang-flag">{l.flag}</span>
+                          <span className="profile-lang-code">{l.code.toUpperCase()}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                <hr className="profile-divider" />
+
+                {/* Font Scaling Accessibility Settings (Single Home for Text Sizing) */}
+                <div className="profile-settings-group">
+                  <div className="profile-group-label">
+                    <span>{t.fontSize}</span>
+                    <span className="profile-font-percent">{Math.round(fontScale * 100)}%</span>
+                  </div>
+                  <div className="profile-font-controls">
+                    <button
+                      type="button"
+                      className="profile-scale-btn"
+                      onClick={() => setFontScale((s) => Math.max(0.85, Number((s - 0.08).toFixed(2))))}
+                      title={t.decreaseFont}
+                      aria-label={t.decreaseFont}
+                    >
+                      A- Smaller
+                    </button>
+                    <button
+                      type="button"
+                      className="profile-scale-btn"
+                      onClick={() => setFontScale((s) => Math.min(1.3, Number((s + 0.08).toFixed(2))))}
+                      title={t.increaseFont}
+                      aria-label={t.increaseFont}
+                    >
+                      A+ Larger
+                    </button>
+                  </div>
+                </div>
+
+                <hr className="profile-divider" />
+
+                {/* Secondary Actions */}
                 <button
                   type="button"
                   role="menuitem"
@@ -745,42 +726,8 @@ export default function App() {
                   onClick={openTour}
                 >
                   <Compass size={15} aria-hidden="true" />
-                  <span>Welcome Tour</span>
+                  <span>{t.welcomeTour}</span>
                 </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="profile-menu-item"
-                  onClick={() => {
-                    setActiveView('calendar')
-                    setProfileOpen(false)
-                  }}
-                >
-                  <Calendar size={15} aria-hidden="true" />
-                  <span>Class Schedule &amp; Join Hub</span>
-                </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="profile-menu-item"
-                  onClick={() => {
-                    setActiveView('source')
-                    setProfileOpen(false)
-                  }}
-                >
-                  <BookOpen size={15} aria-hidden="true" />
-                  <span>Original Teacher Source</span>
-                </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="profile-menu-item"
-                  onClick={() => setCalmMode((prev) => !prev)}
-                >
-                  <Sparkles size={15} aria-hidden="true" />
-                  <span>Calm View: {calmMode ? 'Disable' : 'Enable'}</span>
-                </button>
-                <hr className="profile-divider" />
                 <button
                   type="button"
                   role="menuitem"
@@ -788,7 +735,7 @@ export default function App() {
                   onClick={() => setProfileOpen(false)}
                 >
                   <LogOut size={15} aria-hidden="true" />
-                  <span>Sign Out</span>
+                  <span>{t.signOut}</span>
                 </button>
               </div>
             )}
@@ -798,7 +745,163 @@ export default function App() {
 
       {/* ================= MAIN CONTENT VIEWS ================= */}
       <main className="revamped-main-stage">
-        
+        {/* VIEW 6: CALENDAR & CLASS JOIN HUB (DEFAULT LANDING VIEW) */}
+        {activeView === 'calendar' && (
+          <section className="calendar-container" aria-label="Class schedule and join hub">
+            {/* PROMINENT LIVE CLASS HERO BANNER */}
+            <div className="calendar-live-hero" role="region" aria-label="Active live class in session">
+              <div className="live-hero-top-row">
+                <span className="live-hero-badge">
+                  <span className="live-broadcast-indicator" aria-hidden="true" />
+                  {t.liveHeroBadge}
+                </span>
+                <span className="live-hero-canvas">
+                  <CanvasLogo size={14} />
+                  <span>{t.canvasDueToday}</span>
+                </span>
+              </div>
+
+              <div className="live-hero-main">
+                <div className="live-hero-text">
+                  <h3 className="live-hero-title">{t.liveHeroTitle}</h3>
+                  <p className="live-hero-topic">{t.liveHeroTopic}</p>
+                  <p className="live-hero-loc">{t.liveHeroLocation}</p>
+                </div>
+
+                <div className="live-hero-actions">
+                  <button
+                    type="button"
+                    className="btn-enter-hero"
+                    onClick={() => handleJoinClass('MATH 2B', 'Lecture 14: Integrals')}
+                  >
+                    <span>{t.enterLiveClassCTA}</span>
+                    <ArrowRight size={16} aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="calendar-top-bar">
+              <div>
+                <h2 className="calendar-title">{t.calendarTitle}</h2>
+                <p className="calendar-sub">{t.calendarSubtitle}</p>
+              </div>
+
+              {/* Room Code Quick Join */}
+              <div className="quick-code-box">
+                <span className="quick-code-label">{t.roomCodeLabel}</span>
+                <input
+                  type="text"
+                  className="quick-code-input"
+                  value={roomCodeInput}
+                  onChange={(e) => setRoomCodeInput(e.target.value.toUpperCase())}
+                  placeholder="e.g. MATH-2B"
+                  aria-label={t.roomCodeLabel}
+                />
+                <button
+                  type="button"
+                  className="quick-code-btn"
+                  onClick={() => handleJoinClass('MATH 2B', 'Lecture 14: Integrals')}
+                >
+                  {t.joinLiveBtn}
+                </button>
+              </div>
+            </div>
+
+            {/* Weekly Date Selector Bar */}
+            <div className="weekly-date-nav">
+              <div className="weekly-header">
+                <span>{t.weekRange}</span>
+                <span className="sync-note">
+                  <CanvasLogo size={14} className="sync-canvas-icon" />
+                  <span>{t.canvasConnected}</span>
+                </span>
+              </div>
+
+              <div className="date-pills-row">
+                {Object.keys(scheduleData).map((dateKey) => {
+                  const isActive = selectedDate === dateKey
+                  const isToday = dateKey.includes('Today')
+                  return (
+                    <button
+                      key={dateKey}
+                      type="button"
+                      className={`date-pill-btn ${isActive ? 'active' : ''}`}
+                      onClick={() => setSelectedDate(dateKey)}
+                    >
+                      <span className="pill-day">{dateKey.split(' ')[0]}</span>
+                      <span className="pill-date">{dateKey.split(' ')[1]}</span>
+                      <span className="pill-status">
+                        {isToday ? t.liveClassCount : `${scheduleData[dateKey].length} ${t.classesCount}`}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Scheduled Classes for Selected Date */}
+            <div className="scheduled-classes-section">
+              <h3 className="scheduled-section-title">
+                {t.classesForDate} {selectedDate}
+              </h3>
+
+              <div className="scheduled-cards-stack">
+                {scheduleData[selectedDate]?.map((cls) => (
+                  <div
+                    key={cls.id}
+                    className={`scheduled-class-card ${cls.isLive ? 'class-live' : ''}`}
+                  >
+                    <div className="class-info">
+                      <div className="class-status-line">
+                        {cls.isLive ? (
+                          <span className="badge-live-now">
+                            <span className="live-broadcast-indicator" aria-hidden="true" />
+                            {t.liveNowBadge}
+                          </span>
+                        ) : (
+                          <span className="badge-upcoming">{t.upcomingBadge}</span>
+                        )}
+                        <span className="class-time">{cls.time}</span>
+                        <span className="class-loc">· {cls.location}</span>
+                      </div>
+                      <h4 className="class-name">{cls.title}</h4>
+                      <p className="class-topic">
+                        <strong>{t.topicLabel}</strong> {cls.topic}
+                      </p>
+                      <div className="class-canvas-pill">
+                        <CanvasLogo size={13} />
+                        <span className="class-canvas-sync">{cls.canvasSync}</span>
+                      </div>
+                    </div>
+
+                    <div className="class-action-wrap">
+                      {cls.isLive ? (
+                        <button
+                          type="button"
+                          className="btn-enter-live"
+                          onClick={() => handleJoinClass(cls.code, cls.topic)}
+                        >
+                          <span>{t.enterLiveClassCTA}</span>
+                          <ArrowRight size={14} aria-hidden="true" />
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          className="btn-preview-class"
+                          onClick={() => alert(`Preview outline for ${cls.title} opened.`)}
+                        >
+                          {t.previewOutlineBtn}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* VIEW 1: NOW FOCUS (3D PERSPECTIVE CARDS) */}
         {activeView === 'now' && (
           <div
@@ -808,28 +911,28 @@ export default function App() {
             onMouseLeave={handleArenaMouseLeave}
           >
             {/* TRIADIC WORKING-MEMORY HORIZON */}
-            <div className="horizon-step-flow-bar" role="region" aria-label="Triadic working-memory progress horizon">
+            <div className="horizon-step-flow-bar" role="region" aria-label={t.workingMemoryHorizon}>
               <div className="step-flow-header">
                 <div className="step-flow-badge-wrap">
                   <span className="step-flow-badge">
                     <span className="step-flow-beacon" aria-hidden="true" />
-                    <span>Checkpoint {activeStepNumber} of 4</span>
+                    <span>{t.checkpointLabel} {activeStepNumber} {t.ofLabel} 4</span>
                   </span>
                   <span className="step-flow-desc">
                     {activeStepNumber === 2
-                      ? 'Transform integration limits into u-domain'
+                      ? t.step2Title
                       : activeStepNumber === 3
-                      ? 'Integrate directly with respect to u'
+                      ? t.step3Title
                       : 'Activity Progress'}
                   </span>
                 </div>
                 <div className="step-flow-meta">
                   <span className="step-flow-canvas-tag">
                     <CanvasLogo size={13} />
-                    <span>Canvas Worksheet Sync</span>
+                    <span>{t.canvasWorksheetSync}</span>
                   </span>
                   <span className="step-flow-pct">
-                    {stepCompleted ? '75% Complete' : '50% Complete'}
+                    {stepCompleted ? `75% ${t.completePct}` : `50% ${t.completePct}`}
                   </span>
                 </div>
               </div>
@@ -852,7 +955,7 @@ export default function App() {
                     type="button"
                     className="step-milestone-chip done"
                     onClick={() => setActiveView('overview')}
-                    title="View Step 1: Identify inner u = g(x) (Completed)"
+                    title="View Step 1 (Completed)"
                   >
                     <span className="milestone-num"><Check size={12} strokeWidth={3} /></span>
                     <span className="milestone-text">1. Set u = 2x+1</span>
@@ -862,7 +965,7 @@ export default function App() {
                     type="button"
                     className={`step-milestone-chip ${stepCompleted ? 'done' : 'active'}`}
                     onClick={() => setActiveView('now')}
-                    title="Step 2: Change limits [0,4] to [1,9] (Current Focus)"
+                    title="Step 2 (Current Focus)"
                   >
                     <span className="milestone-num">{stepCompleted ? <Check size={12} strokeWidth={3} /> : '2'}</span>
                     <span className="milestone-text">2. Change Limits</span>
@@ -872,7 +975,7 @@ export default function App() {
                     type="button"
                     className={`step-milestone-chip ${stepCompleted ? 'active' : 'upcoming'}`}
                     onClick={toggleStepCompletion}
-                    title="Step 3: Integrate with u (Click to advance/undo)"
+                    title="Step 3 (Click to advance/undo)"
                   >
                     <span className="milestone-num">3</span>
                     <span className="milestone-text">3. Integrate in u</span>
@@ -882,7 +985,7 @@ export default function App() {
                     type="button"
                     className="step-milestone-chip upcoming"
                     onClick={() => setActiveView('overview')}
-                    title="View Step 4: Final exact fraction to Canvas"
+                    title="View Step 4 (Final Canvas Submit)"
                   >
                     <span className="milestone-num">4</span>
                     <span className="milestone-text">4. Canvas Submit</span>
@@ -892,11 +995,13 @@ export default function App() {
             </div>
 
             <div ref={cardsRowRef} className="now-cards-row">
-              
               {/* LEFT CARD: CONTEXT ANCHOR (ANTECEDENT STATE) */}
               <div className="card-3d card-dimmed">
                 <div className="kicker-row">
-                  <h2 className="kicker">Context Anchor</h2>
+                  <div className="kicker-title-group">
+                    <h2 className="kicker">{t.contextAnchorTitle}</h2>
+                    <span className="kicker-sub">{t.contextAnchorSub}</span>
+                  </div>
                   <button
                     type="button"
                     className="block-info"
@@ -907,16 +1012,19 @@ export default function App() {
                     <Info size={15} aria-hidden="true" />
                   </button>
                 </div>
-                <p className="context">{lecture.where}</p>
+                <p className="context">{t.lectureWhere}</p>
               </div>
 
               {/* CENTER CARD: ACTIVE DIRECTIVE (FOCAL EXECUTION) */}
               <div className="card-3d card-focus">
                 {/* Course Context Header inside Center Card */}
-                <p className="card-course-kicker">{lecture.course}</p>
+                <p className="card-course-kicker">{t.lectureCourse}</p>
 
                 <div className="kicker-row center-kicker-row">
-                  <h2 className="kicker action-kicker">Active Directive</h2>
+                  <div className="kicker-title-group">
+                    <h2 className="kicker action-kicker">{t.activeDirectiveTitle}</h2>
+                    <span className="kicker-sub">{t.activeDirectiveSub}</span>
+                  </div>
                   <button
                     type="button"
                     className="block-info"
@@ -929,7 +1037,7 @@ export default function App() {
                 </div>
 
                 <h1 className="action" aria-live="polite">
-                  {stepCompleted ? 'Integrate with respect to u directly.' : lecture.next}
+                  {stepCompleted ? t.lectureNextCompleted : t.lectureNext}
                 </h1>
 
                 {/* Primary Step Completion Button & Stuck Route */}
@@ -942,12 +1050,12 @@ export default function App() {
                     {stepCompleted ? (
                       <>
                         <RotateCcw size={15} aria-hidden="true" />
-                        <span>Undo Checkpoint</span>
+                        <span>{t.undoCheckpoint}</span>
                       </>
                     ) : (
                       <>
                         <Check size={16} aria-hidden="true" />
-                        <span>Complete Checkpoint 2</span>
+                        <span>{t.completeCheckpoint}</span>
                       </>
                     )}
                   </button>
@@ -957,7 +1065,7 @@ export default function App() {
                     className="step-stuck-btn"
                     onClick={() => setActiveView('rejoin')}
                   >
-                    Resynchronize / Catch Up
+                    {t.resynchronize}
                   </button>
                 </div>
               </div>
@@ -965,7 +1073,10 @@ export default function App() {
               {/* RIGHT CARD: INVARIANT CONSTRAINTS (RUBRIC & DEADLINES) */}
               <div className="card-3d card-dimmed">
                 <div className="kicker-row">
-                  <h2 className="kicker">Invariant Constraints</h2>
+                  <div className="kicker-title-group">
+                    <h2 className="kicker">{t.invariantConstraintsTitle}</h2>
+                    <span className="kicker-sub">{t.invariantConstraintsSub}</span>
+                  </div>
                   <button
                     type="button"
                     className="block-info"
@@ -976,16 +1087,15 @@ export default function App() {
                     <Info size={15} aria-hidden="true" />
                   </button>
                 </div>
-                <p className="constraints">{lecture.keep}</p>
+                <p className="constraints">{t.lectureKeep}</p>
 
                 {/* Canvas Verified Deadline */}
                 <div className="card-canvas-badge">
                   <CanvasLogo size={16} />
-                  <span>Canvas Due: 10:50 AM today</span>
+                  <span>{t.canvasDueToday}</span>
                   <span className="canvas-badge-sync-dot" aria-hidden="true" />
                 </div>
               </div>
-
             </div>
 
             {/* Surfaced Ambiguity Warning */}
@@ -993,7 +1103,8 @@ export default function App() {
               <div className="ambiguity-text">
                 <AlertTriangle size={15} className="ambiguity-icon" aria-hidden="true" />
                 <span>
-                  <strong>Upload location</strong> isn't specified in syllabus.
+                  <strong>{t.ambiguityWarning.split(' ')[0]} {t.ambiguityWarning.split(' ')[1]}</strong>{' '}
+                  {t.ambiguityWarning.split(' ').slice(2).join(' ')}
                 </span>
               </div>
               <button
@@ -1003,10 +1114,10 @@ export default function App() {
                   navigator.clipboard?.writeText(
                     'Excuse me Professor, where should we submit the in-class assignment today?'
                   )
-                  alert('Question copied to clipboard: "Excuse me Professor, where should we submit the in-class assignment today?"')
+                  alert(t.questionCopiedAlert)
                 }}
               >
-                Ask Instructor
+                {t.askInstructor}
               </button>
             </div>
 
@@ -1017,7 +1128,7 @@ export default function App() {
                   <EdStemLogo size={16} />
                 </span>
                 <span>
-                  <strong>EdStem Thread #412:</strong> "Do limits flip if u(0) &gt; u(4)?"
+                  <strong>{t.threadTitle}</strong> "Do limits flip if u(0) &gt; u(4)?"
                 </span>
               </div>
               <button
@@ -1025,7 +1136,7 @@ export default function App() {
                 className="edstem-view-answer-btn"
                 onClick={() => setActiveView('edstem')}
               >
-                View TA Answer (1)
+                {t.viewTAAnswer}
               </button>
             </div>
           </div>
@@ -1040,19 +1151,19 @@ export default function App() {
                 className="view-back-btn"
                 onClick={() => setActiveView('now')}
               >
-                ← Back to Task Focus
+                {t.backToTask}
               </button>
             </div>
             <div className="overview-header">
               <div>
-                <h2 className="overview-title">In-Class Activity: Definite Integral via Substitution</h2>
+                <h2 className="overview-title">{t.overviewTitle}</h2>
                 <div className="overview-sub-row">
                   <CanvasLogo size={14} className="sync-canvas-icon" />
-                  <p className="overview-sub">4 total steps · Synced with Canvas Assignment requirements</p>
+                  <p className="overview-sub">{t.overviewSubtitle}</p>
                 </div>
               </div>
               <span className="overview-badge">
-                {stepCompleted ? '2 Completed · 1 In Progress' : '1 Completed · 1 In Progress'}
+                {stepCompleted ? t.overviewProgress : '1 Completed · 1 In Progress'}
               </span>
             </div>
 
@@ -1074,11 +1185,11 @@ export default function App() {
                 <div className="step-marker done">✓</div>
                 <div className="step-body">
                   <div className="step-meta">
-                    <span className="step-num">Step 1 · Completed</span>
+                    <span className="step-num">Step 1 · {t.stepCompletedBadge}</span>
                     <span className="step-time">~5 mins</span>
                   </div>
-                  <h3 className="step-heading line-through">Identify the inner function and assign u = g(x)</h3>
-                  <p className="step-desc">Found u = 2x + 1 and du = 2 dx</p>
+                  <h3 className="step-heading line-through">{t.step1Title}</h3>
+                  <p className="step-desc">{t.step1Desc}</p>
                 </div>
               </li>
 
@@ -1089,18 +1200,20 @@ export default function App() {
                 </div>
                 <div className="step-body">
                   <div className="step-meta">
-                    <span className="step-num">{stepCompleted ? 'Step 2 · Completed' : 'Step 2 · Current Focus'}</span>
+                    <span className="step-num">
+                      Step 2 · {stepCompleted ? t.stepCompletedBadge : t.stepCurrentBadge}
+                    </span>
                     <span className="step-badge">{stepCompleted ? 'Done' : 'Active'}</span>
                   </div>
-                  <h3 className="step-heading">Change the start and end values (Integration limits)</h3>
-                  <p className="step-desc">Convert x-bounds [0, 4] into u-bounds [1, 9]. Do not convert back to x at the end.</p>
+                  <h3 className="step-heading">{t.step2Title}</h3>
+                  <p className="step-desc">{t.step2Desc}</p>
                   <div className="step-actions">
                     <button
                       type="button"
                       className="step-jump-btn"
                       onClick={() => setActiveView('now')}
                     >
-                      Focus on this step
+                      {t.focusOnStep}
                     </button>
                   </div>
                 </div>
@@ -1111,11 +1224,11 @@ export default function App() {
                 <div className="step-marker upcoming">3</div>
                 <div className="step-body">
                   <div className="step-meta">
-                    <span className="step-num">Step 3 · Upcoming</span>
+                    <span className="step-num">Step 3 · {t.stepUpcomingBadge}</span>
                     <span className="step-time">~6 mins</span>
                   </div>
-                  <h3 className="step-heading">Integrate with respect to u directly</h3>
-                  <p className="step-desc">Evaluate the simplified integral using standard power rule.</p>
+                  <h3 className="step-heading">{t.step3Title}</h3>
+                  <p className="step-desc">{t.step3Desc}</p>
                 </div>
               </li>
 
@@ -1124,11 +1237,11 @@ export default function App() {
                 <div className="step-marker upcoming">4</div>
                 <div className="step-body">
                   <div className="step-meta">
-                    <span className="step-num">Step 4 · Final</span>
+                    <span className="step-num">Step 4 · {t.stepFinalBadge}</span>
                     <span className="step-time">~3 mins</span>
                   </div>
-                  <h3 className="step-heading">Subtract upper bound from lower bound</h3>
-                  <p className="step-desc">Give the exact fraction answer; do not round to decimals. Submit to Canvas.</p>
+                  <h3 className="step-heading">{t.step4Title}</h3>
+                  <p className="step-desc">{t.step4Desc}</p>
                 </div>
               </li>
             </ol>
@@ -1144,20 +1257,20 @@ export default function App() {
                 className="view-back-btn"
                 onClick={() => setActiveView('now')}
               >
-                ← Back to Task Focus
+                {t.backToTask}
               </button>
             </div>
             <div className="rejoin-header">
               <span className="rejoin-icon" aria-hidden="true">🔄</span>
               <div>
-                <h2 className="rejoin-title">Help Me Rejoin: Safe Catch-Up</h2>
-                <p className="rejoin-sub">Zoned out or got stuck? Rejoin the class in 10 seconds without missing a constraint.</p>
+                <h2 className="rejoin-title">{t.rejoinTitle}</h2>
+                <p className="rejoin-sub">{t.rejoinSubtitle}</p>
               </div>
             </div>
 
             <div className="rejoin-form-wrap">
               <label htmlFor="rejoinQuery" className="rejoin-label">
-                Where did you leave off or what did you miss?
+                {t.rejoinPrompt}
               </label>
               <div className="rejoin-input-row">
                 <input
@@ -1166,14 +1279,14 @@ export default function App() {
                   className="rejoin-input"
                   value={rejoinInput}
                   onChange={(e) => setRejoinInput(e.target.value)}
-                  placeholder="e.g., I missed what u was, or where the professor is writing..."
+                  placeholder={t.rejoinPlaceholder}
                 />
                 <button
                   type="button"
                   className="rejoin-submit-btn"
                   onClick={() => setRejoinGenerated(true)}
                 >
-                  Catch Me Up
+                  {t.catchMeUpBtn}
                 </button>
               </div>
             </div>
@@ -1181,22 +1294,22 @@ export default function App() {
             {rejoinGenerated && (
               <div className="recap-card" role="region" aria-label="Rejoin summary">
                 <div className="recap-head">
-                  <span className="recap-tag">Current Checkpoint Recap</span>
-                  <span className="recap-audio-sync">Teacher audio synced (00:32:45)</span>
+                  <span className="recap-tag">{t.recapHeading}</span>
+                  <span className="recap-audio-sync">{t.recapAudioSync}</span>
                 </div>
                 <p className="recap-text">
-                  <strong>Don't worry:</strong> Professor Chen just substituted <code>u = 2x + 1</code>. Instead of solving the whole integral and substituting back later, the class is changing the integration limits right now: when <code>x = 0</code>, <code>u = 1</code>; when <code>x = 4</code>, <code>u = 9</code>.
+                  {t.recapText}
                 </p>
                 <div className="recap-foot">
                   <span className="recap-action-cue">
-                    Your immediate task: Write down the new limits [1, 9] on your worksheet.
+                    {t.recapActionCue}
                   </span>
                   <button
                     type="button"
                     className="recap-back-btn"
                     onClick={() => setActiveView('now')}
                   >
-                    Back to Task →
+                    {t.backToTask} →
                   </button>
                 </div>
               </div>
@@ -1213,7 +1326,7 @@ export default function App() {
                 className="view-back-btn"
                 onClick={() => setActiveView('now')}
               >
-                ← Back to Task Focus
+                {t.backToTask}
               </button>
             </div>
             <div className="edstem-header">
@@ -1222,8 +1335,8 @@ export default function App() {
                   <EdStemLogo size={24} />
                 </div>
                 <div>
-                  <h2 className="edstem-title">EdStem Live Discussion · Math 2B</h2>
-                  <p className="edstem-sub">Live questions asked by classmates right now during Lecture 14</p>
+                  <h2 className="edstem-title">{t.edstemTitle}</h2>
+                  <p className="edstem-sub">{t.edstemSubtitle}</p>
                 </div>
               </div>
 
@@ -1232,7 +1345,7 @@ export default function App() {
                 className="edstem-ask-btn"
                 onClick={() => setNewQuestionModalOpen(true)}
               >
-                + Ask Question (Auto-tagged to Step 2)
+                {t.askEdstemBtn}
               </button>
             </div>
 
@@ -1244,7 +1357,7 @@ export default function App() {
                       <span className="edstem-author">{q.author}</span>
                       <span className="edstem-step-tag">{q.stepTag}</span>
                       {q.isEndorsed && (
-                        <span className="edstem-endorsed-tag">✓ TA Endorsed Answer</span>
+                        <span className="edstem-endorsed-tag">{t.taEndorsedTag}</span>
                       )}
                     </div>
                     <span className="edstem-time">{q.timeAgo}</span>
@@ -1266,7 +1379,7 @@ export default function App() {
               <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="Ask EdStem Question">
                 <div className="edstem-modal">
                   <div className="modal-head">
-                    <h3 className="modal-title">Ask Question on EdStem</h3>
+                    <h3 className="modal-title">{t.modalTitle}</h3>
                     <button
                       type="button"
                       className="modal-close"
@@ -1278,12 +1391,12 @@ export default function App() {
                   </div>
                   <form onSubmit={handlePostEdstemQuestion}>
                     <p className="modal-hint">
-                      Auto-tagging: <code>[Math 2B · Lecture 14 · Step 2: Substitution Limits]</code>
+                      <code>{t.modalTagNotice}</code>
                     </p>
                     <textarea
                       className="edstem-textarea"
                       rows={3}
-                      placeholder="Type your question anonymously here..."
+                      placeholder={t.modalPlaceholder}
                       value={newQuestionText}
                       onChange={(e) => setNewQuestionText(e.target.value)}
                       required
@@ -1294,10 +1407,10 @@ export default function App() {
                         className="modal-cancel-btn"
                         onClick={() => setNewQuestionModalOpen(false)}
                       >
-                        Cancel
+                        {t.cancelBtn}
                       </button>
                       <button type="submit" className="modal-submit-btn">
-                        Post to EdStem
+                        {t.postBtn}
                       </button>
                     </div>
                   </form>
@@ -1316,7 +1429,7 @@ export default function App() {
                 className="view-back-btn"
                 onClick={() => setActiveView('now')}
               >
-                ← Back to Task Focus
+                {t.backToTask}
               </button>
             </div>
             <div className="source-header">
@@ -1354,146 +1467,13 @@ export default function App() {
             </div>
           </section>
         )}
-
-        {/* VIEW 6: CALENDAR & CLASS JOIN HUB */}
-        {activeView === 'calendar' && (
-          <section className="calendar-container" aria-label="Class schedule and join hub">
-            <div className="view-top-back-row">
-              <button
-                type="button"
-                className="view-back-btn"
-                onClick={() => setActiveView('now')}
-              >
-                ← Back to Task Focus
-              </button>
-            </div>
-            <div className="calendar-top-bar">
-              <div>
-                <h2 className="calendar-title">Class Schedule &amp; Join Hub</h2>
-                <p className="calendar-sub">Synced with Canvas LMS, Google Calendar &amp; EdStem</p>
-              </div>
-
-              {/* Room Code Quick Join */}
-              <div className="quick-code-box">
-                <span className="quick-code-label">Room Code:</span>
-                <input
-                  type="text"
-                  className="quick-code-input"
-                  value={roomCodeInput}
-                  onChange={(e) => setRoomCodeInput(e.target.value.toUpperCase())}
-                  placeholder="e.g. MATH-2B"
-                />
-                <button
-                  type="button"
-                  className="quick-code-btn"
-                  onClick={() => handleJoinClass('MATH 2B', 'Lecture 14: Integrals')}
-                >
-                  Join Live
-                </button>
-              </div>
-            </div>
-
-            {/* Weekly Date Selector Bar */}
-            <div className="weekly-date-nav">
-              <div className="weekly-header">
-                <span>WEEK OF NOV 10 – NOV 16, 2026</span>
-                <span className="sync-note">
-                  <CanvasLogo size={14} className="sync-canvas-icon" />
-                  <span>Canvas LMS Connected ✓</span>
-                </span>
-              </div>
-
-              <div className="date-pills-row">
-                {Object.keys(scheduleData).map((dateKey) => {
-                  const isActive = selectedDate === dateKey
-                  const isToday = dateKey.includes('Today')
-                  return (
-                    <button
-                      key={dateKey}
-                      type="button"
-                      className={`date-pill-btn ${isActive ? 'active' : ''}`}
-                      onClick={() => setSelectedDate(dateKey)}
-                    >
-                      <span className="pill-day">{dateKey.split(' ')[0]}</span>
-                      <span className="pill-date">{dateKey.split(' ')[1]}</span>
-                      <span className="pill-status">
-                        {isToday ? '● 1 Live' : `${scheduleData[dateKey].length} classes`}
-                      </span>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-
-            {/* Scheduled Classes for Selected Date */}
-            <div className="scheduled-classes-section">
-              <h3 className="scheduled-section-title">
-                Classes Scheduled for {selectedDate}
-              </h3>
-
-              <div className="scheduled-cards-stack">
-                {scheduleData[selectedDate]?.map((cls) => (
-                  <div
-                    key={cls.id}
-                    className={`scheduled-class-card ${cls.isLive ? 'class-live' : ''}`}
-                  >
-                    <div className="class-info">
-                      <div className="class-status-line">
-                        {cls.isLive ? (
-                          <span className="badge-live-now">
-                            <span className="live-broadcast-indicator" aria-hidden="true" />
-                            ● LIVE NOW
-                          </span>
-                        ) : (
-                          <span className="badge-upcoming">UPCOMING</span>
-                        )}
-                        <span className="class-time">{cls.time}</span>
-                        <span className="class-loc">· {cls.location}</span>
-                      </div>
-                      <h4 className="class-name">{cls.title}</h4>
-                      <p className="class-topic">
-                        <strong>Topic:</strong> {cls.topic}
-                      </p>
-                      <div className="class-canvas-pill">
-                        <CanvasLogo size={13} />
-                        <span className="class-canvas-sync">{cls.canvasSync}</span>
-                      </div>
-                    </div>
-
-                    <div className="class-action-wrap">
-                      {cls.isLive ? (
-                        <button
-                          type="button"
-                          className="btn-enter-live"
-                          onClick={() => handleJoinClass(cls.code, cls.topic)}
-                        >
-                          <span>Enter Live Workspace</span>
-                          <ArrowRight size={14} aria-hidden="true" />
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          className="btn-preview-class"
-                          onClick={() => alert(`Preview outline for ${cls.title} opened.`)}
-                        >
-                          Preview Outline
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
       </main>
 
       {/* ================= TECHNICAL MATH DETAILS POPOVER ================= */}
       {openTech !== null && (
-        <div className="tech-card" role="dialog" aria-label="Technical version">
+        <div className="tech-card" role="dialog" aria-label={t.technicalDetails}>
           <div className="tech-head">
-            <span>Technical version</span>
+            <span>{t.technicalDetails}</span>
             <button
               type="button"
               className="tech-close"
@@ -1503,13 +1483,13 @@ export default function App() {
               <X size={14} aria-hidden="true" />
             </button>
           </div>
-          <Technical block={openTech} />
+          <Technical block={openTech} t={t} />
         </div>
       )}
 
       {/* ================= ACCESSIBLE WELCOME TOUR MODAL ================= */}
       {tourOpen && (
-        <div className="tour-overlay" role="dialog" aria-modal="true" aria-label="Welcome tour">
+        <div className="tour-overlay" role="dialog" aria-modal="true" aria-label={t.welcomeTour}>
           <div className="tour-card">
             <div className="tour-card-header">
               <span className="tour-badge">
@@ -1596,24 +1576,24 @@ export default function App() {
       {/* ================= FOOTER ================= */}
       <footer className="revamped-footer" role="contentinfo">
         <div className="footer-left">
-          <span>✨ <strong>Bullseye Accessible Classroom Standard</strong></span>
+          <span>✨ <strong>{t.footerStandard}</strong></span>
           <span className="footer-dot">•</span>
           <span className="footer-brand-pill">
             <CanvasLogo size={13} className="sync-canvas-icon" />
-            <span>Canvas LMS API Connected</span>
+            <span>{t.footerCanvasApi}</span>
           </span>
           <span className="footer-dot">•</span>
           <span className="footer-brand-pill">
             <EdStemLogo size={13} className="header-edstem-icon" />
-            <span>EdStem Q&amp;A Live Sync</span>
+            <span>{t.footerEdstemSync}</span>
           </span>
           <span className="footer-dot">•</span>
-          <span>WCAG 2.2 AA Contrast Checked</span>
+          <span>{t.footerContrast}</span>
         </div>
         <div className="footer-right">
-          <span>Keyboard: Tab / Esc / [ ] / c</span>
+          <span>{t.footerKeys}</span>
           <span className="footer-dot">•</span>
-          <span>Zero clinical tracking · Dignity-first</span>
+          <span>{t.footerDignity}</span>
         </div>
       </footer>
     </div>
