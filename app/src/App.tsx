@@ -76,6 +76,16 @@ const initialEdstemQuestions: EdstemQuestion[] = [
   },
 ]
 
+interface ClassOutline {
+  unit: string
+  summary: string
+  keyConcepts: string[]
+  reading: string
+  assignments: string
+  rubricConstraint: string
+  officeHours?: string
+}
+
 interface ScheduledClass {
   id: string
   code: string
@@ -83,8 +93,10 @@ interface ScheduledClass {
   time: string
   location: string
   topic: string
+  instructor: string
   isLive: boolean
   canvasSync: string
+  outline: ClassOutline
 }
 
 const scheduleData: Record<string, ScheduledClass[]> = {
@@ -96,18 +108,48 @@ const scheduleData: Record<string, ScheduledClass[]> = {
       time: '10:00 AM – 10:50 AM',
       location: 'Rowland Hall 101',
       topic: 'Introduction to Substitution Rule',
+      instructor: 'Prof. Chen',
       isLive: false,
       canvasSync: 'Homework 3 Graded',
+      outline: {
+        unit: 'Unit 2: Techniques of Integration',
+        summary: 'Introduction to the differential substitution rule for indefinite integrals, identifying derivative patterns g\'(x)dx, and change of variables.',
+        keyConcepts: [
+          'Differential substitution theorem: ∫ f(g(x))g\'(x)dx = ∫ f(u)du',
+          'Pattern recognition for inner composite functions u = g(x)',
+          'Accounting for constant multipliers when solving for dx',
+          'Converting expressions back to original variable x (+ C)',
+        ],
+        reading: 'Stewart Calculus 8th Ed, Section 5.5 (pp. 410–418)',
+        assignments: 'Homework 3 (Graded: 20/20) · Worksheet 12 due in discussion',
+        rubricConstraint: 'Must always write the arbitrary constant + C for indefinite integrals',
+        officeHours: 'Prof. Chen · Mon/Wed 2:00–3:30 PM (Rowland Hall 214)',
+      },
     },
     {
       id: 'm2',
       code: 'PHYS 7C',
-      title: 'Classical Mechanics',
+      title: 'Classical Mechanics · Lecture 7',
       time: '1:00 PM – 2:20 PM',
       location: 'PSLH 120',
-      topic: 'Simple Harmonic Motion',
+      topic: 'Simple Harmonic Motion & Energy',
+      instructor: 'Prof. Robertson',
       isLive: false,
       canvasSync: 'Lab 2 Submitted',
+      outline: {
+        unit: 'Unit 2: Oscillations and Mechanical Waves',
+        summary: 'Kinematics of ideal harmonic oscillators, Hooke\'s Law linear restoring forces, phase angles, and conservation of mechanical energy.',
+        keyConcepts: [
+          'Position trajectory x(t) = A cos(ωt + φ)',
+          'Angular frequency ω = √(k/m), Period T = 2π/ω',
+          'Total mechanical energy E = 1/2 k A² = constant',
+          'Velocity leads displacement by π/2 radians',
+        ],
+        reading: 'Giancoli Physics for Scientists & Engineers, Chapter 14.1–14.3',
+        assignments: 'Lab 2: Air Track Oscillations (Submitted, pending rubric grading)',
+        rubricConstraint: 'All state vectors must explicitly include SI units (rad/s, m/s²)',
+        officeHours: 'Prof. Robertson · Tue 10:00–11:30 AM (PSLH 142)',
+      },
     },
   ],
   'Tue Nov 11': [
@@ -118,8 +160,23 @@ const scheduleData: Record<string, ScheduledClass[]> = {
       time: '3:30 PM – 4:50 PM',
       location: 'DBH 1100',
       topic: 'Divide and Conquer: Master Theorem',
+      instructor: 'Prof. Shindler',
       isLive: false,
       canvasSync: 'Quiz 3 Completed',
+      outline: {
+        unit: 'Unit 2: Divide-and-Conquer Recurrences',
+        summary: 'Asymptotic analysis of recursive branch algorithms using the Master Method across subproblem division and recombination costs.',
+        keyConcepts: [
+          'General recurrence T(n) = a T(n/b) + f(n)',
+          'Critical exponent comparison log_b(a) vs. polynomial degree of f(n)',
+          'Case 1 (leaf heavy), Case 2 (balanced tree), Case 3 (root heavy)',
+          'Regularity condition verification a f(n/b) ≤ c f(n)',
+        ],
+        reading: 'CLRS Algorithms 3rd Ed, Chapter 4.5 (pp. 93–106)',
+        assignments: 'Quiz 3: Recurrence Trees (Score: 10/10) · Problem Set 2 assigned',
+        rubricConstraint: 'Must explicitly prove the regularity condition holds when applying Case 3',
+        officeHours: 'Prof. Shindler · Tue/Thu 1:00–2:30 PM (DBH 4022)',
+      },
     },
   ],
   'Wed Nov 12': [
@@ -129,19 +186,48 @@ const scheduleData: Record<string, ScheduledClass[]> = {
       title: 'Calculus II · Lecture 13',
       time: '10:00 AM – 10:50 AM',
       location: 'Rowland Hall 101',
-      topic: 'Indefinite Integrals with Substitution',
+      topic: 'Indefinite Integrals with Algebraic Substitution',
+      instructor: 'Prof. Chen',
       isLive: false,
       canvasSync: 'Worksheet 13 Submitted',
+      outline: {
+        unit: 'Unit 2: Advanced Integration Techniques',
+        summary: 'Higher-degree substitutions, completing the square in quadratic denominators, and algebraic manipulation prior to variable substitution.',
+        keyConcepts: [
+          'Completing the square: ax² + bx + c → a(x - h)² + k',
+          'Standard forms yielding arcsin(u/a) and (1/a) arctan(u/a)',
+          'Rationalizing substitutions for root expressions u = √(g(x))',
+        ],
+        reading: 'Stewart Calculus 8th Ed, Section 5.5 (pp. 418–425)',
+        assignments: 'Worksheet 13 (Submitted) · Canvas Prep for Lecture 14',
+        rubricConstraint: 'State the domain constraints when introducing inverse trigonometric transformations',
+        officeHours: 'Prof. Chen · Mon/Wed 2:00–3:30 PM (Rowland Hall 214)',
+      },
     },
     {
       id: 'w2',
       code: 'PHYS 7C',
-      title: 'Classical Mechanics',
+      title: 'Classical Mechanics · Lecture 8',
       time: '1:00 PM – 2:20 PM',
       location: 'PSLH 120',
       topic: 'Driven Oscillations & Resonance',
+      instructor: 'Prof. Robertson',
       isLive: false,
       canvasSync: 'Homework 4 Due',
+      outline: {
+        unit: 'Unit 3: Driven Oscillatory Systems',
+        summary: 'Harmonically driven damped systems, steady-state vs. transient solutions, phase shifts, and mechanical resonance peaks.',
+        keyConcepts: [
+          'Driving force F(t) = F₀ cos(ω t)',
+          'Steady-state amplitude A(ω) = F₀ / √((k - mω²)² + b²ω²)',
+          'Resonance peak condition ω_res = √(ω₀² - 2γ²)',
+          'Phase lag δ(ω) between driving force and system velocity',
+        ],
+        reading: 'Giancoli Physics, Chapter 14.7–14.8',
+        assignments: 'Homework 4: Resonance Curves (Due 11:59 PM tonight on Canvas)',
+        rubricConstraint: 'Derive the maximum amplitude formula before substituting numerical values',
+        officeHours: 'Prof. Robertson · Wed 3:00–4:30 PM (PSLH 142)',
+      },
     },
     {
       id: 'w3',
@@ -149,9 +235,23 @@ const scheduleData: Record<string, ScheduledClass[]> = {
       title: 'Algorithms Discussion',
       time: '5:00 PM – 5:50 PM',
       location: 'ICS 174',
-      topic: 'Greedy Algorithms Practice',
+      topic: 'Greedy Algorithms: Interval Scheduling',
+      instructor: 'TA Jessica',
       isLive: false,
       canvasSync: 'No submission required',
+      outline: {
+        unit: 'Unit 3: Greedy Choice Paradigm',
+        summary: 'Proving optimality of greedy choices using inductive exchange arguments and earliest-deadline-first ordering.',
+        keyConcepts: [
+          'Earliest finish time first selection',
+          'Greedy-stays-ahead induction proof structure',
+          'Interval partitioning and graph coloring lower bounds',
+        ],
+        reading: 'Kleinberg & Tardos Algorithm Design, Chapter 4.1–4.2',
+        assignments: 'Practice Worksheet · Ungraded in-class collaboration',
+        rubricConstraint: 'Inductive step must explicitly map the difference between greedy solution G and optimal solution O',
+        officeHours: 'TA Jessica · Fri 11:00 AM–1:00 PM (ICS 248)',
+      },
     },
   ],
   'Thu Nov 13': [
@@ -161,9 +261,24 @@ const scheduleData: Record<string, ScheduledClass[]> = {
       title: 'Design and Analysis of Algorithms',
       time: '3:30 PM – 4:50 PM',
       location: 'DBH 1100',
-      topic: 'Dynamic Programming: Intro',
+      topic: 'Dynamic Programming: Intro & Memoization',
+      instructor: 'Prof. Shindler',
       isLive: false,
       canvasSync: 'Quiz 4 Prep Available',
+      outline: {
+        unit: 'Unit 4: Dynamic Programming Principles',
+        summary: 'Characterizing optimal substructure, overlapping subproblems, top-down memoization arrays, and bottom-up iterative tabulation.',
+        keyConcepts: [
+          'Bellman principle of optimality',
+          'Memoization cache: trade O(n) memory for polynomial time',
+          'Weighted Interval Scheduling: OPT(j) = max(v_j + OPT(p(j)), OPT(j-1))',
+          'Pre-computing predecessor array p(j) via binary search in O(n log n)',
+        ],
+        reading: 'Kleinberg & Tardos, Chapter 6.1–6.2 (pp. 251–260)',
+        assignments: 'Quiz 4 Prep Module (Available on Canvas)',
+        rubricConstraint: 'Always specify the exact base cases and topological evaluation order of the DP table',
+        officeHours: 'Prof. Shindler · Tue/Thu 1:00–2:30 PM (DBH 4022)',
+      },
     },
   ],
   'Fri Nov 14 (Today)': [
@@ -174,18 +289,49 @@ const scheduleData: Record<string, ScheduledClass[]> = {
       time: '10:00 AM – 10:50 AM',
       location: 'Rowland Hall 101',
       topic: 'Definite Integrals via u-substitution',
+      instructor: 'Prof. Chen',
       isLive: true,
       canvasSync: 'Lab 14 Worksheet (Due 10:50 AM)',
+      outline: {
+        unit: 'Unit 2: Definite Integrals & Fundamental Theorem',
+        summary: 'Transforming integration bounds when executing change-of-variables: evaluating bounds directly in the u-domain without converting back to original variable x.',
+        keyConcepts: [
+          'Integration by Substitution Theorem: ∫_a^b f(g(x))g\'(x)dx = ∫_{g(a)}^{g(b)} f(u)du',
+          'Direct boundary evaluation: u(0) = 0² = 0, u(1) = 1² = 1',
+          'Evaluation on board: [e^u]_0^1 = e¹ - e⁰ = e - 1 exact',
+          'Never convert back to x for definite integrals (+ C is not needed)',
+        ],
+        reading: 'Stewart Calculus 8th Ed, Section 5.5 (pp. 418–422)',
+        assignments: 'Lab 14 In-Class Worksheet (Submit to Canvas by 10:50 AM sharp)',
+        rubricConstraint: 'Canvas Invariant: Exact fractions and mathematical constants only (write "e - 1", do not evaluate to decimal 1.718)',
+        officeHours: 'Prof. Chen · Mon/Wed 2:00–3:30 PM (Rowland Hall 214)',
+      },
     },
     {
       id: 'f2',
       code: 'PHYS 7C',
-      title: 'Classical Mechanics',
+      title: 'Classical Mechanics · Lecture 9',
       time: '1:00 PM – 2:20 PM',
       location: 'PSLH 120',
       topic: 'Damped Harmonic Oscillations',
+      instructor: 'Prof. Robertson',
       isLive: false,
       canvasSync: 'Lab 3 Opens at 1:00 PM',
+      outline: {
+        unit: 'Unit 3: Damped Oscillatory Systems',
+        summary: 'Linear drag forces proportional to velocity, characteristic quadratic auxiliary equation, and the three physical damping regimes.',
+        keyConcepts: [
+          'Differential equation of motion: m d²x/dt² + b dx/dt + k x = 0',
+          'Characteristic roots: r = -γ ± √(γ² - ω₀²), where γ = b / 2m',
+          'Underdamped (γ < ω₀): oscillatory decay with envelope A e^{-γt}',
+          'Critically damped (γ = ω₀): fastest return to equilibrium without oscillation',
+          'Overdamped (γ > ω₀): sluggish non-oscillatory return governed by slower exponential',
+        ],
+        reading: 'Giancoli Physics, Chapter 14.4–14.6 (pp. 385–392)',
+        assignments: 'Lab 3: Viscous Damping Sensors (Opens 1:00 PM, due next Monday 11:59 PM, 20 pts)',
+        rubricConstraint: 'Canvas Invariant: Clearly distinguish angular frequency ω_d = √(ω₀² - γ²) from undamped natural frequency ω₀',
+        officeHours: 'Prof. Robertson · Wed 3:00–4:30 PM (PSLH 142)',
+      },
     },
     {
       id: 'f3',
@@ -194,8 +340,23 @@ const scheduleData: Record<string, ScheduledClass[]> = {
       time: '3:30 PM – 4:50 PM',
       location: 'DBH 1100',
       topic: 'Dynamic Programming: Bellman-Ford',
+      instructor: 'Prof. Shindler',
       isLive: false,
       canvasSync: 'In-Class Quiz #4',
+      outline: {
+        unit: 'Unit 4: Dynamic Programming - Shortest Paths',
+        summary: 'Single-source shortest paths on directed graphs with arbitrary or negative edge weights, and detecting negative-weight cycles.',
+        keyConcepts: [
+          'Bellman-Ford recurrence: OPT(i, v) = min(OPT(i-1, v), min_{w ∈ V} (OPT(i-1, w) + c_{wv}))',
+          'Shortest simple path has at most |V|-1 edges',
+          'Negative cycle detection: if values change on iteration |V|, a negative cycle exists',
+          'Space optimization from O(|V|²) down to O(|V|) with standard predecessor pointers',
+        ],
+        reading: 'Kleinberg & Tardos Algorithm Design, Section 6.8 (pp. 288–299)',
+        assignments: 'In-Class Quiz #4 (Completed on Canvas Lockdown Browser, 15 pts)',
+        rubricConstraint: 'Canvas Invariant: Must prove absence of negative cycles before reconstructing the shortest path tree',
+        officeHours: 'Prof. Shindler · Tue/Thu 1:00–2:30 PM (DBH 4022)',
+      },
     },
   ],
 }
@@ -363,6 +524,8 @@ export default function App() {
   const [roomCodeInput, setRoomCodeInput] = useState<string>('MATH-2B')
   const [currentCourse, setCurrentCourse] = useState<string>('MATH 2B')
   const [currentTopic, setCurrentTopic] = useState<string>('Lecture 14: Integrals')
+  const [expandedOutlineId, setExpandedOutlineId] = useState<string | null>(null)
+  const [toastMessage, setToastMessage] = useState<string | null>(null)
 
   // Help Me Rejoin State
   const [rejoinInput, setRejoinInput] = useState<string>('I got confused when changing the bounds')
@@ -748,43 +911,17 @@ export default function App() {
         {/* VIEW 6: CALENDAR & CLASS JOIN HUB (DEFAULT LANDING VIEW) */}
         {activeView === 'calendar' && (
           <section className="calendar-container" aria-label="Class schedule and join hub">
-            {/* PROMINENT LIVE CLASS HERO BANNER */}
-            <div className="calendar-live-hero" role="region" aria-label="Active live class in session">
-              <div className="live-hero-top-row">
-                <span className="live-hero-badge">
-                  <span className="live-broadcast-indicator" aria-hidden="true" />
-                  {t.liveHeroBadge}
-                </span>
-                <span className="live-hero-canvas">
-                  <CanvasLogo size={14} />
-                  <span>{t.canvasDueToday}</span>
-                </span>
-              </div>
-
-              <div className="live-hero-main">
-                <div className="live-hero-text">
-                  <h3 className="live-hero-title">{t.liveHeroTitle}</h3>
-                  <p className="live-hero-topic">{t.liveHeroTopic}</p>
-                  <p className="live-hero-loc">{t.liveHeroLocation}</p>
-                </div>
-
-                <div className="live-hero-actions">
-                  <button
-                    type="button"
-                    className="btn-enter-hero"
-                    onClick={() => handleJoinClass('MATH 2B', 'Lecture 14: Integrals')}
-                  >
-                    <span>{t.enterLiveClassCTA}</span>
-                    <ArrowRight size={16} aria-hidden="true" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
             <div className="calendar-top-bar">
               <div>
                 <h2 className="calendar-title">{t.calendarTitle}</h2>
-                <p className="calendar-sub">{t.calendarSubtitle}</p>
+                <p className="calendar-sub">
+                  <span>{t.calendarSubtitle}</span>
+                  <span className="calendar-crumb-dot">·</span>
+                  <span className="calendar-canvas-status">
+                    <CanvasLogo size={13} />
+                    <span>Canvas Synced</span>
+                  </span>
+                </p>
               </div>
 
               {/* Room Code Quick Join */}
@@ -801,7 +938,7 @@ export default function App() {
                 <button
                   type="button"
                   className="quick-code-btn"
-                  onClick={() => handleJoinClass('MATH 2B', 'Lecture 14: Integrals')}
+                  onClick={() => handleJoinClass(roomCodeInput.trim() || 'MATH 2B', 'Lecture 14: Integrals')}
                 >
                   {t.joinLiveBtn}
                 </button>
@@ -810,14 +947,6 @@ export default function App() {
 
             {/* Weekly Date Selector Bar */}
             <div className="weekly-date-nav">
-              <div className="weekly-header">
-                <span>{t.weekRange}</span>
-                <span className="sync-note">
-                  <CanvasLogo size={14} className="sync-canvas-icon" />
-                  <span>{t.canvasConnected}</span>
-                </span>
-              </div>
-
               <div className="date-pills-row">
                 {Object.keys(scheduleData).map((dateKey) => {
                   const isActive = selectedDate === dateKey
@@ -827,7 +956,10 @@ export default function App() {
                       key={dateKey}
                       type="button"
                       className={`date-pill-btn ${isActive ? 'active' : ''}`}
-                      onClick={() => setSelectedDate(dateKey)}
+                      onClick={() => {
+                        setSelectedDate(dateKey)
+                        setExpandedOutlineId(null)
+                      }}
                     >
                       <span className="pill-day">{dateKey.split(' ')[0]}</span>
                       <span className="pill-date">{dateKey.split(' ')[1]}</span>
@@ -842,61 +974,130 @@ export default function App() {
 
             {/* Scheduled Classes for Selected Date */}
             <div className="scheduled-classes-section">
-              <h3 className="scheduled-section-title">
-                {t.classesForDate} {selectedDate}
-              </h3>
+              <div className="scheduled-section-header">
+                <h3 className="scheduled-section-title">
+                  {t.classesForDate} {selectedDate}
+                </h3>
+                <span className="scheduled-count-badge">
+                  {scheduleData[selectedDate]?.length || 0} enrolled classes
+                </span>
+              </div>
 
               <div className="scheduled-cards-stack">
-                {scheduleData[selectedDate]?.map((cls) => (
-                  <div
-                    key={cls.id}
-                    className={`scheduled-class-card ${cls.isLive ? 'class-live' : ''}`}
-                  >
-                    <div className="class-info">
-                      <div className="class-status-line">
-                        {cls.isLive ? (
-                          <span className="badge-live-now">
-                            <span className="live-broadcast-indicator" aria-hidden="true" />
-                            {t.liveNowBadge}
-                          </span>
-                        ) : (
-                          <span className="badge-upcoming">{t.upcomingBadge}</span>
-                        )}
-                        <span className="class-time">{cls.time}</span>
-                        <span className="class-loc">· {cls.location}</span>
-                      </div>
-                      <h4 className="class-name">{cls.title}</h4>
-                      <p className="class-topic">
-                        <strong>{t.topicLabel}</strong> {cls.topic}
-                      </p>
-                      <div className="class-canvas-pill">
-                        <CanvasLogo size={13} />
-                        <span className="class-canvas-sync">{cls.canvasSync}</span>
-                      </div>
-                    </div>
+                {scheduleData[selectedDate]?.map((cls) => {
+                  const isExpanded = expandedOutlineId === cls.id
+                  return (
+                    <div
+                      key={cls.id}
+                      className={`scheduled-class-card ${cls.isLive ? 'class-live' : ''} ${isExpanded ? 'card-expanded' : ''}`}
+                    >
+                      <div className="class-card-top-row">
+                        <div className="class-info">
+                          <div className="class-status-line">
+                            {cls.isLive ? (
+                              <span className="badge-live-now">
+                                <span className="live-broadcast-indicator" aria-hidden="true" />
+                                {t.liveNowBadge}
+                              </span>
+                            ) : (
+                              <span className="badge-upcoming">{t.upcomingBadge}</span>
+                            )}
+                            <span className="class-time">{cls.time}</span>
+                            <span className="class-loc">· {cls.location}</span>
+                            <span className="class-prof">· {cls.instructor}</span>
+                          </div>
+                          <h4 className="class-name">{cls.title}</h4>
+                          <p className="class-topic">
+                            <strong>{t.topicLabel}</strong> {cls.topic}
+                          </p>
+                          <div className="class-canvas-pill">
+                            <CanvasLogo size={13} />
+                            <span className="class-canvas-sync">{cls.canvasSync}</span>
+                          </div>
+                        </div>
 
-                    <div className="class-action-wrap">
-                      {cls.isLive ? (
-                        <button
-                          type="button"
-                          className="btn-enter-live"
-                          onClick={() => handleJoinClass(cls.code, cls.topic)}
-                        >
-                          <span>{t.enterLiveClassCTA}</span>
-                          <ArrowRight size={14} aria-hidden="true" />
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          className="btn-preview-class"
-                          onClick={() => alert(`Preview outline for ${cls.title} opened.`)}
-                        >
-                          {t.previewOutlineBtn}
-                        </button>
+                        <div className="class-action-wrap">
+                          {cls.isLive && (
+                            <button
+                              type="button"
+                              className="btn-enter-live"
+                              onClick={() => handleJoinClass(cls.code, cls.topic)}
+                            >
+                              <span>{t.enterLiveClassCTA}</span>
+                              <ArrowRight size={14} aria-hidden="true" />
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            className={`btn-preview-class ${isExpanded ? 'active' : ''}`}
+                            onClick={() =>
+                              setExpandedOutlineId((prev) => (prev === cls.id ? null : cls.id))
+                            }
+                            aria-expanded={isExpanded}
+                            title="Toggle lecture syllabus, formulas, and rubric data"
+                          >
+                            <span>{isExpanded ? 'Hide Outline ▲' : 'Preview Outline ▼'}</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* INLINE RICH LECTURE DATA (NO MODAL/DIALOG BOX) */}
+                      {isExpanded && cls.outline && (
+                        <div className="class-outline-drawer" role="region" aria-label="Course outline details">
+                          <div className="outline-grid">
+                            {/* Unit & Summary Box */}
+                            <div className="outline-box">
+                              <span className="outline-box-title">Course Unit & Scope</span>
+                              <strong className="outline-unit-name">{cls.outline.unit}</strong>
+                              <p className="outline-summary-text">{cls.outline.summary}</p>
+                            </div>
+
+                            {/* Key Concepts & Mathematical Formulas */}
+                            <div className="outline-box">
+                              <span className="outline-box-title">Key Core Concepts</span>
+                              <ul className="outline-concepts-list">
+                                {cls.outline.keyConcepts.map((concept, i) => (
+                                  <li key={i}>{concept}</li>
+                                ))}
+                              </ul>
+                            </div>
+
+                            {/* Reading & Preparation */}
+                            <div className="outline-box">
+                              <span className="outline-box-title">Assigned Reading & Textbook</span>
+                              <p className="outline-reading-text">📖 {cls.outline.reading}</p>
+                              {cls.outline.officeHours && (
+                                <p className="outline-office-hours">🕒 {cls.outline.officeHours}</p>
+                              )}
+                            </div>
+
+                            {/* Canvas Assignment & Grading Invariant */}
+                            <div className="outline-box rubric-box">
+                              <span className="outline-box-title">Canvas LMS Rubric Constraint</span>
+                              <div className="outline-rubric-note">
+                                ⚖️ {cls.outline.rubricConstraint}
+                              </div>
+                              <p className="outline-assignment-meta">
+                                📋 {cls.outline.assignments}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="outline-footer-actions">
+                            <button
+                              type="button"
+                              className="btn-launch-course-horizon"
+                              onClick={() => handleJoinClass(cls.code, cls.topic)}
+                            >
+                              <span>Enter {cls.code} Focus Horizon</span>
+                              <ArrowRight size={13} aria-hidden="true" />
+                            </button>
+                          </div>
+                        </div>
                       )}
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
           </section>
@@ -1114,7 +1315,8 @@ export default function App() {
                   navigator.clipboard?.writeText(
                     'Excuse me Professor, where should we submit the in-class assignment today?'
                   )
-                  alert(t.questionCopiedAlert)
+                  setToastMessage(t.questionCopiedAlert)
+                  setTimeout(() => setToastMessage(null), 3000)
                 }}
               >
                 {t.askInstructor}
@@ -1570,6 +1772,14 @@ export default function App() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Floating Non-Intrusive Toast Alert */}
+      {toastMessage && (
+        <div className="app-toast-notification" role="status" aria-live="polite">
+          <CheckCircle size={16} className="toast-icon" aria-hidden="true" />
+          <span className="toast-text">{toastMessage}</span>
         </div>
       )}
 
