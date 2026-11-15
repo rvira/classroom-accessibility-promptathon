@@ -1,0 +1,60 @@
+name: 💡 Feature Request
+description: Propose a new feature, classroom integration, or accessibility improvement
+title: "[Feature]: "
+labels: ["enhancement", "needs-discussion"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting an enhancement to Bullseye!
+        Our design philosophy prioritizes **Now-First** clarity, zero diagnostic stigma, and cognitive load minimization.
+
+  - type: input
+    id: feature_title
+    attributes:
+      label: Feature Title
+      description: A concise summary of the proposed feature.
+      placeholder: e.g. Canvas SpeedGrader rubric sync integration
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem & User Need
+      description: What specific problem or cognitive barrier does this solve for students or educators?
+      placeholder: Students participating in hybrid STEM labs lose track of checkpoint deadlines when switching browser tabs.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed Solution
+      description: Describe your proposed solution or how you envision the feature working.
+    validations:
+      required: true
+
+  - type: textarea
+    id: cognitive_a11y
+    attributes:
+      label: Cognitive & Accessibility Considerations
+      description: How does this proposal align with Now-First architecture, WCAG 2.2 AA, and zero-stigma principles?
+      placeholder: e.g. Keeps secondary information docked until requested; respects reduced-motion settings.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What other approaches or workarounds have you considered?
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: contribution_interest
+    attributes:
+      label: Willingness to Contribute
+      options:
+        - label: I am interested in implementing or testing this feature myself.

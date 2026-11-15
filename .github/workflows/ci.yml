@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend Lint & Typecheck & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install Frontend Dependencies
+        run: npm --prefix app ci || npm --prefix app install
+
+      - name: Run Frontend Linter (oxlint)
+        run: npm --prefix app run lint
+
+      - name: Build Frontend Application (TypeScript + Vite)
+        run: npm --prefix app run build
+
+  backend:
+    name: Backend Lint & Typecheck & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Backend Dependencies
+        run: npm --prefix server install
+
+      - name: Run Backend Typecheck & Lint
+        run: npm --prefix server run lint
+
+      - name: Build Backend Server (tsc)
+        run: npm --prefix server run build
+
+      - name: Run Backend Tests
+        run: npm --prefix server test
+
+  accessibility-wcag:
+    name: WCAG 2.2 AA & Design System Verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Verify Contrast Ratios & Regenerate Tokens
+        run: python3 design-system/build_tokens.py
+
+      - name: Ensure Generated CSS is in Sync
+        run: |
+          if [ -n "$(git status --porcelain design-system/tokens.css)" ]; then
+            echo "::error::design-system/tokens.css is out of sync with tokens.json. Run 'python3 design-system/build_tokens.py' and commit changes."
+            git diff design-system/tokens.css
+            exit 1
+          fi
