@@ -21,24 +21,24 @@ Instead of flooding students with everything at once, Bullseye shows only **one 
 
 ---
 
-## 🎬 See It in Action (2x Speed)
+## See It in Action (2x Speed)
 
 Watch the rapid visual walkthrough showing the live workspace, Canvas sync, and 10-second safe recovery flow:
 
 [![Bullseye Visual Demo Walkthrough](media/demo-preview.gif)](media/bullseye-demo-2x.mp4)
 
-- ⚡ **[Watch 2x Speed Website Demo (`media/bullseye-demo-2x.mp4`)](media/bullseye-demo-2x.mp4)**
-- 🌐 **[Try the Live Web App](https://classroom-accessibility-promptathon.vercel.app/)**
+- **[Watch 2x Speed Website Demo (`media/bullseye-demo-2x.mp4`)](media/bullseye-demo-2x.mp4)**
+- **[Try the Live Web App](https://classroom-accessibility-promptathon.vercel.app/)**
 
 ---
 
-## 🖥️ Live Interface Preview
+## Live Interface Preview
 
 ![Bullseye Triadic Horizon Workspace](media/02_now_horizon.png)
 
 ---
 
-## 🧠 Core Features (Explained Simply)
+## Core Features (Explained Simply)
 
 ### 1. Triadic Working-Memory Horizon
 Our 3D workspace organizes lecture information into three clear spatial planes so working memory never saturates:
@@ -71,7 +71,7 @@ Our 3D workspace organizes lecture information into three clear spatial planes s
 
 ---
 
-## 📊 Measured Impact
+## Measured Impact
 
 In prototype testing evaluated against typical university STEM lecture formats:
 
@@ -84,7 +84,18 @@ In prototype testing evaluated against typical university STEM lecture formats:
 
 ---
 
-## 🚀 Quickstart Guide
+## 🔬 Research & Design Foundation
+
+Bullseye is grounded in peer-reviewed cognitive load theory and participatory co-design with neurodivergent students:
+
+- **[Now-First Design Principles](research/now-first-design.md):** Core cognitive architecture for working-memory preservation.
+- **[Design Philosophy](research/design-philosophy.md):** The psychological case for zero-stigma default accommodations.
+- **[Disability & Accessibility Evidence](research/disability-evidence.md):** Analysis of executive function and auditory processing barriers in higher education.
+- **[Design Tokens & WCAG Verification](design-system/tokens.json):** Atkinson Hyperlegible typography and verified 4.5:1 / 3:1 contrast ratios.
+
+---
+
+## Quickstart Guide
 
 ### Option A: Run Locally with npm
 
@@ -126,47 +137,9 @@ npm --prefix server run build
 npm --prefix app run lint
 npm --prefix app run build
 ```
-
 ---
 
-## 🔬 Research & Design Foundation
-
-Bullseye is grounded in peer-reviewed cognitive load theory and participatory co-design with neurodivergent students:
-
-- **[Now-First Design Principles](research/now-first-design.md):** Core cognitive architecture for working-memory preservation.
-- **[Design Philosophy](research/design-philosophy.md):** The psychological case for zero-stigma default accommodations.
-- **[Disability & Accessibility Evidence](research/disability-evidence.md):** Analysis of executive function and auditory processing barriers in higher education.
-- **[Design Tokens & WCAG Verification](design-system/tokens.json):** Atkinson Hyperlegible typography and verified 4.5:1 / 3:1 contrast ratios.
-
----
-
-## 📽️ Interactive Presentation & Media
-
-- **Interactive Presentation Deck:** [`design-system/slides/index.html`](design-system/slides/index.html)
-- **Speaker Guide & Script:** [`design-system/slides/SPEAKER_NOTES.md`](design-system/slides/SPEAKER_NOTES.md)
-- **2x Website Demo Video:** [`media/bullseye-demo-2x.mp4`](media/bullseye-demo-2x.mp4)
-- **Animated Walkthrough Preview:** [`media/demo-preview.gif`](media/demo-preview.gif)
-- **High-Resolution Interface Captures:**
-  - 📅 [Class Schedule & Live Hub (`media/01_calender.png`)](media/01_calender.png)
-  - 🎯 [Now Focus Triadic Horizon (`media/02_now_horizon.png`)](media/02_now_horizon.png)
-  - 📝 [Teacher Verbatim Board Notes (`media/03_technical_derivation.png`)](media/03_technical_derivation.png)
-  - 🕊️ [Sensory Calm Mode (`media/04_calm_mode.png`)](media/04_calm_mode.png)
-  - 🔄 [Safe Rejoin Catch-Up Flow (`media/05_rejoin_flow.png`)](media/05_rejoin_flow.png)
-  - 💬 [EdStem Live Discussion Hub (`media/06_edstem_qa.png`)](media/06_edstem_qa.png)
-
----
-
-## 🎓 UC Irvine Pilot Program
-
-Bullseye is configured for live classroom trial evaluation in foundational STEM sequences at the **University of California, Irvine**, including:
-- **MATH 2B:** Single-Variable Calculus (Integration by Substitution & Area)
-- **PHYS 7C:** Classical Mechanics (Damped Harmonic Oscillations)
-- **CHEM 1A:** General Chemistry (Hess's Law & Enthalpy Cycles)
-- **ICS 33:** Intermediate Python (Metaprogramming & Decorators)
-
----
-
-## 🤝 Community & Open Source
+## Community & Open Source
 
 Bullseye is an open-source project developed under the **MIT License**. We welcome contributions from researchers, developers, educators, and accessibility advocates.
 
