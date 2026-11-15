@@ -6,3 +6,5 @@ dist/
 *.local
 *.log
 .vercel/
+.vercel
+.env*
