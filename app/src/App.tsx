@@ -3,13 +3,13 @@ import {
   Activity,
   AlertTriangle,
   ArrowRight,
+  BookOpen,
   Calendar,
   Check,
   CheckCircle,
   ChevronLeft,
   ChevronRight,
   Compass,
-  ExternalLink,
   Info,
   LogOut,
   MessageSquare,
@@ -525,7 +525,7 @@ export default function App() {
       {/* ================= TOP APPLICATION HEADER ================= */}
       <header className="revamped-top-bar" role="banner">
         
-        {/* Brand & Classroom Breadcrumb */}
+        {/* Left: Brand & Classroom Course Switcher */}
         <div className="revamped-brand-row">
           <button
             type="button"
@@ -543,7 +543,7 @@ export default function App() {
             <button
               type="button"
               className="revamped-course-crumb"
-              onClick={() => setActiveView('calendar')}
+              onClick={() => setActiveView(activeView === 'calendar' ? 'now' : 'calendar')}
               title="Click to view classes or switch course"
             >
               <span>{currentCourse}</span>
@@ -554,26 +554,45 @@ export default function App() {
           </div>
         </div>
 
-        {/* LMS & Discussion Integration Chips */}
-        <div className="revamped-integrations-row">
-          {/* Canvas LMS Indicator */}
-          <div className="integration-chip canvas-chip" title="Connected to Canvas LMS Modules">
-            <span className="chip-dot canvas-dot" />
-            <span className="chip-text">Canvas: "Lab 14" Synced</span>
-          </div>
-
-          {/* EdStem Discussion Indicator */}
+        {/* Center: Simplified 2-Mode Segmented Pill */}
+        <div className="center-view-selector" role="tablist" aria-label="Core view mode">
           <button
             type="button"
-            className="integration-chip edstem-chip"
-            onClick={() => setActiveView('edstem')}
-            title="4 Active Questions on EdStem for this lecture"
+            role="tab"
+            aria-selected={activeView === 'now'}
+            className={`center-tab-btn ${activeView === 'now' ? 'active' : ''}`}
+            onClick={() => setActiveView('now')}
           >
-            <span className="chip-dot edstem-dot" />
-            <span className="chip-text">EdStem: {edstemQuestions.length} Questions</span>
+            <span aria-hidden="true">🎯</span>
+            <span>Now Focus</span>
           </button>
 
-          {/* Live Teacher Recorder Button */}
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeView === 'overview'}
+            className={`center-tab-btn ${activeView === 'overview' ? 'active' : ''}`}
+            onClick={() => setActiveView('overview')}
+          >
+            <span aria-hidden="true">📋</span>
+            <span>All Steps (4)</span>
+          </button>
+        </div>
+
+        {/* Right: Essential Action Controls */}
+        <div className="revamped-actions-row">
+          {/* EdStem Discussion Pill */}
+          <button
+            type="button"
+            className={`header-edstem-pill ${activeView === 'edstem' ? 'active' : ''}`}
+            onClick={() => setActiveView(activeView === 'edstem' ? 'now' : 'edstem')}
+            title="EdStem live questions for this lecture"
+          >
+            <span className="edstem-pulse-dot" />
+            <span>💬 EdStem ({edstemQuestions.length})</span>
+          </button>
+
+          {/* Live Teacher Recorder Pill */}
           <div className="live-recorder-container" ref={liveMenuRef}>
             <button
               type="button"
@@ -586,9 +605,9 @@ export default function App() {
               <span className="live-pulse-dot" aria-hidden="true" />
               <Mic size={14} className="live-mic-icon" aria-hidden="true" />
               <span className="live-label">
-                {recordingActive ? 'Prof. Chen Live' : 'Recording Paused'}
+                {recordingActive ? 'Prof. Chen' : 'Paused'}
               </span>
-              <span className="live-time-chip">00:34:12</span>
+              <span className="live-time-chip">34:12</span>
             </button>
 
             {liveDetailsOpen && (
@@ -633,58 +652,40 @@ export default function App() {
             )}
           </div>
 
-          {/* Student Progress Badge */}
-          <div className="step-progress-badge" aria-label={`Current progress: Step ${activeStepNumber} of 4`}>
-            Step {activeStepNumber} of 4
-          </div>
-        </div>
-
-        {/* Sensory & Accessibility Toolbar */}
-        <div className="revamped-actions-row">
-          <div className="sensory-toolbar" role="toolbar" aria-label="Sensory and accessibility controls">
-            <button
-              type="button"
-              className={`toolbar-btn calm-btn ${calmMode ? 'calm-active' : ''}`}
-              onClick={() => setCalmMode((prev) => !prev)}
-              title="Calm Mode (key: c): pauses background motion"
-              aria-pressed={calmMode}
-            >
-              <span aria-hidden="true">🕊️</span>
-              <span className="calm-btn-label">Calm: {calmMode ? 'On' : 'Off'}</span>
-            </button>
-
-            <div className="font-scale-group" aria-label="Text size adjusters">
-              <button
-                type="button"
-                className="scale-btn"
-                onClick={() => setFontScale((s) => Math.max(0.85, s - 0.08))}
-                title="Decrease font size"
-                aria-label="Decrease text size"
-              >
-                A-
-              </button>
-              <button
-                type="button"
-                className="scale-btn"
-                onClick={() => setFontScale((s) => Math.min(1.3, s + 0.08))}
-                title="Increase font size"
-                aria-label="Increase text size"
-              >
-                A+
-              </button>
-            </div>
-          </div>
-
+          {/* Calm Mode Toggle */}
           <button
             type="button"
-            className="tour-pill-btn"
-            onClick={openTour}
-            aria-label="Start interactive welcome tour"
+            className={`toolbar-btn calm-btn ${calmMode ? 'calm-active' : ''}`}
+            onClick={() => setCalmMode((prev) => !prev)}
+            title="Calm Mode (key: c): pauses background motion"
+            aria-pressed={calmMode}
           >
-            <Compass size={15} aria-hidden="true" />
-            <span>Tour</span>
+            <span aria-hidden="true">🕊️</span>
+            <span className="calm-btn-label">{calmMode ? 'Calm: On' : 'Calm'}</span>
           </button>
 
+          <div className="font-scale-group" aria-label="Text size adjusters">
+            <button
+              type="button"
+              className="scale-btn"
+              onClick={() => setFontScale((s) => Math.max(0.85, s - 0.08))}
+              title="Decrease font size"
+              aria-label="Decrease text size"
+            >
+              A-
+            </button>
+            <button
+              type="button"
+              className="scale-btn"
+              onClick={() => setFontScale((s) => Math.min(1.3, s + 0.08))}
+              title="Increase font size"
+              aria-label="Increase text size"
+            >
+              A+
+            </button>
+          </div>
+
+          {/* Profile Menu */}
           <div className="profile-container" ref={profileRef}>
             <button
               type="button"
@@ -723,7 +724,19 @@ export default function App() {
                   }}
                 >
                   <Calendar size={15} aria-hidden="true" />
-                  <span>My Class Schedule</span>
+                  <span>Class Schedule &amp; Join Hub</span>
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="profile-menu-item"
+                  onClick={() => {
+                    setActiveView('source')
+                    setProfileOpen(false)
+                  }}
+                >
+                  <BookOpen size={15} aria-hidden="true" />
+                  <span>Original Teacher Source</span>
                 </button>
                 <button
                   type="button"
@@ -749,88 +762,6 @@ export default function App() {
           </div>
         </div>
       </header>
-
-      {/* ================= PRIMARY NAVIGATION TABS ================= */}
-      <nav className="revamped-nav-tabs" aria-label="View switcher">
-        <div className="nav-tabs-group" role="tablist">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeView === 'now'}
-            className={`nav-tab-item ${activeView === 'now' ? 'active' : ''}`}
-            onClick={() => setActiveView('now')}
-          >
-            <span aria-hidden="true">🎯</span>
-            <span>Now Focus</span>
-          </button>
-
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeView === 'overview'}
-            className={`nav-tab-item ${activeView === 'overview' ? 'active' : ''}`}
-            onClick={() => setActiveView('overview')}
-          >
-            <span aria-hidden="true">📋</span>
-            <span>All Steps (4)</span>
-          </button>
-
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeView === 'rejoin'}
-            className={`nav-tab-item ${activeView === 'rejoin' ? 'active' : ''}`}
-            onClick={() => setActiveView('rejoin')}
-          >
-            <span aria-hidden="true">🔄</span>
-            <span>Help Me Rejoin</span>
-          </button>
-
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeView === 'edstem'}
-            className={`nav-tab-item ${activeView === 'edstem' ? 'active' : ''}`}
-            onClick={() => setActiveView('edstem')}
-          >
-            <span aria-hidden="true" className="edstem-icon-color">💬</span>
-            <span>EdStem Live Q&amp;A</span>
-          </button>
-
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeView === 'source'}
-            className={`nav-tab-item ${activeView === 'source' ? 'active' : ''}`}
-            onClick={() => setActiveView('source')}
-          >
-            <span aria-hidden="true">📜</span>
-            <span>Original Source</span>
-          </button>
-
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeView === 'calendar'}
-            className={`nav-tab-item ${activeView === 'calendar' ? 'active' : ''}`}
-            onClick={() => setActiveView('calendar')}
-          >
-            <span aria-hidden="true">📅</span>
-            <span>Schedule &amp; Join</span>
-          </button>
-        </div>
-
-        {/* Canvas Direct Portal Link */}
-        <button
-          type="button"
-          onClick={() => alert('Opening Canvas Assignment: Lab 14 Integration by Substitution')}
-          className="canvas-portal-link"
-          title="Direct link to submit this problem on Canvas"
-        >
-          <span>Canvas Assignment Portal</span>
-          <ExternalLink size={13} aria-hidden="true" />
-        </button>
-      </nav>
 
       {/* ================= MAIN CONTENT VIEWS ================= */}
       <main className="revamped-main-stage">
@@ -982,6 +913,15 @@ export default function App() {
         {/* VIEW 2: ALL STEPS OVERVIEW */}
         {activeView === 'overview' && (
           <section className="overview-container" aria-label="Step-by-step activity overview">
+            <div className="view-top-back-row">
+              <button
+                type="button"
+                className="view-back-btn"
+                onClick={() => setActiveView('now')}
+              >
+                ← Back to Task Focus
+              </button>
+            </div>
             <div className="overview-header">
               <div>
                 <h2 className="overview-title">In-Class Activity: Definite Integral via Substitution</h2>
@@ -1062,6 +1002,15 @@ export default function App() {
         {/* VIEW 3: HELP ME REJOIN (CATCH-UP ASSISTANT) */}
         {activeView === 'rejoin' && (
           <section className="rejoin-container" aria-label="Catch me up safe rejoin flow">
+            <div className="view-top-back-row">
+              <button
+                type="button"
+                className="view-back-btn"
+                onClick={() => setActiveView('now')}
+              >
+                ← Back to Task Focus
+              </button>
+            </div>
             <div className="rejoin-header">
               <span className="rejoin-icon" aria-hidden="true">🔄</span>
               <div>
@@ -1122,6 +1071,15 @@ export default function App() {
         {/* VIEW 4: EDSTEM LIVE Q&A */}
         {activeView === 'edstem' && (
           <section className="edstem-container" aria-label="EdStem discussion thread">
+            <div className="view-top-back-row">
+              <button
+                type="button"
+                className="view-back-btn"
+                onClick={() => setActiveView('now')}
+              >
+                ← Back to Task Focus
+              </button>
+            </div>
             <div className="edstem-header">
               <div className="edstem-title-wrap">
                 <div className="edstem-badge-icon" aria-hidden="true">Ed</div>
@@ -1214,6 +1172,15 @@ export default function App() {
         {/* VIEW 5: ORIGINAL SOURCE */}
         {activeView === 'source' && (
           <section className="source-container" aria-label="Original teacher instructions">
+            <div className="view-top-back-row">
+              <button
+                type="button"
+                className="view-back-btn"
+                onClick={() => setActiveView('now')}
+              >
+                ← Back to Task Focus
+              </button>
+            </div>
             <div className="source-header">
               <div className="source-title-wrap">
                 <span className="source-icon" aria-hidden="true">📜</span>
@@ -1253,6 +1220,15 @@ export default function App() {
         {/* VIEW 6: CALENDAR & CLASS JOIN HUB */}
         {activeView === 'calendar' && (
           <section className="calendar-container" aria-label="Class schedule and join hub">
+            <div className="view-top-back-row">
+              <button
+                type="button"
+                className="view-back-btn"
+                onClick={() => setActiveView('now')}
+              >
+                ← Back to Task Focus
+              </button>
+            </div>
             <div className="calendar-top-bar">
               <div>
                 <h2 className="calendar-title">Class Schedule &amp; Join Hub</h2>
@@ -1386,15 +1362,12 @@ export default function App() {
 
       {/* ================= ACCESSIBLE WELCOME TOUR MODAL ================= */}
       {tourOpen && (
-        <div className="tour-backdrop" role="dialog" aria-modal="true" aria-label="Welcome tour">
-          <div className="tour-modal">
-            <div className="tour-header">
-              <div className="tour-header-meta">
-                <span className="tour-step-pill">
-                  Step {tourStep + 1} of {tourSteps.length}
-                </span>
-                <span className="tour-title-mini">{tourSteps[tourStep].title}</span>
-              </div>
+        <div className="tour-overlay" role="dialog" aria-modal="true" aria-label="Welcome tour">
+          <div className="tour-card">
+            <div className="tour-card-header">
+              <span className="tour-badge">
+                Step {tourStep + 1} of {tourSteps.length}
+              </span>
               <button
                 type="button"
                 className="tour-close-btn"
@@ -1409,15 +1382,15 @@ export default function App() {
               <div className="tour-icon-wrap" aria-hidden="true">
                 {(() => {
                   const IconComponent = tourSteps[tourStep].icon
-                  return <IconComponent size={28} className="tour-step-icon" />
+                  return <IconComponent size={28} />
                 })()}
               </div>
-              <h3 className="tour-step-title">{tourSteps[tourStep].title}</h3>
-              <p className="tour-step-subtitle">{tourSteps[tourStep].subtitle}</p>
-              <p className="tour-step-desc">{tourSteps[tourStep].description}</p>
+              <h3 className="tour-title">{tourSteps[tourStep].title}</h3>
+              <p className="tour-subtitle">{tourSteps[tourStep].subtitle}</p>
+              <p className="tour-description">{tourSteps[tourStep].description}</p>
               {tourSteps[tourStep].tip && (
-                <div className="tour-step-tip">
-                  <Sparkles size={14} className="tour-tip-icon" aria-hidden="true" />
+                <div className="tour-tip">
+                  <span className="tour-tip-tag">Tip: </span>
                   <span>{tourSteps[tourStep].tip}</span>
                 </div>
               )}
@@ -1426,15 +1399,21 @@ export default function App() {
             <div className="tour-footer">
               <div className="tour-dots" aria-hidden="true">
                 {tourSteps.map((_, i) => (
-                  <span key={i} className={`tour-dot ${i === tourStep ? 'active' : ''}`} />
+                  <button
+                    key={i}
+                    type="button"
+                    className={`tour-dot ${i === tourStep ? 'active' : ''}`}
+                    onClick={() => setTourStep(i)}
+                    aria-label={`Go to tour step ${i + 1}`}
+                  />
                 ))}
               </div>
 
-              <div className="tour-actions">
+              <div className="tour-buttons">
                 {tourStep > 0 && (
                   <button
                     type="button"
-                    className="tour-nav-btn tour-prev"
+                    className="tour-btn tour-btn-secondary"
                     onClick={() => setTourStep((s) => s - 1)}
                   >
                     <ChevronLeft size={16} aria-hidden="true" />
@@ -1445,7 +1424,7 @@ export default function App() {
                 {tourStep < tourSteps.length - 1 ? (
                   <button
                     type="button"
-                    className="tour-nav-btn tour-next"
+                    className="tour-btn tour-btn-primary"
                     onClick={() => setTourStep((s) => s + 1)}
                   >
                     <span>Next</span>
@@ -1454,7 +1433,7 @@ export default function App() {
                 ) : (
                   <button
                     type="button"
-                    className="tour-nav-btn tour-finish"
+                    className="tour-btn tour-btn-primary"
                     onClick={closeTour}
                   >
                     <span>Get Started</span>

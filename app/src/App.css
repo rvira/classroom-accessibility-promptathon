@@ -1787,6 +1787,75 @@ input:focus-visible {
   font-weight: 500;
 }
 
+/* ---------- Center Simplified 2-Mode Segmented Control ---------- */
+.center-view-selector {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: #eaece8;
+  padding: 3px;
+  border-radius: 12px;
+  border: 1px solid rgba(20, 22, 26, 0.06);
+}
+
+.center-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #64748b;
+  font-family: var(--ui);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.center-tab-btn:hover {
+  color: var(--ink);
+}
+
+.center-tab-btn.active {
+  background: #ffffff;
+  color: var(--accent);
+  font-weight: 700;
+  border-color: rgba(70, 130, 15, 0.18);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Header EdStem Pill */
+.header-edstem-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(0, 150, 136, 0.08);
+  border: 1px solid rgba(0, 150, 136, 0.25);
+  color: #00796b;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.header-edstem-pill:hover,
+.header-edstem-pill.active {
+  background: rgba(0, 150, 136, 0.18);
+  border-color: #009688;
+  transform: translateY(-1px);
+}
+
+.edstem-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #009688;
+}
+
 /* ---------- Integrations Chips Row ---------- */
 .revamped-integrations-row {
   display: flex;
@@ -2049,6 +2118,46 @@ input:focus-visible {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.card-3d .kicker-row {
+  margin-bottom: 8px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.card-3d .kicker {
+  font-size: 0.82rem !important;
+  letter-spacing: 0.1em;
+  margin: 0 !important;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+  white-space: normal;
+}
+
+.card-3d .action {
+  font-family: var(--display) !important;
+  font-size: clamp(1.4rem, 2.2vw, 2.2rem) !important;
+  line-height: 1.18 !important;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 6px auto 14px !important;
+  max-width: 18ch !important;
+}
+
+.card-3d .context,
+.card-3d .constraints {
+  font-family: var(--ui) !important;
+  font-size: clamp(0.88rem, 1.1vw, 1.05rem) !important;
+  line-height: 1.45 !important;
+  color: #475569 !important;
+  margin: 0 auto !important;
+  max-width: 28ch !important;
+}
+
 .card-dimmed {
   opacity: 0.58;
   transform: scale(0.96) translateZ(-15px);
@@ -2251,6 +2360,35 @@ input:focus-visible {
 
 .edstem-view-answer-btn:hover {
   background: rgba(0, 150, 136, 0.2);
+}
+
+/* ---------- View Top Back Button ---------- */
+.view-top-back-row {
+  margin-bottom: 16px;
+  display: flex;
+}
+
+.view-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(20, 22, 26, 0.1);
+  background: #f8fafc;
+  color: #475569;
+  font-family: var(--ui);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.view-back-btn:hover {
+  background: #ffffff;
+  color: var(--accent);
+  border-color: rgba(70, 130, 15, 0.3);
+  transform: translateX(-2px);
 }
 
 /* ---------- View 2: All Steps Overview ---------- */
