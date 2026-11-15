@@ -28,12 +28,12 @@ import './App.css'
 
 /* Sample state from one Math 2B (Calculus) lecture on integrals.
    Synthetic, not a transcript, and no model is called. The visible copy is
-   plain on purpose; the exact maths lives behind each small i button. */
+   focused and accessible; technical derivation details live behind each info trigger. */
 const lecture = {
   course: 'Math 2B · Lecture 14 · Integrals',
-  where: 'The class is on one integral problem. They just renamed a messy part with the letter u.',
-  next: 'Change the start and end values.',
-  keep: 'Change them too — don’t switch back. Give the exact answer.',
+  where: 'Definite integration via substitution. Preceding step established parameter u = 2x + 1.',
+  next: 'Transform integration limits in terms of u.',
+  keep: 'Retain transformed limits throughout evaluation; do not back-substitute. Express solution as an exact fraction.',
 }
 
 type ViewMode = 'now' | 'overview' | 'rejoin' | 'edstem' | 'source' | 'calendar'
@@ -228,11 +228,11 @@ const tourSteps: TourStep[] = [
     icon: Target,
   },
   {
-    title: 'The 3-Part Horizon',
-    subtitle: 'Context, immediate action, and constraints',
+    title: 'Triadic Working-Memory Horizon',
+    subtitle: 'Antecedent state, focal directive, and invariant constraints',
     description:
-      'Look across the screen: "Where we are" anchors the lecture context, "Next action" is your clear focal point, and "Keep in mind" lists the essential assignment rules.',
-    tip: 'No more searching across chaotic chat threads or multi-page slide decks.',
+      'The workspace projects tasks across three spatial depths: Context Anchor maintains situational awareness, Active Directive isolates the immediate execution target, and Invariant Constraints preserves critical rubric and submission boundaries.',
+    tip: 'Eliminates cognitive fragmentation without sacrificing academic rigor or grading parameters.',
     icon: Compass,
   },
   {
@@ -807,17 +807,17 @@ export default function App() {
             onMouseMove={handleArenaMouseMove}
             onMouseLeave={handleArenaMouseLeave}
           >
-            {/* HORIZON STEP PROGRESS FLOW BAR */}
-            <div className="horizon-step-flow-bar" role="region" aria-label="Step progress horizon">
+            {/* TRIADIC WORKING-MEMORY HORIZON */}
+            <div className="horizon-step-flow-bar" role="region" aria-label="Triadic working-memory progress horizon">
               <div className="step-flow-header">
                 <div className="step-flow-badge-wrap">
                   <span className="step-flow-badge">
                     <span className="step-flow-beacon" aria-hidden="true" />
-                    <span>Step {activeStepNumber} of 4</span>
+                    <span>Checkpoint {activeStepNumber} of 4</span>
                   </span>
                   <span className="step-flow-desc">
                     {activeStepNumber === 2
-                      ? 'Change the start and end values (Integration limits)'
+                      ? 'Transform integration limits into u-domain'
                       : activeStepNumber === 3
                       ? 'Integrate directly with respect to u'
                       : 'Activity Progress'}
@@ -893,15 +893,15 @@ export default function App() {
 
             <div ref={cardsRowRef} className="now-cards-row">
               
-              {/* LEFT CARD: WHERE WE ARE (DIMMED ORIENTATION) */}
+              {/* LEFT CARD: CONTEXT ANCHOR (ANTECEDENT STATE) */}
               <div className="card-3d card-dimmed">
                 <div className="kicker-row">
-                  <h2 className="kicker">Where we are</h2>
+                  <h2 className="kicker">Context Anchor</h2>
                   <button
                     type="button"
                     className="block-info"
                     aria-expanded={openTech === 'where'}
-                    aria-label="Show the technical version of where we are"
+                    aria-label="Show technical specification of antecedent context"
                     onClick={() => setOpenTech(openTech === 'where' ? null : 'where')}
                   >
                     <Info size={15} aria-hidden="true" />
@@ -910,18 +910,18 @@ export default function App() {
                 <p className="context">{lecture.where}</p>
               </div>
 
-              {/* CENTER CARD: NEXT ACTION (ELEVATED 3D FOCUS) */}
+              {/* CENTER CARD: ACTIVE DIRECTIVE (FOCAL EXECUTION) */}
               <div className="card-3d card-focus">
                 {/* Course Context Header inside Center Card */}
                 <p className="card-course-kicker">{lecture.course}</p>
 
                 <div className="kicker-row center-kicker-row">
-                  <h2 className="kicker action-kicker">Next Action</h2>
+                  <h2 className="kicker action-kicker">Active Directive</h2>
                   <button
                     type="button"
                     className="block-info"
                     aria-expanded={openTech === 'next'}
-                    aria-label="Show the technical version of the next step"
+                    aria-label="Show technical specification of active directive"
                     onClick={() => setOpenTech(openTech === 'next' ? null : 'next')}
                   >
                     <Info size={15} aria-hidden="true" />
@@ -942,12 +942,12 @@ export default function App() {
                     {stepCompleted ? (
                       <>
                         <RotateCcw size={15} aria-hidden="true" />
-                        <span>Undo (Mark Incomplete)</span>
+                        <span>Undo Checkpoint</span>
                       </>
                     ) : (
                       <>
                         <Check size={16} aria-hidden="true" />
-                        <span>Mark Step 2 Done</span>
+                        <span>Complete Checkpoint 2</span>
                       </>
                     )}
                   </button>
@@ -957,20 +957,20 @@ export default function App() {
                     className="step-stuck-btn"
                     onClick={() => setActiveView('rejoin')}
                   >
-                    I'm stuck / catch up
+                    Resynchronize / Catch Up
                   </button>
                 </div>
               </div>
 
-              {/* RIGHT CARD: KEEP IN MIND (DIMMED CONSTRAINTS + CANVAS) */}
+              {/* RIGHT CARD: INVARIANT CONSTRAINTS (RUBRIC & DEADLINES) */}
               <div className="card-3d card-dimmed">
                 <div className="kicker-row">
-                  <h2 className="kicker">Keep in mind</h2>
+                  <h2 className="kicker">Invariant Constraints</h2>
                   <button
                     type="button"
                     className="block-info"
                     aria-expanded={openTech === 'keep'}
-                    aria-label="Show the technical version of what to keep in mind"
+                    aria-label="Show technical specification of invariant constraints"
                     onClick={() => setOpenTech(openTech === 'keep' ? null : 'keep')}
                   >
                     <Info size={15} aria-hidden="true" />
