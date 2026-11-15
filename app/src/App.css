@@ -3813,9 +3813,241 @@ input:focus-visible {
 }
 
 .calendar-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.78rem;
   color: #64748b;
   margin: 4px 0 0;
+}
+
+.calendar-crumb-dot {
+  color: #cbd5e1;
+}
+
+.calendar-canvas-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #b31427;
+  font-weight: 700;
+  font-size: 0.74rem;
+}
+
+.scheduled-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2px;
+}
+
+.scheduled-count-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.class-card-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.class-prof {
+  color: #475569;
+  font-weight: 600;
+}
+
+.btn-preview-class {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-preview-class:hover {
+  background: #ffffff;
+  border-color: var(--accent);
+  color: var(--ink);
+}
+
+.btn-preview-class.active {
+  background: #004d40;
+  border-color: #004d40;
+  color: #ffffff;
+}
+
+/* Rich Course Outline Drawer (Zero-Dialog-Box Data Presentation) */
+.class-outline-drawer {
+  width: 100%;
+  margin-top: 14px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(20, 22, 26, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: outlineDrawerFade 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes outlineDrawerFade {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.outline-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.outline-box {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.outline-box.rubric-box {
+  background: #fff8f8;
+  border-color: rgba(232, 31, 55, 0.2);
+}
+
+.outline-box-title {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #64748b;
+}
+
+.outline-unit-name {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.outline-summary-text {
+  font-size: 0.78rem;
+  color: #475569;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.outline-concepts-list {
+  margin: 4px 0 0 16px;
+  padding: 0;
+  font-size: 0.78rem;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.outline-reading-text {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #334155;
+  margin: 0;
+}
+
+.outline-office-hours {
+  font-size: 0.74rem;
+  color: #64748b;
+  margin: 2px 0 0;
+}
+
+.outline-rubric-note {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #b31427;
+  line-height: 1.4;
+}
+
+.outline-assignment-meta {
+  font-size: 0.74rem;
+  color: #475569;
+  margin: 2px 0 0;
+}
+
+.outline-footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-launch-course-horizon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: none;
+  background: var(--accent-deep);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 105, 92, 0.2);
+  transition: all 0.15s ease;
+}
+
+.btn-launch-course-horizon:hover {
+  background: #004d40;
+  transform: translateY(-1px);
+}
+
+/* Floating Non-Intrusive Toast Alert */
+.app-toast-notification {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: #1e293b;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  animation: toastSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.app-toast-notification .toast-icon {
+  color: #4ade80;
+}
+
+@keyframes toastSlideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 14px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
 }
 
 .quick-code-box {
