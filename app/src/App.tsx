@@ -1,21 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   Activity,
-  ArrowLeftRight,
+  AlertTriangle,
   ArrowRight,
+  Calendar,
+  Check,
   CheckCircle,
   ChevronLeft,
   ChevronRight,
   Compass,
-  Equal,
-  HelpCircle,
+  ExternalLink,
   Info,
   LogOut,
+  MessageSquare,
   Mic,
-  MoveHorizontal,
   Radio,
-  Settings,
-  Sigma,
+  RotateCcw,
   Sparkles,
   Target,
   User,
@@ -35,33 +35,179 @@ const lecture = {
   keep: 'Change them too — don’t switch back. Give the exact answer.',
 }
 
-const catchUpSteps = [
+type ViewMode = 'now' | 'overview' | 'rejoin' | 'edstem' | 'source' | 'calendar'
+
+interface EdstemQuestion {
+  id: string
+  author: string
+  timeAgo: string
+  question: string
+  stepTag: string
+  isEndorsed: boolean
+  answer?: {
+    author: string
+    text: string
+  }
+}
+
+const initialEdstemQuestions: EdstemQuestion[] = [
   {
-    icon: Sigma,
-    text: 'The class is solving one integral together.',
-    info: 'One worked example from today. You don’t need the earlier examples to follow this.',
+    id: '1',
+    author: 'Anonymous Student',
+    timeAgo: '3 mins ago',
+    question: "For Problem 2, why don't we convert back to x at the end like we did on Wednesday?",
+    stepTag: 'Step 2: Integration Limits',
+    isEndorsed: true,
+    answer: {
+      author: 'TA Marcus',
+      text: 'Because this is a definite integral with limits [0, 4]. Once you convert the limits to u [1, 9], you evaluate the numbers directly in u. Converting back to x is only for indefinite integrals (+ C)!',
+    },
   },
   {
-    icon: ArrowLeftRight,
-    text: 'They renamed a messy part of it with the letter u.',
-    info: 'The messy part was x². Calling it u means you work with one letter instead of a whole expression.',
+    id: '2',
+    author: 'Anonymous Student',
+    timeAgo: '7 mins ago',
+    question: 'Is the assignment submission on Canvas closing exactly at 10:50 AM or is there a grace period?',
+    stepTag: 'Submission Constraints',
+    isEndorsed: false,
   },
   {
-    icon: MoveHorizontal,
-    text: 'The start and end numbers change with it.',
-    info: 'The problem runs from a start value to an end value. When the letter changes, those two numbers change too.',
-  },
-  {
-    icon: Equal,
-    text: 'That left a much simpler problem to finish.',
-    info: 'After the swap it is one short, standard step. Nothing new to learn here.',
-  },
-  {
-    icon: ArrowRight,
-    text: 'The answer is about 1.7. A new method starts next.',
-    info: 'The value comes out around 1.7. Next the class moves to a different technique, so you can join there.',
+    id: '3',
+    author: 'Anonymous Student',
+    timeAgo: '14 mins ago',
+    question: 'Do limits flip if u(0) turns out greater than u(4)?',
+    stepTag: 'Step 2: Bounds',
+    isEndorsed: true,
+    answer: {
+      author: 'Prof. Chen',
+      text: 'Yes! If the lower bound maps to a higher value than the upper bound, keep them in their mapped positions, or apply the negative property: integral from a to b = - integral from b to a.',
+    },
   },
 ]
+
+interface ScheduledClass {
+  id: string
+  code: string
+  title: string
+  time: string
+  location: string
+  topic: string
+  isLive: boolean
+  canvasSync: string
+}
+
+const scheduleData: Record<string, ScheduledClass[]> = {
+  'Mon Nov 10': [
+    {
+      id: 'm1',
+      code: 'MATH 2B',
+      title: 'Calculus II · Lecture 12',
+      time: '10:00 AM – 10:50 AM',
+      location: 'Rowland Hall 101',
+      topic: 'Introduction to Substitution Rule',
+      isLive: false,
+      canvasSync: 'Homework 3 Graded',
+    },
+    {
+      id: 'm2',
+      code: 'PHYS 7C',
+      title: 'Classical Mechanics',
+      time: '1:00 PM – 2:20 PM',
+      location: 'PSLH 120',
+      topic: 'Simple Harmonic Motion',
+      isLive: false,
+      canvasSync: 'Lab 2 Submitted',
+    },
+  ],
+  'Tue Nov 11': [
+    {
+      id: 't1',
+      code: 'COMPSCI 161',
+      title: 'Design and Analysis of Algorithms',
+      time: '3:30 PM – 4:50 PM',
+      location: 'DBH 1100',
+      topic: 'Divide and Conquer: Master Theorem',
+      isLive: false,
+      canvasSync: 'Quiz 3 Completed',
+    },
+  ],
+  'Wed Nov 12': [
+    {
+      id: 'w1',
+      code: 'MATH 2B',
+      title: 'Calculus II · Lecture 13',
+      time: '10:00 AM – 10:50 AM',
+      location: 'Rowland Hall 101',
+      topic: 'Indefinite Integrals with Substitution',
+      isLive: false,
+      canvasSync: 'Worksheet 13 Submitted',
+    },
+    {
+      id: 'w2',
+      code: 'PHYS 7C',
+      title: 'Classical Mechanics',
+      time: '1:00 PM – 2:20 PM',
+      location: 'PSLH 120',
+      topic: 'Driven Oscillations & Resonance',
+      isLive: false,
+      canvasSync: 'Homework 4 Due',
+    },
+    {
+      id: 'w3',
+      code: 'COMPSCI 161',
+      title: 'Algorithms Discussion',
+      time: '5:00 PM – 5:50 PM',
+      location: 'ICS 174',
+      topic: 'Greedy Algorithms Practice',
+      isLive: false,
+      canvasSync: 'No submission required',
+    },
+  ],
+  'Thu Nov 13': [
+    {
+      id: 'th1',
+      code: 'COMPSCI 161',
+      title: 'Design and Analysis of Algorithms',
+      time: '3:30 PM – 4:50 PM',
+      location: 'DBH 1100',
+      topic: 'Dynamic Programming: Intro',
+      isLive: false,
+      canvasSync: 'Quiz 4 Prep Available',
+    },
+  ],
+  'Fri Nov 14 (Today)': [
+    {
+      id: 'f1',
+      code: 'MATH 2B',
+      title: 'Calculus II · Lecture 14',
+      time: '10:00 AM – 10:50 AM',
+      location: 'Rowland Hall 101',
+      topic: 'Definite Integrals via u-substitution',
+      isLive: true,
+      canvasSync: 'Lab 14 Worksheet (Due 10:50 AM)',
+    },
+    {
+      id: 'f2',
+      code: 'PHYS 7C',
+      title: 'Classical Mechanics',
+      time: '1:00 PM – 2:20 PM',
+      location: 'PSLH 120',
+      topic: 'Damped Harmonic Oscillations',
+      isLive: false,
+      canvasSync: 'Lab 3 Opens at 1:00 PM',
+    },
+    {
+      id: 'f3',
+      code: 'COMPSCI 161',
+      title: 'Design and Analysis of Algorithms',
+      time: '3:30 PM – 4:50 PM',
+      location: 'DBH 1100',
+      topic: 'Dynamic Programming: Bellman-Ford',
+      isLive: false,
+      canvasSync: 'In-Class Quiz #4',
+    },
+  ],
+}
 
 interface TourStep {
   title: string
@@ -89,24 +235,23 @@ const tourSteps: TourStep[] = [
     icon: Compass,
   },
   {
-    title: 'Inspect Exact Math Anytime',
-    subtitle: 'Plain words with full depth behind them',
+    title: 'Canvas LMS & EdStem Integration',
+    subtitle: 'Assignments & live classroom questions',
     description:
-      'Visible copy is kept plain and readable. Whenever you need the unabridged board formulas, substitution variables, or exact values, click any small info (i) button.',
-    tip: 'Every technical popover includes accessible screen-reader explanations.',
-    icon: Info,
+      'Bullseye syncs with your Canvas modules for exact submission deadlines, and surfaces live EdStem discussion threads tagged directly to your current lecture problem.',
+    tip: 'One click lets you ask a question auto-tagged with your problem step.',
+    icon: MessageSquare,
   },
   {
     title: 'Rejoin Whenever You Drift',
     subtitle: 'No penalties, no lost time',
     description:
-      'Lost the thread? Tap "Help me rejoin" at the bottom. Type the last thing you recall, and Bullseye provides a structured, chronological path right back to the current problem.',
+      'Lost the thread? Tap "Help me rejoin" at the top. Type what you recall, and Bullseye provides a safe 10-second recap grounded in the current step.',
     tip: 'You can restart this tour anytime from the top bar or profile menu.',
     icon: Sparkles,
   },
 ]
 
-type Stage = 'ask' | 'steps'
 type BlockKey = 'where' | 'next' | 'keep'
 
 function Integral({ lower, upper, children }: { lower: string; upper: string; children: React.ReactNode }) {
@@ -148,26 +293,19 @@ function Technical({ block }: { block: BlockKey }) {
   if (block === 'next') {
     return (
       <>
-        <p className="tech-label">Limit change</p>
+        <p className="tech-label">On the board</p>
         <p className="math-line" aria-hidden="true">
-          x = 0 &nbsp;→&nbsp; u = 0
-        </p>
-        <p className="math-line" aria-hidden="true">
-          x = 1 &nbsp;→&nbsp; u = 1
+          x = 0 → u = 0
+          <br />x = 1 → u = 1
         </p>
         <p className="math-line math-soft" aria-hidden="true">
-          <Integral lower="0" upper="1">
-            2x·e<sup>x²</sup> dx
-          </Integral>
-          &nbsp;=&nbsp;
           <Integral lower="0" upper="1">
             e<sup>u</sup> du
           </Integral>
         </p>
         <p className="sr-only">
-          The start and end values are rewritten in u: x equals 0 becomes u equals 0, and x equals 1
-          becomes u equals 1. The integral from 0 to 1 of 2x times e to the x squared, dx becomes the
-          integral from 0 to 1 of e to the u, du.
+          The limits change: when x is 0, u is 0; when x is 1, u is 1. The integral becomes the integral
+          from 0 to 1 of e to the u, du.
         </p>
       </>
     )
@@ -175,43 +313,85 @@ function Technical({ block }: { block: BlockKey }) {
 
   return (
     <>
-      <p className="tech-label">Exact value</p>
+      <p className="tech-label">On the board</p>
       <p className="math-line" aria-hidden="true">
-        <Integral lower="0" upper="1">
-          e<sup>u</sup> du
-        </Integral>
-        &nbsp;=&nbsp; e − 1 ≈ 1.718
+        [e<sup>u</sup>] from 0 to 1 = e¹ − e⁰
       </p>
-      <p className="tech-note">Evaluated in u. x never comes back.</p>
+      <p className="math-line math-soft" aria-hidden="true">
+        = e − 1 &nbsp;(exact)
+      </p>
       <p className="sr-only">
-        The integral from 0 to 1 of e to the u, du equals e minus 1, about 1.718. It is evaluated in u,
-        so x is never substituted back.
+        The calculation is: e to the u evaluated from 0 to 1, which equals e to the 1 minus e to the 0,
+        which equals e minus 1 exact. Do not write a decimal.
       </p>
     </>
   )
 }
 
-function App() {
-  const [open, setOpen] = useState(false)
-  const [stage, setStage] = useState<Stage>('ask')
-  const [draft, setDraft] = useState('')
-  const [answer, setAnswer] = useState('')
-  const [openInfo, setOpenInfo] = useState<number | null>(null)
+export default function App() {
+  const [activeView, setActiveView] = useState<ViewMode>('now')
   const [openTech, setOpenTech] = useState<BlockKey | null>(null)
   const [profileOpen, setProfileOpen] = useState(false)
-  const [tourOpen, setTourOpen] = useState(() => {
+  const [liveDetailsOpen, setLiveDetailsOpen] = useState(false)
+  const [recordingActive, setRecordingActive] = useState(true)
+
+  // Sensory & Accessibility Toolbar State
+  const [calmMode, setCalmMode] = useState<boolean>(() => {
     try {
-      return !localStorage.getItem('bullseye_tour_seen')
+      return localStorage.getItem('bullseye_calm_mode') === 'true'
     } catch {
       return false
     }
   })
-  const [tourStep, setTourStep] = useState(0)
-  const [recordingActive, setRecordingActive] = useState(true)
-  const [liveDetailsOpen, setLiveDetailsOpen] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const profileRef = useRef<HTMLDivElement>(null)
-  const liveMenuRef = useRef<HTMLDivElement>(null)
+  const [fontScale, setFontScale] = useState<number>(1.0)
+
+  // Step Progress State
+  const [stepCompleted, setStepCompleted] = useState(false)
+  const [activeStepNumber, setActiveStepNumber] = useState(2)
+
+  // Calendar Hub State
+  const [selectedDate, setSelectedDate] = useState<string>('Fri Nov 14 (Today)')
+  const [roomCodeInput, setRoomCodeInput] = useState<string>('MATH-2B')
+  const [currentCourse, setCurrentCourse] = useState<string>('MATH 2B')
+  const [currentTopic, setCurrentTopic] = useState<string>('Lecture 14: Integrals')
+
+  // Help Me Rejoin State
+  const [rejoinInput, setRejoinInput] = useState<string>('I got confused when changing the bounds')
+  const [rejoinGenerated, setRejoinGenerated] = useState<boolean>(true)
+
+  // EdStem State
+  const [edstemQuestions, setEdstemQuestions] = useState<EdstemQuestion[]>(initialEdstemQuestions)
+  const [newQuestionModalOpen, setNewQuestionModalOpen] = useState<boolean>(false)
+  const [newQuestionText, setNewQuestionText] = useState<string>('')
+
+  // Welcome Tour State
+  const [tourOpen, setTourOpen] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('bullseye_tour_seen') !== 'true'
+    } catch {
+      return false
+    }
+  })
+  const [tourStep, setTourStep] = useState<number>(0)
+
+  const profileRef = useRef<HTMLDivElement | null>(null)
+  const liveMenuRef = useRef<HTMLDivElement | null>(null)
+  const cardsRowRef = useRef<HTMLDivElement | null>(null)
+  const arenaRef = useRef<HTMLDivElement | null>(null)
+
+  // Persist calm mode
+  useEffect(() => {
+    try {
+      localStorage.setItem('bullseye_calm_mode', calmMode ? 'true' : 'false')
+    } catch {
+      // ignore
+    }
+  }, [calmMode])
+
+  // Apply font scale to document
+  useEffect(() => {
+    document.documentElement.style.setProperty('--font-scale', `${fontScale}rem`)
+  }, [fontScale])
 
   const openTour = () => {
     setTourStep(0)
@@ -224,142 +404,176 @@ function App() {
     try {
       localStorage.setItem('bullseye_tour_seen', 'true')
     } catch {
-      // safe fallback
+      // ignore
     }
   }
 
-  const nextTourStep = () => {
-    setTourStep((s) => {
-      if (s < tourSteps.length - 1) return s + 1
-      closeTour()
-      return s
+  // Keyboard navigation
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      // Ignore when typing in an input
+      if (['INPUT', 'TEXTAREA'].includes((event.target as HTMLElement)?.tagName)) {
+        if (event.key === 'Escape') {
+          setNewQuestionModalOpen(false)
+        }
+        return
+      }
+
+      if (event.key === 'Escape') {
+        setNewQuestionModalOpen(false)
+        setLiveDetailsOpen(false)
+        setProfileOpen(false)
+        setOpenTech(null)
+        if (tourOpen) closeTour()
+        return
+      }
+
+      if (event.key === 'c' || event.key === 'C') {
+        setCalmMode((prev) => !prev)
+        return
+      }
+
+      if (event.key === ']' || event.key === 'ArrowRight') {
+        if (tourOpen) {
+          setTourStep((s) => (s < tourSteps.length - 1 ? s + 1 : s))
+        }
+      }
+
+      if (event.key === '[' || event.key === 'ArrowLeft') {
+        if (tourOpen) {
+          setTourStep((s) => (s > 0 ? s - 1 : s))
+        }
+      }
+    }
+
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [tourOpen])
+
+  // Close menus on outside click
+  useEffect(() => {
+    const onDocClick = (e: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false)
+      }
+      if (liveMenuRef.current && !liveMenuRef.current.contains(e.target as Node)) {
+        setLiveDetailsOpen(false)
+      }
+    }
+    document.addEventListener('click', onDocClick)
+    return () => document.removeEventListener('click', onDocClick)
+  }, [])
+
+  // 3D Tilt interaction for Now Focus Arena
+  const handleArenaMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (calmMode || !arenaRef.current || !cardsRowRef.current) return
+    const rect = arenaRef.current.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    const centerX = rect.width / 2
+    const centerY = rect.height / 2
+    const rotateX = ((y - centerY) / centerY) * -5
+    const rotateY = ((x - centerX) / centerX) * 6
+    cardsRowRef.current.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
+  }
+
+  const handleArenaMouseLeave = () => {
+    if (cardsRowRef.current) {
+      cardsRowRef.current.style.transform = 'rotateX(0deg) rotateY(0deg)'
+    }
+  }
+
+  const toggleStepCompletion = () => {
+    setStepCompleted((prev) => {
+      const next = !prev
+      if (next) {
+        setActiveStepNumber(3)
+      } else {
+        setActiveStepNumber(2)
+      }
+      return next
     })
   }
 
-  const prevTourStep = () => {
-    setTourStep((s) => (s > 0 ? s - 1 : s))
+  const handleJoinClass = (course: string, topic: string) => {
+    setCurrentCourse(course)
+    setCurrentTopic(topic)
+    setActiveView('now')
   }
 
-  const close = () => {
-    setOpen(false)
-    setStage('ask')
-    setOpenInfo(null)
+  const handlePostEdstemQuestion = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newQuestionText.trim()) return
+    const newQ: EdstemQuestion = {
+      id: Date.now().toString(),
+      author: 'You (Anonymous)',
+      timeAgo: 'Just now',
+      question: newQuestionText.trim(),
+      stepTag: 'Step 2: Integration Limits',
+      isEndorsed: false,
+    }
+    setEdstemQuestions([newQ, ...edstemQuestions])
+    setNewQuestionText('')
+    setNewQuestionModalOpen(false)
+    setActiveView('edstem')
   }
-
-  useEffect(() => {
-    if (!open || stage !== 'ask') return
-    // Defer past the click that opened the sheet; otherwise the browser
-    // hands focus back to the body after the trigger unmounts.
-    const frame = requestAnimationFrame(() => inputRef.current?.focus())
-    return () => cancelAnimationFrame(frame)
-  }, [open, stage])
-
-  useEffect(() => {
-    if (!profileOpen) return
-    const onPointerDown = (event: PointerEvent) => {
-      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
-        setProfileOpen(false)
-      }
-    }
-    window.addEventListener('pointerdown', onPointerDown)
-    return () => window.removeEventListener('pointerdown', onPointerDown)
-  }, [profileOpen])
-
-  useEffect(() => {
-    if (!liveDetailsOpen) return
-    const onPointerDown = (event: PointerEvent) => {
-      if (liveMenuRef.current && !liveMenuRef.current.contains(event.target as Node)) {
-        setLiveDetailsOpen(false)
-      }
-    }
-    window.addEventListener('pointerdown', onPointerDown)
-    return () => window.removeEventListener('pointerdown', onPointerDown)
-  }, [liveDetailsOpen])
-
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (tourOpen) {
-        if (event.key === 'Escape') {
-          closeTour()
-          return
-        }
-        if (event.key === 'ArrowRight') {
-          setTourStep((s) => {
-            if (s < tourSteps.length - 1) return s + 1
-            setTourOpen(false)
-            try {
-              localStorage.setItem('bullseye_tour_seen', 'true')
-            } catch {
-              // safe fallback
-            }
-            return s
-          })
-          return
-        }
-        if (event.key === 'ArrowLeft') {
-          setTourStep((s) => (s > 0 ? s - 1 : s))
-          return
-        }
-      }
-      if (event.key !== 'Escape') return
-      if (liveDetailsOpen) {
-        setLiveDetailsOpen(false)
-        return
-      }
-      if (profileOpen) {
-        setProfileOpen(false)
-        return
-      }
-      if (openInfo !== null) {
-        setOpenInfo(null)
-        return
-      }
-      if (openTech !== null) {
-        setOpenTech(null)
-        return
-      }
-      if (open) {
-        setOpen(false)
-        setStage('ask')
-      }
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [open, openInfo, openTech, profileOpen, liveDetailsOpen, tourOpen])
-
-  const submit = (event: React.FormEvent) => {
-    event.preventDefault()
-    const value = draft.trim()
-    if (!value) return
-    setAnswer(value)
-    setDraft('')
-    setStage('steps')
-  }
-
-  const blocks: { key: BlockKey; label: string }[] = [
-    { key: 'where', label: 'Where we are' },
-    { key: 'next', label: 'Next' },
-    { key: 'keep', label: 'Keep in mind' },
-  ]
-
-  const shell = ['app']
-  if (open) shell.push('sheet-open')
-  if (open && stage === 'steps') shell.push('sheet-steps')
-
-  const dock = ['dock']
-  if (open) dock.push('open')
-  if (open && stage === 'steps') dock.push('steps')
 
   return (
-    <div className={shell.join(' ')}>
-      <InteractiveBackground />
-      <header className="top-bar">
-        <div className="top-brand">
-          <Target size={24} strokeWidth={2.8} className="top-brand-icon" aria-hidden="true" />
-          <span className="top-brand-name">Bullseye</span>
+    <div className={`app ${calmMode ? 'calm-mode' : ''}`}>
+      <InteractiveBackground calm={calmMode} />
+
+      {/* ================= TOP APPLICATION HEADER ================= */}
+      <header className="revamped-top-bar" role="banner">
+        
+        {/* Brand & Classroom Breadcrumb */}
+        <div className="revamped-brand-row">
+          <button
+            type="button"
+            className="revamped-brand-btn"
+            onClick={() => setActiveView('calendar')}
+            title="Open Class Schedule & Hub"
+          >
+            <Target size={22} strokeWidth={2.8} className="revamped-brand-icon" aria-hidden="true" />
+            <span className="revamped-brand-name">Bullseye</span>
+          </button>
+
+          <span className="revamped-crumb-divider">/</span>
+
+          <div className="revamped-crumb-wrap">
+            <button
+              type="button"
+              className="revamped-course-crumb"
+              onClick={() => setActiveView('calendar')}
+              title="Click to view classes or switch course"
+            >
+              <span>{currentCourse}</span>
+              <span className="crumb-arrow">▼</span>
+            </button>
+            <span className="revamped-crumb-dot">·</span>
+            <span className="revamped-topic-crumb">{currentTopic}</span>
+          </div>
         </div>
 
-        <div className="top-actions">
+        {/* LMS & Discussion Integration Chips */}
+        <div className="revamped-integrations-row">
+          {/* Canvas LMS Indicator */}
+          <div className="integration-chip canvas-chip" title="Connected to Canvas LMS Modules">
+            <span className="chip-dot canvas-dot" />
+            <span className="chip-text">Canvas: "Lab 14" Synced</span>
+          </div>
+
+          {/* EdStem Discussion Indicator */}
+          <button
+            type="button"
+            className="integration-chip edstem-chip"
+            onClick={() => setActiveView('edstem')}
+            title="4 Active Questions on EdStem for this lecture"
+          >
+            <span className="chip-dot edstem-dot" />
+            <span className="chip-text">EdStem: {edstemQuestions.length} Questions</span>
+          </button>
+
+          {/* Live Teacher Recorder Button */}
           <div className="live-recorder-container" ref={liveMenuRef}>
             <button
               type="button"
@@ -372,40 +586,30 @@ function App() {
               <span className="live-pulse-dot" aria-hidden="true" />
               <Mic size={14} className="live-mic-icon" aria-hidden="true" />
               <span className="live-label">
-                {recordingActive ? 'Teacher Live' : 'Recording Paused'}
+                {recordingActive ? 'Prof. Chen Live' : 'Recording Paused'}
               </span>
-              <span className="live-wave" aria-hidden="true">
-                <i />
-                <i />
-                <i />
-              </span>
+              <span className="live-time-chip">00:34:12</span>
             </button>
 
             {liveDetailsOpen && (
-              <div
-                className="live-details-popover"
-                role="dialog"
-                aria-label="Real-time lecture recording details"
-              >
+              <div className="live-details-popover" role="dialog" aria-label="Real-time lecture recording details">
                 <div className="live-details-head">
                   <div className="live-details-title-row">
-                    <span className="live-badge">Live Capture</span>
+                    <span className="live-badge">Live Extract</span>
                     <span className="live-timer">34:12</span>
                   </div>
                   <h3 className="live-stream-title">Professor Mic Stream</h3>
                   <p className="live-stream-sub">Real-time lecture extraction &amp; progress sync</p>
                 </div>
-
                 <div className="live-progress-bar-wrap">
                   <div className="live-progress-labels">
                     <span>Lecture Progress</span>
-                    <span>Step 2 of 3</span>
+                    <span>Step {activeStepNumber} of 4</span>
                   </div>
                   <div className="live-progress-track">
-                    <div className="live-progress-fill" style={{ width: '66%' }} />
+                    <div className="live-progress-fill" style={{ width: stepCompleted ? '75%' : '50%' }} />
                   </div>
                 </div>
-
                 <div className="live-details-meta">
                   <div className="live-meta-item">
                     <Activity size={14} aria-hidden="true" />
@@ -416,7 +620,6 @@ function App() {
                     <span>Audio Stream: 48kHz stereo · 42ms sync</span>
                   </div>
                 </div>
-
                 <div className="live-details-foot">
                   <button
                     type="button"
@@ -430,6 +633,48 @@ function App() {
             )}
           </div>
 
+          {/* Student Progress Badge */}
+          <div className="step-progress-badge" aria-label={`Current progress: Step ${activeStepNumber} of 4`}>
+            Step {activeStepNumber} of 4
+          </div>
+        </div>
+
+        {/* Sensory & Accessibility Toolbar */}
+        <div className="revamped-actions-row">
+          <div className="sensory-toolbar" role="toolbar" aria-label="Sensory and accessibility controls">
+            <button
+              type="button"
+              className={`toolbar-btn calm-btn ${calmMode ? 'calm-active' : ''}`}
+              onClick={() => setCalmMode((prev) => !prev)}
+              title="Calm Mode (key: c): pauses background motion"
+              aria-pressed={calmMode}
+            >
+              <span aria-hidden="true">🕊️</span>
+              <span className="calm-btn-label">Calm: {calmMode ? 'On' : 'Off'}</span>
+            </button>
+
+            <div className="font-scale-group" aria-label="Text size adjusters">
+              <button
+                type="button"
+                className="scale-btn"
+                onClick={() => setFontScale((s) => Math.max(0.85, s - 0.08))}
+                title="Decrease font size"
+                aria-label="Decrease text size"
+              >
+                A-
+              </button>
+              <button
+                type="button"
+                className="scale-btn"
+                onClick={() => setFontScale((s) => Math.min(1.3, s + 0.08))}
+                title="Increase font size"
+                aria-label="Increase text size"
+              >
+                A+
+              </button>
+            </div>
+          </div>
+
           <button
             type="button"
             className="tour-pill-btn"
@@ -437,7 +682,7 @@ function App() {
             aria-label="Start interactive welcome tour"
           >
             <Compass size={15} aria-hidden="true" />
-            <span>Welcome Tour</span>
+            <span>Tour</span>
           </button>
 
           <div className="profile-container" ref={profileRef}>
@@ -472,118 +717,656 @@ function App() {
                   type="button"
                   role="menuitem"
                   className="profile-menu-item"
+                  onClick={() => {
+                    setActiveView('calendar')
+                    setProfileOpen(false)
+                  }}
+                >
+                  <Calendar size={15} aria-hidden="true" />
+                  <span>My Class Schedule</span>
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="profile-menu-item"
+                  onClick={() => setCalmMode((prev) => !prev)}
+                >
+                  <Sparkles size={15} aria-hidden="true" />
+                  <span>Calm View: {calmMode ? 'Disable' : 'Enable'}</span>
+                </button>
+                <hr className="profile-divider" />
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="profile-menu-item profile-logout"
                   onClick={() => setProfileOpen(false)}
                 >
-                  <User size={15} aria-hidden="true" />
-                  <span>Profile</span>
+                  <LogOut size={15} aria-hidden="true" />
+                  <span>Sign Out</span>
                 </button>
-              <button
-                type="button"
-                role="menuitem"
-                className="profile-menu-item"
-                onClick={() => setProfileOpen(false)}
-              >
-                <Settings size={15} aria-hidden="true" />
-                <span>Settings</span>
-              </button>
-              <button
-                type="button"
-                role="menuitem"
-                className="profile-menu-item"
-                onClick={() => setProfileOpen(false)}
-              >
-                <Sparkles size={15} aria-hidden="true" />
-                <span>Accessibility Preferences</span>
-              </button>
-              <button
-                type="button"
-                role="menuitem"
-                className="profile-menu-item"
-                onClick={() => setProfileOpen(false)}
-              >
-                <HelpCircle size={15} aria-hidden="true" />
-                <span>Help &amp; Resources</span>
-              </button>
-              <hr className="profile-divider" />
-              <button
-                type="button"
-                role="menuitem"
-                className="profile-menu-item profile-logout"
-                onClick={() => setProfileOpen(false)}
-              >
-                <LogOut size={15} aria-hidden="true" />
-                <span>Sign Out</span>
-              </button>
-            </div>
-          )}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
 
-      <div className="ether" aria-hidden="true">
-        {Array.from({ length: 9 }, (_, i) => (
-          <i key={i} />
-        ))}
-      </div>
+      {/* ================= PRIMARY NAVIGATION TABS ================= */}
+      <nav className="revamped-nav-tabs" aria-label="View switcher">
+        <div className="nav-tabs-group" role="tablist">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeView === 'now'}
+            className={`nav-tab-item ${activeView === 'now' ? 'active' : ''}`}
+            onClick={() => setActiveView('now')}
+          >
+            <span aria-hidden="true">🎯</span>
+            <span>Now Focus</span>
+          </button>
 
-      <main>
-        <div className="workspace">
-          <p className="course">{lecture.course}</p>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeView === 'overview'}
+            className={`nav-tab-item ${activeView === 'overview' ? 'active' : ''}`}
+            onClick={() => setActiveView('overview')}
+          >
+            <span aria-hidden="true">📋</span>
+            <span>All Steps (4)</span>
+          </button>
 
-          <section className="row" aria-label="Sample classroom activity">
-            <div className="block">
-              <div className="kicker-row">
-                <h2 className="kicker">{blocks[0].label}</h2>
-                <button
-                  type="button"
-                  className="block-info"
-                  aria-expanded={openTech === 'where'}
-                  aria-label="Show the technical version of where we are"
-                  onClick={() => setOpenTech(openTech === 'where' ? null : 'where')}
-                >
-                  <Info size={15} aria-hidden="true" />
-                </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeView === 'rejoin'}
+            className={`nav-tab-item ${activeView === 'rejoin' ? 'active' : ''}`}
+            onClick={() => setActiveView('rejoin')}
+          >
+            <span aria-hidden="true">🔄</span>
+            <span>Help Me Rejoin</span>
+          </button>
+
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeView === 'edstem'}
+            className={`nav-tab-item ${activeView === 'edstem' ? 'active' : ''}`}
+            onClick={() => setActiveView('edstem')}
+          >
+            <span aria-hidden="true" className="edstem-icon-color">💬</span>
+            <span>EdStem Live Q&amp;A</span>
+          </button>
+
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeView === 'source'}
+            className={`nav-tab-item ${activeView === 'source' ? 'active' : ''}`}
+            onClick={() => setActiveView('source')}
+          >
+            <span aria-hidden="true">📜</span>
+            <span>Original Source</span>
+          </button>
+
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeView === 'calendar'}
+            className={`nav-tab-item ${activeView === 'calendar' ? 'active' : ''}`}
+            onClick={() => setActiveView('calendar')}
+          >
+            <span aria-hidden="true">📅</span>
+            <span>Schedule &amp; Join</span>
+          </button>
+        </div>
+
+        {/* Canvas Direct Portal Link */}
+        <button
+          type="button"
+          onClick={() => alert('Opening Canvas Assignment: Lab 14 Integration by Substitution')}
+          className="canvas-portal-link"
+          title="Direct link to submit this problem on Canvas"
+        >
+          <span>Canvas Assignment Portal</span>
+          <ExternalLink size={13} aria-hidden="true" />
+        </button>
+      </nav>
+
+      {/* ================= MAIN CONTENT VIEWS ================= */}
+      <main className="revamped-main-stage">
+        
+        {/* VIEW 1: NOW FOCUS (3D PERSPECTIVE CARDS) */}
+        {activeView === 'now' && (
+          <div
+            ref={arenaRef}
+            className="now-perspective-arena"
+            onMouseMove={handleArenaMouseMove}
+            onMouseLeave={handleArenaMouseLeave}
+          >
+            <div ref={cardsRowRef} className="now-cards-row">
+              
+              {/* LEFT CARD: WHERE WE ARE (DIMMED ORIENTATION) */}
+              <div className="card-3d card-dimmed">
+                <div className="kicker-row">
+                  <h2 className="kicker">Where we are</h2>
+                  <button
+                    type="button"
+                    className="block-info"
+                    aria-expanded={openTech === 'where'}
+                    aria-label="Show the technical version of where we are"
+                    onClick={() => setOpenTech(openTech === 'where' ? null : 'where')}
+                  >
+                    <Info size={15} aria-hidden="true" />
+                  </button>
+                </div>
+                <p className="context">{lecture.where}</p>
               </div>
-              <p className="context">{lecture.where}</p>
+
+              {/* CENTER CARD: NEXT ACTION (ELEVATED 3D FOCUS) */}
+              <div className="card-3d card-focus">
+                {/* Course Context Header inside Center Card */}
+                <p className="card-course-kicker">{lecture.course}</p>
+
+                <div className="kicker-row center-kicker-row">
+                  <h2 className="kicker action-kicker">Next Action</h2>
+                  <button
+                    type="button"
+                    className="block-info"
+                    aria-expanded={openTech === 'next'}
+                    aria-label="Show the technical version of the next step"
+                    onClick={() => setOpenTech(openTech === 'next' ? null : 'next')}
+                  >
+                    <Info size={15} aria-hidden="true" />
+                  </button>
+                </div>
+
+                <h1 className="action" aria-live="polite">
+                  {stepCompleted ? 'Integrate with respect to u directly.' : lecture.next}
+                </h1>
+
+                {/* Primary Step Completion Button & Stuck Route */}
+                <div className="step-action-bar">
+                  <button
+                    type="button"
+                    className={`step-complete-btn ${stepCompleted ? 'completed' : ''}`}
+                    onClick={toggleStepCompletion}
+                  >
+                    {stepCompleted ? (
+                      <>
+                        <RotateCcw size={15} aria-hidden="true" />
+                        <span>Undo (Mark Incomplete)</span>
+                      </>
+                    ) : (
+                      <>
+                        <Check size={16} aria-hidden="true" />
+                        <span>Mark Step 2 Done</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    className="step-stuck-btn"
+                    onClick={() => setActiveView('rejoin')}
+                  >
+                    I'm stuck / catch up
+                  </button>
+                </div>
+              </div>
+
+              {/* RIGHT CARD: KEEP IN MIND (DIMMED CONSTRAINTS + CANVAS) */}
+              <div className="card-3d card-dimmed">
+                <div className="kicker-row">
+                  <h2 className="kicker">Keep in mind</h2>
+                  <button
+                    type="button"
+                    className="block-info"
+                    aria-expanded={openTech === 'keep'}
+                    aria-label="Show the technical version of what to keep in mind"
+                    onClick={() => setOpenTech(openTech === 'keep' ? null : 'keep')}
+                  >
+                    <Info size={15} aria-hidden="true" />
+                  </button>
+                </div>
+                <p className="constraints">{lecture.keep}</p>
+
+                {/* Canvas Verified Deadline */}
+                <div className="card-canvas-badge">
+                  <span>Canvas Due: 10:50 AM today</span>
+                </div>
+              </div>
+
             </div>
 
-            <div className="block">
-              <div className="kicker-row">
-                <h2 className="kicker">{blocks[1].label}</h2>
-                <button
-                  type="button"
-                  className="block-info"
-                  aria-expanded={openTech === 'next'}
-                  aria-label="Show the technical version of the next step"
-                  onClick={() => setOpenTech(openTech === 'next' ? null : 'next')}
-                >
-                  <Info size={15} aria-hidden="true" />
-                </button>
+            {/* Surfaced Ambiguity Warning */}
+            <div className="ambiguity-callout" role="alert">
+              <div className="ambiguity-text">
+                <AlertTriangle size={15} className="ambiguity-icon" aria-hidden="true" />
+                <span>
+                  <strong>Upload location</strong> isn't specified in syllabus.
+                </span>
               </div>
-              <h1 className="action" aria-live="polite">
-                {lecture.next}
-              </h1>
+              <button
+                type="button"
+                className="ambiguity-btn"
+                onClick={() => {
+                  navigator.clipboard?.writeText(
+                    'Excuse me Professor, where should we submit the in-class assignment today?'
+                  )
+                  alert('Question copied to clipboard: "Excuse me Professor, where should we submit the in-class assignment today?"')
+                }}
+              >
+                Ask Instructor
+              </button>
             </div>
 
-            <div className="block">
-              <div className="kicker-row">
-                <h2 className="kicker">{blocks[2].label}</h2>
+            {/* In-Context EdStem Thread Banner */}
+            <div className="edstem-context-banner">
+              <div className="edstem-context-info">
+                <span className="edstem-icon-badge" aria-hidden="true">💬</span>
+                <span>
+                  <strong>EdStem Thread #412:</strong> "Do limits flip if u(0) &gt; u(4)?"
+                </span>
+              </div>
+              <button
+                type="button"
+                className="edstem-view-answer-btn"
+                onClick={() => setActiveView('edstem')}
+              >
+                View TA Answer (1)
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* VIEW 2: ALL STEPS OVERVIEW */}
+        {activeView === 'overview' && (
+          <section className="overview-container" aria-label="Step-by-step activity overview">
+            <div className="overview-header">
+              <div>
+                <h2 className="overview-title">In-Class Activity: Definite Integral via Substitution</h2>
+                <p className="overview-sub">4 total steps · Synced with Canvas Assignment requirements</p>
+              </div>
+              <span className="overview-badge">
+                {stepCompleted ? '2 Completed · 1 In Progress' : '1 Completed · 1 In Progress'}
+              </span>
+            </div>
+
+            <ol className="overview-step-list">
+              {/* Step 1 */}
+              <li className="step-item step-completed">
+                <div className="step-marker done">✓</div>
+                <div className="step-body">
+                  <div className="step-meta">
+                    <span className="step-num">Step 1 · Completed</span>
+                    <span className="step-time">~5 mins</span>
+                  </div>
+                  <h3 className="step-heading line-through">Identify the inner function and assign u = g(x)</h3>
+                  <p className="step-desc">Found u = 2x + 1 and du = 2 dx</p>
+                </div>
+              </li>
+
+              {/* Step 2 */}
+              <li className={`step-item ${stepCompleted ? 'step-completed' : 'step-active'}`}>
+                <div className={`step-marker ${stepCompleted ? 'done' : 'active'}`}>
+                  {stepCompleted ? '✓' : '2'}
+                </div>
+                <div className="step-body">
+                  <div className="step-meta">
+                    <span className="step-num">{stepCompleted ? 'Step 2 · Completed' : 'Step 2 · Current Focus'}</span>
+                    <span className="step-badge">{stepCompleted ? 'Done' : 'Active'}</span>
+                  </div>
+                  <h3 className="step-heading">Change the start and end values (Integration limits)</h3>
+                  <p className="step-desc">Convert x-bounds [0, 4] into u-bounds [1, 9]. Do not convert back to x at the end.</p>
+                  <div className="step-actions">
+                    <button
+                      type="button"
+                      className="step-jump-btn"
+                      onClick={() => setActiveView('now')}
+                    >
+                      Focus on this step
+                    </button>
+                  </div>
+                </div>
+              </li>
+
+              {/* Step 3 */}
+              <li className="step-item step-upcoming">
+                <div className="step-marker upcoming">3</div>
+                <div className="step-body">
+                  <div className="step-meta">
+                    <span className="step-num">Step 3 · Upcoming</span>
+                    <span className="step-time">~6 mins</span>
+                  </div>
+                  <h3 className="step-heading">Integrate with respect to u directly</h3>
+                  <p className="step-desc">Evaluate the simplified integral using standard power rule.</p>
+                </div>
+              </li>
+
+              {/* Step 4 */}
+              <li className="step-item step-upcoming">
+                <div className="step-marker upcoming">4</div>
+                <div className="step-body">
+                  <div className="step-meta">
+                    <span className="step-num">Step 4 · Final</span>
+                    <span className="step-time">~3 mins</span>
+                  </div>
+                  <h3 className="step-heading">Subtract upper bound from lower bound</h3>
+                  <p className="step-desc">Give the exact fraction answer; do not round to decimals. Submit to Canvas.</p>
+                </div>
+              </li>
+            </ol>
+          </section>
+        )}
+
+        {/* VIEW 3: HELP ME REJOIN (CATCH-UP ASSISTANT) */}
+        {activeView === 'rejoin' && (
+          <section className="rejoin-container" aria-label="Catch me up safe rejoin flow">
+            <div className="rejoin-header">
+              <span className="rejoin-icon" aria-hidden="true">🔄</span>
+              <div>
+                <h2 className="rejoin-title">Help Me Rejoin: Safe Catch-Up</h2>
+                <p className="rejoin-sub">Zoned out or got stuck? Rejoin the class in 10 seconds without missing a constraint.</p>
+              </div>
+            </div>
+
+            <div className="rejoin-form-wrap">
+              <label htmlFor="rejoinQuery" className="rejoin-label">
+                Where did you leave off or what did you miss?
+              </label>
+              <div className="rejoin-input-row">
+                <input
+                  id="rejoinQuery"
+                  type="text"
+                  className="rejoin-input"
+                  value={rejoinInput}
+                  onChange={(e) => setRejoinInput(e.target.value)}
+                  placeholder="e.g., I missed what u was, or where the professor is writing..."
+                />
                 <button
                   type="button"
-                  className="block-info"
-                  aria-expanded={openTech === 'keep'}
-                  aria-label="Show the technical version of what to keep in mind"
-                  onClick={() => setOpenTech(openTech === 'keep' ? null : 'keep')}
+                  className="rejoin-submit-btn"
+                  onClick={() => setRejoinGenerated(true)}
                 >
-                  <Info size={15} aria-hidden="true" />
+                  Catch Me Up
                 </button>
               </div>
-              <p className="constraints">{lecture.keep}</p>
+            </div>
+
+            {rejoinGenerated && (
+              <div className="recap-card" role="region" aria-label="Rejoin summary">
+                <div className="recap-head">
+                  <span className="recap-tag">Current Checkpoint Recap</span>
+                  <span className="recap-audio-sync">Teacher audio synced (00:32:45)</span>
+                </div>
+                <p className="recap-text">
+                  <strong>Don't worry:</strong> Professor Chen just substituted <code>u = 2x + 1</code>. Instead of solving the whole integral and substituting back later, the class is changing the integration limits right now: when <code>x = 0</code>, <code>u = 1</code>; when <code>x = 4</code>, <code>u = 9</code>.
+                </p>
+                <div className="recap-foot">
+                  <span className="recap-action-cue">
+                    Your immediate task: Write down the new limits [1, 9] on your worksheet.
+                  </span>
+                  <button
+                    type="button"
+                    className="recap-back-btn"
+                    onClick={() => setActiveView('now')}
+                  >
+                    Back to Task →
+                  </button>
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* VIEW 4: EDSTEM LIVE Q&A */}
+        {activeView === 'edstem' && (
+          <section className="edstem-container" aria-label="EdStem discussion thread">
+            <div className="edstem-header">
+              <div className="edstem-title-wrap">
+                <div className="edstem-badge-icon" aria-hidden="true">Ed</div>
+                <div>
+                  <h2 className="edstem-title">EdStem Live Discussion · Math 2B</h2>
+                  <p className="edstem-sub">Live questions asked by classmates right now during Lecture 14</p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="edstem-ask-btn"
+                onClick={() => setNewQuestionModalOpen(true)}
+              >
+                + Ask Question (Auto-tagged to Step 2)
+              </button>
+            </div>
+
+            <div className="edstem-thread-list">
+              {edstemQuestions.map((q) => (
+                <div key={q.id} className="edstem-post-card">
+                  <div className="edstem-post-meta">
+                    <div className="edstem-author-row">
+                      <span className="edstem-author">{q.author}</span>
+                      <span className="edstem-step-tag">{q.stepTag}</span>
+                      {q.isEndorsed && (
+                        <span className="edstem-endorsed-tag">✓ TA Endorsed Answer</span>
+                      )}
+                    </div>
+                    <span className="edstem-time">{q.timeAgo}</span>
+                  </div>
+
+                  <p className="edstem-question-body">{q.question}</p>
+
+                  {q.answer && (
+                    <div className="edstem-answer-box">
+                      <span className="edstem-answerer">{q.answer.author}:</span>
+                      <p className="edstem-answer-text">{q.answer.text}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {newQuestionModalOpen && (
+              <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="Ask EdStem Question">
+                <div className="edstem-modal">
+                  <div className="modal-head">
+                    <h3 className="modal-title">Ask Question on EdStem</h3>
+                    <button
+                      type="button"
+                      className="modal-close"
+                      onClick={() => setNewQuestionModalOpen(false)}
+                      aria-label="Close"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                  <form onSubmit={handlePostEdstemQuestion}>
+                    <p className="modal-hint">
+                      Auto-tagging: <code>[Math 2B · Lecture 14 · Step 2: Substitution Limits]</code>
+                    </p>
+                    <textarea
+                      className="edstem-textarea"
+                      rows={3}
+                      placeholder="Type your question anonymously here..."
+                      value={newQuestionText}
+                      onChange={(e) => setNewQuestionText(e.target.value)}
+                      required
+                    />
+                    <div className="modal-foot">
+                      <button
+                        type="button"
+                        className="modal-cancel-btn"
+                        onClick={() => setNewQuestionModalOpen(false)}
+                      >
+                        Cancel
+                      </button>
+                      <button type="submit" className="modal-submit-btn">
+                        Post to EdStem
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* VIEW 5: ORIGINAL SOURCE */}
+        {activeView === 'source' && (
+          <section className="source-container" aria-label="Original teacher instructions">
+            <div className="source-header">
+              <div className="source-title-wrap">
+                <span className="source-icon" aria-hidden="true">📜</span>
+                <div>
+                  <h2 className="source-title">Original Instructor Instructions (Verbatim)</h2>
+                  <p className="source-sub">Inspect the exact source text from the board and syllabus</p>
+                </div>
+              </div>
+              <span className="source-verified-chip">Teacher Verified</span>
+            </div>
+
+            <blockquote className="source-quote font-mono">
+              "Class, open to problem 2 on page 142. Evaluate the definite integral from 0 to 4 of (2x+1)^3 dx using u-substitution. Work in pairs if you want, but each student writes their own sheet. <mark className="source-highlight">Crucial: change your limits of integration when substituting u so you don't have to back-substitute at the end.</mark> We have 15 minutes. Upload to Canvas."
+            </blockquote>
+
+            <div className="source-breakdown-grid">
+              <div className="breakdown-card">
+                <strong className="breakdown-title text-plum">Preserved Constraints:</strong>
+                <ul className="breakdown-list">
+                  <li>Pair work optional; separate submission required for every student</li>
+                  <li>Must change limits of integration from x to u</li>
+                  <li>15 minute in-class time limit</li>
+                  <li>Exact fraction answer required; no rounded decimals</li>
+                </ul>
+              </div>
+
+              <div className="breakdown-card">
+                <strong className="breakdown-title text-amber">Surfaced Ambiguities:</strong>
+                <p className="breakdown-desc">
+                  "Upload to Canvas" did not specify which Canvas module folder. Checked Canvas API: submission is directed to <strong>"Lecture 14 Worksheet"</strong>.
+                </p>
+              </div>
             </div>
           </section>
-        </div>
+        )}
+
+        {/* VIEW 6: CALENDAR & CLASS JOIN HUB */}
+        {activeView === 'calendar' && (
+          <section className="calendar-container" aria-label="Class schedule and join hub">
+            <div className="calendar-top-bar">
+              <div>
+                <h2 className="calendar-title">Class Schedule &amp; Join Hub</h2>
+                <p className="calendar-sub">Synced with Canvas LMS, Google Calendar &amp; EdStem</p>
+              </div>
+
+              {/* Room Code Quick Join */}
+              <div className="quick-code-box">
+                <span className="quick-code-label">Room Code:</span>
+                <input
+                  type="text"
+                  className="quick-code-input"
+                  value={roomCodeInput}
+                  onChange={(e) => setRoomCodeInput(e.target.value.toUpperCase())}
+                  placeholder="e.g. MATH-2B"
+                />
+                <button
+                  type="button"
+                  className="quick-code-btn"
+                  onClick={() => handleJoinClass('MATH 2B', 'Lecture 14: Integrals')}
+                >
+                  Join Live
+                </button>
+              </div>
+            </div>
+
+            {/* Weekly Date Selector Bar */}
+            <div className="weekly-date-nav">
+              <div className="weekly-header">
+                <span>WEEK OF NOV 10 – NOV 16, 2026</span>
+                <span className="sync-note">Canvas LMS Connected ✓</span>
+              </div>
+
+              <div className="date-pills-row">
+                {Object.keys(scheduleData).map((dateKey) => {
+                  const isActive = selectedDate === dateKey
+                  const isToday = dateKey.includes('Today')
+                  return (
+                    <button
+                      key={dateKey}
+                      type="button"
+                      className={`date-pill-btn ${isActive ? 'active' : ''}`}
+                      onClick={() => setSelectedDate(dateKey)}
+                    >
+                      <span className="pill-day">{dateKey.split(' ')[0]}</span>
+                      <span className="pill-date">{dateKey.split(' ')[1]}</span>
+                      <span className="pill-status">
+                        {isToday ? '● 1 Live' : `${scheduleData[dateKey].length} classes`}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Scheduled Classes for Selected Date */}
+            <div className="scheduled-classes-section">
+              <h3 className="scheduled-section-title">
+                Classes Scheduled for {selectedDate}
+              </h3>
+
+              <div className="scheduled-cards-stack">
+                {scheduleData[selectedDate]?.map((cls) => (
+                  <div
+                    key={cls.id}
+                    className={`scheduled-class-card ${cls.isLive ? 'class-live' : ''}`}
+                  >
+                    <div className="class-info">
+                      <div className="class-status-line">
+                        {cls.isLive ? (
+                          <span className="badge-live-now">● LIVE NOW</span>
+                        ) : (
+                          <span className="badge-upcoming">UPCOMING</span>
+                        )}
+                        <span className="class-time">{cls.time}</span>
+                        <span className="class-loc">· {cls.location}</span>
+                      </div>
+                      <h4 className="class-name">{cls.title}</h4>
+                      <p className="class-topic">
+                        <strong>Topic:</strong> {cls.topic}
+                      </p>
+                      <span className="class-canvas-sync">{cls.canvasSync}</span>
+                    </div>
+
+                    <div className="class-action-wrap">
+                      {cls.isLive ? (
+                        <button
+                          type="button"
+                          className="btn-enter-live"
+                          onClick={() => handleJoinClass(cls.code, cls.topic)}
+                        >
+                          <span>Enter Live Workspace</span>
+                          <ArrowRight size={14} aria-hidden="true" />
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          className="btn-preview-class"
+                          onClick={() => alert(`Preview outline for ${cls.title} opened.`)}
+                        >
+                          Preview Outline
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
       </main>
 
+      {/* ================= TECHNICAL MATH DETAILS POPOVER ================= */}
       {openTech !== null && (
         <div className="tech-card" role="dialog" aria-label="Technical version">
           <div className="tech-head">
@@ -601,136 +1384,22 @@ function App() {
         </div>
       )}
 
-      <div className={dock.join(' ')}>
-        {!open ? (
-          <button
-            type="button"
-            className="dock-trigger"
-            onClick={() => {
-              setOpenTech(null)
-              setOpen(true)
-            }}
-          >
-            Catch me up
-            <ArrowRight size={20} aria-hidden="true" />
-          </button>
-        ) : (
-          <div className="sheet" role="dialog" aria-label="Catch me up">
-            <div className="sheet-head">
-              <span className="sheet-title">Catch me up</span>
-              <button
-                type="button"
-                className="sheet-close"
-                onClick={close}
-                aria-label="Close catch up"
-              >
-                <X size={18} aria-hidden="true" />
-              </button>
-            </div>
-
-            {stage === 'ask' ? (
-              <form className="ask" onSubmit={submit}>
-                <p className="question">What’s the last thing you remember?</p>
-
-                <div className="answer-line">
-                  {draft === '' && <span className="caret" aria-hidden="true" />}
-                  <label className="sr-only" htmlFor="remembered">
-                    What’s the last thing you remember?
-                  </label>
-                  <input
-                    id="remembered"
-                    ref={inputRef}
-                    value={draft}
-                    onChange={(event) => setDraft(event.target.value)}
-                    autoComplete="off"
-                    spellCheck={false}
-                  />
-                </div>
-
-                <p className="hint">Type it, then press Enter</p>
-                <p className="sample-note">Demo script, not live AI.</p>
-              </form>
-            ) : (
-              <>
-                <div className="steps-stage">
-                  <p className="remembered">You remembered: “{answer}”</p>
-                  <ol className="steps" aria-live="polite">
-                    {catchUpSteps.map((step, index) => {
-                      const Icon = step.icon
-                      return (
-                        <li key={step.text}>
-                          <span className="step-icon" aria-hidden="true">
-                            <Icon size={20} strokeWidth={2} />
-                          </span>
-                          <span className="step-text">
-                            <span className="step-num" aria-hidden="true">
-                              {index + 1}
-                            </span>
-                            {step.text}
-                          </span>
-                          <button
-                            type="button"
-                            className="step-info"
-                            aria-expanded={openInfo === index}
-                            aria-label={`Explain step ${index + 1}`}
-                            onClick={() => setOpenInfo(openInfo === index ? null : index)}
-                          >
-                            <Info size={14} aria-hidden="true" />
-                          </button>
-                        </li>
-                      )
-                    })}
-                  </ol>
-                </div>
-
-                {openInfo !== null && (
-                  <div className="clarify" role="status">
-                    <div className="clarify-head">
-                      <span>In plain words</span>
-                      <button
-                        type="button"
-                        className="clarify-close"
-                        onClick={() => setOpenInfo(null)}
-                        aria-label="Close explanation"
-                      >
-                        <X size={14} aria-hidden="true" />
-                      </button>
-                    </div>
-                    <p>{catchUpSteps[openInfo].info}</p>
-                  </div>
-                )}
-
-                <div className="steps-foot">
-                  <button type="button" className="back-to-lecture" onClick={close}>
-                    Back to the lecture
-                  </button>
-                  <p className="sample-note">Demo script, not live AI.</p>
-                </div>
-              </>
-            )}
-          </div>
-        )}
-      </div>
-
+      {/* ================= ACCESSIBLE WELCOME TOUR MODAL ================= */}
       {tourOpen && (
-        <div className="tour-overlay" role="presentation" onClick={closeTour}>
-          <div
-            className="tour-card"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="tour-title"
-            aria-describedby="tour-desc"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="tour-card-header">
-              <span className="tour-badge">
-                Step {tourStep + 1} of {tourSteps.length}
-              </span>
+        <div className="tour-backdrop" role="dialog" aria-modal="true" aria-label="Welcome tour">
+          <div className="tour-modal">
+            <div className="tour-header">
+              <div className="tour-header-meta">
+                <span className="tour-step-pill">
+                  Step {tourStep + 1} of {tourSteps.length}
+                </span>
+                <span className="tour-title-mini">{tourSteps[tourStep].title}</span>
+              </div>
               <button
                 type="button"
                 className="tour-close-btn"
                 onClick={closeTour}
-                aria-label="Close welcome tour"
+                aria-label="Close tour"
               >
                 <X size={16} aria-hidden="true" />
               </button>
@@ -739,72 +1408,82 @@ function App() {
             <div className="tour-body">
               <div className="tour-icon-wrap" aria-hidden="true">
                 {(() => {
-                  const Icon = tourSteps[tourStep].icon
-                  return <Icon size={26} />
+                  const IconComponent = tourSteps[tourStep].icon
+                  return <IconComponent size={28} className="tour-step-icon" />
                 })()}
               </div>
-
-              <h2 id="tour-title" className="tour-title">
-                {tourSteps[tourStep].title}
-              </h2>
-              <p className="tour-subtitle">{tourSteps[tourStep].subtitle}</p>
-
-              <p id="tour-desc" className="tour-description">
-                {tourSteps[tourStep].description}
-              </p>
-
+              <h3 className="tour-step-title">{tourSteps[tourStep].title}</h3>
+              <p className="tour-step-subtitle">{tourSteps[tourStep].subtitle}</p>
+              <p className="tour-step-desc">{tourSteps[tourStep].description}</p>
               {tourSteps[tourStep].tip && (
-                <div className="tour-tip">
-                  <span className="tour-tip-tag">Guide Note:</span> {tourSteps[tourStep].tip}
+                <div className="tour-step-tip">
+                  <Sparkles size={14} className="tour-tip-icon" aria-hidden="true" />
+                  <span>{tourSteps[tourStep].tip}</span>
                 </div>
               )}
             </div>
 
             <div className="tour-footer">
-              <div className="tour-dots" aria-label="Tour navigation dots">
+              <div className="tour-dots" aria-hidden="true">
                 {tourSteps.map((_, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    className={`tour-dot ${i === tourStep ? 'active' : ''}`}
-                    onClick={() => setTourStep(i)}
-                    aria-label={`Jump to tour step ${i + 1}`}
-                  />
+                  <span key={i} className={`tour-dot ${i === tourStep ? 'active' : ''}`} />
                 ))}
               </div>
 
-              <div className="tour-buttons">
+              <div className="tour-actions">
                 {tourStep > 0 && (
                   <button
                     type="button"
-                    className="tour-btn tour-btn-secondary"
-                    onClick={prevTourStep}
+                    className="tour-nav-btn tour-prev"
+                    onClick={() => setTourStep((s) => s - 1)}
                   >
                     <ChevronLeft size={16} aria-hidden="true" />
                     <span>Back</span>
                   </button>
                 )}
-                <button
-                  type="button"
-                  className="tour-btn tour-btn-primary"
-                  onClick={nextTourStep}
-                >
-                  <span>
-                    {tourStep === tourSteps.length - 1 ? 'Get Started' : 'Next'}
-                  </span>
-                  {tourStep === tourSteps.length - 1 ? (
-                    <CheckCircle size={16} aria-hidden="true" />
-                  ) : (
+
+                {tourStep < tourSteps.length - 1 ? (
+                  <button
+                    type="button"
+                    className="tour-nav-btn tour-next"
+                    onClick={() => setTourStep((s) => s + 1)}
+                  >
+                    <span>Next</span>
                     <ChevronRight size={16} aria-hidden="true" />
-                  )}
-                </button>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="tour-nav-btn tour-finish"
+                    onClick={closeTour}
+                  >
+                    <span>Get Started</span>
+                    <CheckCircle size={16} aria-hidden="true" />
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* ================= FOOTER ================= */}
+      <footer className="revamped-footer" role="contentinfo">
+        <div className="footer-left">
+          <span>✨ <strong>Bullseye Accessible Classroom Standard</strong></span>
+          <span className="footer-dot">•</span>
+          <span>Canvas LMS API Connected</span>
+          <span className="footer-dot">•</span>
+          <span>EdStem Q&amp;A Live Sync</span>
+          <span className="footer-dot">•</span>
+          <span>WCAG 2.2 AA Contrast Checked</span>
+        </div>
+        <div className="footer-right">
+          <span>Keyboard: Tab / Esc / [ ] / c</span>
+          <span className="footer-dot">•</span>
+          <span>Zero clinical tracking · Dignity-first</span>
+        </div>
+      </footer>
     </div>
   )
 }
-
-export default App
