@@ -16,9 +16,9 @@
 
 ---
 
-### Slide 3: The 3-Card Horizon · Core UX
-- **What to say:** "Our core architecture uses physical 3D perspective. Context is tucked safely on the left; Canvas deadlines stay locked on the right; the exact next action sits forward in emerald elevation."
-- **Key visual:** 3D perspective horizon isolating one clear forward action.
+### Slide 3: Triadic Working-Memory Horizon · Cognitive Architecture
+- **What to say:** "Our Triadic Working-Memory Horizon uses spatial depth projection: antecedent context anchors on the left, invariant LMS constraints lock on the right, and the focal active directive elevates forward in depth to eliminate attentional fragmentation."
+- **Key visual:** Spatial 3D depth separating antecedent context, focal execution target, and invariant submission parameters.
 
 ---
 

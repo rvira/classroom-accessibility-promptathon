@@ -29,10 +29,10 @@ In fast-paced university STEM lectures, a **60-second lapse in attention** often
 
 ## ✨ Core Features
 
-### 1. 3D Card Horizon View
-- **Where We Are (Left):** Background orientation context showing what the class has covered.
-- **Next Action (Center):** Elevated 3D perspective card displaying the singular immediate task (e.g., *"Change the start and end values"*).
-- **Keep In Mind (Right):** Preserved instructor constraints and submission requirements.
+### 1. Triadic Working-Memory Horizon (Spatial Depth Projection)
+- **Context Anchor (Left Plane):** Anchors antecedent computational derivation and lecture grounding, maintaining situational awareness without working-memory saturation.
+- **Active Directive (Center Elevated Plane):** 3D focal projection isolating the singular active execution target (e.g., *"Transform integration limits into u-domain"*).
+- **Invariant Constraints (Right Plane):** Continuous visual persistence for LMS evaluation parameters, rubrics, and deadlines, removing boundary anxiety during problem solving.
 
 ### 2. Canvas LMS Integration
 - Real-time synchronization of assignment deadlines, submission constraints, and rubric exceptions.
@@ -48,7 +48,7 @@ In fast-paced university STEM lectures, a **60-second lapse in attention** often
 
 ### 5. Dignity-First Accommodations
 - **Sensory Calm Mode (`c`):** Freezes all background canvas particles and ambient animations into a static, high-contrast reading surface. Automatically respects `prefers-reduced-motion`.
-- **Safe Rejoin Flow (`"I'm stuck"`):** Neutral, non-judgmental recovery dialog. Students enter what they last recall and receive an immediate, penalty-free recap grounded in current audio checkpoints.
+- **Safe Resynchronization Flow (`"Resynchronize / Catch Up"`):** Neutral, non-judgmental recovery pathway. Students enter what they last recall and receive an immediate, penalty-free recap grounded in current audio checkpoints.
 - **Full Keyboard Navigation:** Complete accessibility via `Tab`, `Enter`, `Esc`, `[` and `]` step flipping, and WCAG 2.2 AA compliant 3px focus indicators.
 
 ---
