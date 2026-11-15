@@ -1678,15 +1678,79 @@ input:focus-visible {
    REVAMPED BULLSEYE CLASSROOM EXPERIENCE (LMS, EDSTEM, 3D FOCUS & CALENDAR)
    ========================================================================== */
 
-/* ---------- Sensory Calm Mode ---------- */
+/* ---------- Sensory Calm Mode & Reduced Motion Guarantees ---------- */
 .calm-mode .antigravity-interactive-canvas {
-  opacity: 0.15 !important;
+  opacity: 0.12 !important;
   filter: grayscale(1);
 }
 
 .calm-mode .now-cards-row {
   transform: none !important;
   transition: none !important;
+}
+
+.calm-mode *,
+.calm-mode *::before,
+.calm-mode *::after {
+  animation: none !important;
+  transition-duration: 0.05s !important;
+}
+
+.calm-mode .step-flow-shimmer,
+.calm-mode .step-flow-beacon,
+.calm-mode .live-mic-pulse-beacon,
+.calm-mode .live-broadcast-indicator,
+.calm-mode .live-audio-waveform-bars .wave-bar,
+.calm-mode .card-focus::before,
+.calm-mode .card-3d::after,
+.calm-mode .live-pulse-dot,
+.calm-mode .edstem-pulse-dot {
+  animation: none !important;
+}
+
+.calm-mode .live-audio-waveform-bars .wave-bar {
+  height: 5px !important;
+}
+
+.calm-mode .card-3d,
+.calm-mode .card-focus,
+.calm-mode .card-dimmed,
+.calm-mode .scheduled-class-card {
+  transform: none !important;
+  transition: none !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .step-flow-shimmer,
+  .step-flow-beacon,
+  .live-mic-pulse-beacon,
+  .live-broadcast-indicator,
+  .live-audio-waveform-bars .wave-bar,
+  .card-focus::before,
+  .card-3d::after,
+  .live-pulse-dot,
+  .edstem-pulse-dot,
+  .antigravity-interactive-canvas {
+    animation: none !important;
+  }
+
+  .card-3d,
+  .card-focus,
+  .card-dimmed,
+  .now-cards-row,
+  .scheduled-class-card {
+    transform: none !important;
+    transition: none !important;
+  }
 }
 
 /* ---------- Top Application Header ---------- */
@@ -1776,6 +1840,131 @@ input:focus-visible {
 .crumb-arrow {
   font-size: 0.65rem;
   color: #94a3b8;
+}
+
+/* Real-time Teacher Audio Waveform & Mic Pulse */
+.header-live-waveform-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(52, 168, 83, 0.08);
+  border: 1px solid rgba(52, 168, 83, 0.28);
+  border-radius: 999px;
+  padding: 3px 8px 3px 7px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.header-live-waveform-pill:hover {
+  background: rgba(52, 168, 83, 0.16);
+  border-color: rgba(52, 168, 83, 0.5);
+  transform: translateY(-1px);
+}
+
+.header-live-waveform-pill.paused {
+  background: rgba(100, 116, 139, 0.08);
+  border-color: rgba(100, 116, 139, 0.2);
+}
+
+.live-mic-pulse-beacon {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #34A853;
+  box-shadow: 0 0 0 0 rgba(52, 168, 83, 0.7);
+  animation: liveBeaconPulse 2s infinite cubic-bezier(0.66, 0, 0, 1);
+  flex-shrink: 0;
+}
+
+.header-live-waveform-pill.paused .live-mic-pulse-beacon {
+  background: #94a3b8;
+  animation: none;
+  box-shadow: none;
+}
+
+@keyframes liveBeaconPulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(52, 168, 83, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(52, 168, 83, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(52, 168, 83, 0);
+  }
+}
+
+.live-audio-waveform-bars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 14px;
+}
+
+.live-audio-waveform-bars .wave-bar {
+  display: inline-block;
+  width: 2.5px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #34A853 0%, #15803d 100%);
+  transition: height 0.15s ease;
+}
+
+.header-live-waveform-pill.active .wave-bar.bar-1 {
+  animation: liveWave1 1.1s ease-in-out infinite alternate;
+}
+.header-live-waveform-pill.active .wave-bar.bar-2 {
+  animation: liveWave2 0.85s ease-in-out infinite alternate;
+}
+.header-live-waveform-pill.active .wave-bar.bar-3 {
+  animation: liveWave3 1.3s ease-in-out infinite alternate;
+}
+.header-live-waveform-pill.active .wave-bar.bar-4 {
+  animation: liveWave4 0.95s ease-in-out infinite alternate;
+}
+.header-live-waveform-pill.active .wave-bar.bar-5 {
+  animation: liveWave5 1.15s ease-in-out infinite alternate;
+}
+
+@keyframes liveWave1 {
+  0% { height: 4px; }
+  100% { height: 13px; }
+}
+@keyframes liveWave2 {
+  0% { height: 12px; }
+  100% { height: 5px; }
+}
+@keyframes liveWave3 {
+  0% { height: 5px; }
+  100% { height: 14px; }
+}
+@keyframes liveWave4 {
+  0% { height: 13px; }
+  100% { height: 4px; }
+}
+@keyframes liveWave5 {
+  0% { height: 6px; }
+  100% { height: 11px; }
+}
+
+.header-live-waveform-pill.paused .wave-bar {
+  height: 4px !important;
+  background: #94a3b8;
+  animation: none !important;
+}
+
+.live-waveform-label {
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #166534;
+}
+
+.header-live-waveform-pill.paused .live-waveform-label {
+  color: #64748b;
 }
 
 .revamped-crumb-dot {
@@ -2091,6 +2280,218 @@ input:focus-visible {
   align-items: center;
 }
 
+/* Horizon Step Progress Bar */
+.horizon-step-flow-bar {
+  width: 100%;
+  max-width: 980px;
+  margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(20, 22, 26, 0.08);
+  border-radius: 18px;
+  padding: 14px 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.025);
+  transform-style: preserve-3d;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.step-flow-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.step-flow-badge-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.step-flow-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(70, 130, 15, 0.12);
+  color: var(--accent);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.step-flow-beacon {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 0 rgba(70, 130, 15, 0.6);
+  animation: liveBeaconPulse 2s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+.step-flow-desc {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.step-flow-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.step-flow-canvas-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #c2410c;
+  background: #fff7ed;
+  padding: 3px 9px;
+  border-radius: 8px;
+  border: 1px solid #fed7aa;
+}
+
+.step-flow-pct {
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+/* Progress track */
+.step-flow-track-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.step-flow-track {
+  width: 100%;
+  height: 7px;
+  background: rgba(20, 22, 26, 0.07);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.step-flow-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #34A853 0%, #46820F 70%, #22c55e 100%);
+  position: relative;
+  overflow: hidden;
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Flowing shimmer light wave */
+.step-flow-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.7) 50%,
+    transparent 100%
+  );
+  animation: flowShimmer 2.2s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes flowShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+
+.step-flow-head {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.9), 0 0 12px rgba(52, 168, 83, 0.8);
+}
+
+/* Milestone chips */
+.step-milestones-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.step-milestone-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.step-milestone-chip:hover {
+  background: rgba(20, 22, 26, 0.04);
+  transform: translateY(-1px);
+}
+
+.step-milestone-chip .milestone-num {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.step-milestone-chip.done .milestone-num {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.step-milestone-chip.active .milestone-num {
+  background: var(--accent);
+  color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(70, 130, 15, 0.25);
+}
+
+.step-milestone-chip.upcoming .milestone-num {
+  background: #f1f5f9;
+  color: #94a3b8;
+}
+
+.step-milestone-chip .milestone-text {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.step-milestone-chip.active .milestone-text {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.step-milestone-chip.done .milestone-text {
+  color: #15803d;
+}
+
 .now-cards-row {
   display: grid;
   grid-template-columns: 1fr minmax(0, 1.75fr) 1fr;
@@ -2101,11 +2502,11 @@ input:focus-visible {
   transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
 }
 
-/* 3D Glass Cards */
+/* 3D Glass Cards with Specular Lighting & Hover Physics */
 .card-3d {
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-radius: 22px;
   border: 1px solid rgba(20, 22, 26, 0.08);
   padding: clamp(22px, 3.2vh, 36px) clamp(18px, 2.2vw, 32px);
@@ -2115,7 +2516,84 @@ input:focus-visible {
   text-align: center;
   position: relative;
   transform-style: preserve-3d;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, box-shadow;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s ease,
+              opacity 0.25s ease;
+  overflow: hidden;
+}
+
+/* Subtle Specular Sheen on Cards */
+.card-3d::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  background: radial-gradient(
+    600px circle at var(--mouse-x, 50%) var(--mouse-y, 0%),
+    rgba(255, 255, 255, 0.45),
+    transparent 60%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card-3d:hover::after {
+  opacity: 1;
+}
+
+.card-dimmed {
+  opacity: 0.62;
+  transform: scale(0.96) translateZ(-10px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.03);
+}
+
+.card-dimmed:hover {
+  opacity: 0.98;
+  transform: scale(1.0) translateZ(16px) translateY(-4px);
+  border-color: rgba(70, 130, 15, 0.3);
+  box-shadow: 0 20px 42px rgba(0, 0, 0, 0.07), 0 0 18px rgba(70, 130, 15, 0.08);
+}
+
+.card-focus {
+  opacity: 1;
+  transform: scale(1.03) translateZ(32px);
+  border: 1.5px solid rgba(70, 130, 15, 0.45);
+  box-shadow:
+    0 26px 54px rgba(70, 130, 15, 0.14),
+    0 10px 24px rgba(0, 0, 0, 0.04);
+}
+
+.card-focus:hover {
+  transform: scale(1.045) translateZ(42px) translateY(-5px);
+  box-shadow:
+    0 32px 64px rgba(70, 130, 15, 0.18),
+    0 12px 28px rgba(0, 0, 0, 0.06);
+}
+
+.card-focus::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20px;
+  right: 20px;
+  height: 4px;
+  background: linear-gradient(90deg, transparent 0%, #34A853 25%, #46820F 75%, transparent 100%);
+  border-radius: 0 0 6px 6px;
+  animation: focusBarGleam 4s ease-in-out infinite alternate;
+}
+
+@keyframes focusBarGleam {
+  0% {
+    opacity: 0.75;
+    filter: brightness(1);
+  }
+  100% {
+    opacity: 1;
+    filter: brightness(1.25) drop-shadow(0 0 6px rgba(52, 168, 83, 0.6));
+  }
 }
 
 .card-3d .kicker-row {
@@ -2156,39 +2634,6 @@ input:focus-visible {
   color: #475569 !important;
   margin: 0 auto !important;
   max-width: 28ch !important;
-}
-
-.card-dimmed {
-  opacity: 0.58;
-  transform: scale(0.96) translateZ(-15px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
-}
-
-.card-dimmed:hover {
-  opacity: 0.95;
-  transform: scale(0.99) translateZ(8px);
-  border-color: rgba(70, 130, 15, 0.25);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.06);
-}
-
-.card-focus {
-  opacity: 1;
-  transform: scale(1.03) translateZ(28px);
-  border: 1.5px solid rgba(70, 130, 15, 0.38);
-  box-shadow:
-    0 24px 50px rgba(70, 130, 15, 0.12),
-    0 8px 20px rgba(0, 0, 0, 0.03);
-}
-
-.card-focus::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 28px;
-  right: 28px;
-  height: 4px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  border-radius: 0 0 4px 4px;
 }
 
 .card-course-kicker {
@@ -2265,13 +2710,99 @@ input:focus-visible {
   border-color: rgba(20, 22, 26, 0.2);
 }
 
+/* Canvas LMS Logo & Badges */
+.canvas-lms-logo {
+  flex-shrink: 0;
+  color: #E72429;
+}
+
 .card-canvas-badge {
   margin-top: 14px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(20, 22, 26, 0.06);
-  font-size: 0.72rem;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(254, 242, 242, 0.75);
+  border: 1px solid #fee2e2;
+  font-size: 0.74rem;
   font-weight: 700;
-  color: #b31427;
+  color: #991b1b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.canvas-badge-sync-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
+  flex-shrink: 0;
+}
+
+.class-canvas-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  padding: 3px 8px;
+  border-radius: 8px;
+  margin-top: 3px;
+  width: fit-content;
+}
+
+.class-canvas-sync {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #991b1b;
+}
+
+.sync-canvas-icon {
+  color: #E72429;
+  flex-shrink: 0;
+}
+
+/* EdStem Logos & Live Discussion Accents */
+.edstem-brand-logo {
+  flex-shrink: 0;
+  color: #009688;
+}
+
+.header-edstem-icon {
+  color: #009688;
+  flex-shrink: 0;
+}
+
+.edstem-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edstem-badge-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(0, 150, 136, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Class Schedule Hub Broadcast Waves */
+.live-broadcast-indicator {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  margin-right: 4px;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  animation: liveBeaconPulse 1.8s infinite;
 }
 
 /* Callouts below cards */
@@ -2421,7 +2952,18 @@ input:focus-visible {
 .overview-sub {
   font-size: 0.78rem;
   color: #64748b;
-  margin: 4px 0 0;
+  margin: 0;
+}
+
+.overview-sub-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.overview-progress-bar-wrap {
+  margin: 0 0 20px;
 }
 
 .overview-badge {
@@ -3414,6 +3956,12 @@ input:focus-visible {
 
 .footer-dot {
   color: #cbd5e1;
+}
+
+.footer-brand-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 
 /* ---------- Responsive Adjustments ---------- */

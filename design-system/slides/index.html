@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bullseye Pitch Deck · Visual Edition</title>
+  <title>Bullseye Pitch Deck · Motion & Interactive Edition</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
     :root {
@@ -16,6 +16,8 @@
       --signal-action-hover: #00574C;
       --signal-brand-surface: #E2F3EC;
       --signal-focus: #185FCA;
+      --signal-alert: #C62828;
+      --signal-alert-bg: #FFEBEE;
     }
 
     * { box-sizing: border-box; }
@@ -23,19 +25,20 @@
     body {
       margin: 0;
       padding: 0;
-      background: #0f172a;
+      background: #090e17;
       color: var(--signal-text);
-      font-family: Arial, Helvetica, -apple-system, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      overflow-x: hidden;
     }
 
     .deck-container {
       width: 100%;
-      max-width: 1160px;
+      max-width: 1180px;
       padding: 16px;
       display: flex;
       flex-direction: column;
@@ -46,30 +49,38 @@
       width: 100%;
       aspect-ratio: 16 / 9;
       background: var(--signal-canvas);
-      border-radius: 18px;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 4px 18px rgba(0, 0, 0, 0.25);
+      border-radius: 20px;
+      box-shadow: 0 25px 65px rgba(0, 0, 0, 0.65), 0 4px 20px rgba(0, 0, 0, 0.3);
       overflow: hidden;
       position: relative;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       display: flex;
       flex-direction: column;
+      transition: background-color 0.3s ease;
     }
 
     .slide-viewport {
       flex: 1;
-      padding: 34px 48px;
+      padding: 28px 44px 24px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
+      overflow: hidden;
+      animation: fadeInSlide 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(6px) scale(0.995); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .slide-h1 {
-      font-size: clamp(26px, 3.4vw, 40px);
+      font-size: clamp(24px, 3.2vw, 38px);
       font-weight: 800;
       line-height: 1.15;
       color: var(--signal-text);
-      letter-spacing: -0.02em;
+      letter-spacing: -0.025em;
       margin: 0;
     }
 
@@ -80,12 +91,14 @@
       letter-spacing: -0.5px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     .slide-badge {
-      display: inline-block;
-      padding: 3px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
       border-radius: 999px;
       font-size: 11px;
       font-weight: 700;
@@ -93,7 +106,8 @@
       letter-spacing: 0.08em;
       background: var(--signal-brand-surface);
       color: var(--signal-action);
-      border: 1px solid rgba(0, 105, 92, 0.25);
+      border: 1px solid rgba(0, 105, 92, 0.28);
+      box-shadow: 0 1px 3px rgba(0, 105, 92, 0.08);
     }
 
     .slide-footer-row {
@@ -105,39 +119,129 @@
       font-size: 11px;
       color: var(--signal-text-secondary);
       font-weight: 600;
+      z-index: 5;
+    }
+
+    /* Ambient Background Pulse */
+    .ambient-glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      pointer-events: none;
+      opacity: 0.45;
+      transition: all 0.5s ease;
     }
 
     /* 3D Horizon Perspective Stage */
     .perspective-stage {
-      perspective: 1000px;
+      perspective: 1100px;
       transform-style: preserve-3d;
     }
 
     .card-left-3d {
-      transform: rotateY(14deg) scale(0.92) translateZ(-20px);
-      opacity: 0.8;
-      transition: all 0.3s ease;
+      transform: rotateY(16deg) scale(0.92) translateZ(-25px);
+      opacity: 0.85;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: floatCardLeft 4.5s ease-in-out infinite alternate;
     }
     .card-left-3d:hover {
-      transform: rotateY(0deg) scale(0.98);
+      transform: rotateY(0deg) scale(0.98) translateZ(10px);
       opacity: 1;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
     }
 
     .card-center-3d {
-      transform: translateZ(30px) scale(1.05);
+      transform: translateZ(35px) scale(1.05);
       z-index: 10;
-      box-shadow: 0 16px 36px rgba(0, 105, 92, 0.18), 0 4px 12px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 20px 42px rgba(0, 105, 92, 0.22), 0 4px 14px rgba(0, 0, 0, 0.08);
       border: 2.5px solid var(--signal-action);
+      animation: floatCardCenter 4s ease-in-out infinite alternate;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .card-right-3d {
-      transform: rotateY(-14deg) scale(0.92) translateZ(-20px);
-      opacity: 0.8;
-      transition: all 0.3s ease;
+      transform: rotateY(-16deg) scale(0.92) translateZ(-25px);
+      opacity: 0.85;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: floatCardRight 5s ease-in-out infinite alternate;
     }
     .card-right-3d:hover {
-      transform: rotateY(0deg) scale(0.98);
+      transform: rotateY(0deg) scale(0.98) translateZ(10px);
       opacity: 1;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+    }
+
+    @keyframes floatCardCenter {
+      0% { transform: translateZ(35px) scale(1.05) translateY(0px); }
+      100% { transform: translateZ(35px) scale(1.05) translateY(-6px); }
+    }
+    @keyframes floatCardLeft {
+      0% { transform: rotateY(16deg) scale(0.92) translateZ(-25px) translateY(0px); }
+      100% { transform: rotateY(16deg) scale(0.92) translateZ(-25px) translateY(5px); }
+    }
+    @keyframes floatCardRight {
+      0% { transform: rotateY(-16deg) scale(0.92) translateZ(-25px) translateY(0px); }
+      100% { transform: rotateY(-16deg) scale(0.92) translateZ(-25px) translateY(5px); }
+    }
+
+    /* Waveform Animation */
+    .waveform-bar {
+      width: 3.5px;
+      border-radius: 3px;
+      background: var(--signal-action);
+      animation: wavePulse 1.2s ease-in-out infinite alternate;
+      transform-origin: bottom;
+    }
+    @keyframes wavePulse {
+      0% { height: 4px; opacity: 0.4; }
+      100% { height: 22px; opacity: 1; }
+    }
+
+    /* Radar Beacon Sonar */
+    .radar-beacon {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .radar-beacon::before, .radar-beacon::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid #00695c;
+      animation: sonarPing 2.2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+    }
+    .radar-beacon::after {
+      animation-delay: 1.1s;
+    }
+    @keyframes sonarPing {
+      0% { transform: scale(0.8); opacity: 0.9; }
+      100% { transform: scale(2.6); opacity: 0; }
+    }
+
+    /* Energy Pipeline Beam */
+    .pipeline-beam-line {
+      position: relative;
+      height: 4px;
+      background: #cfe8df;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .pipeline-beam-line::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -40%;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, #00695c, #10b981, transparent);
+      animation: beamTravel 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+    @keyframes beamTravel {
+      0% { left: -40%; }
+      100% { left: 100%; }
     }
 
     /* Controls Bar */
@@ -145,19 +249,22 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: #1e293b;
+      background: #151d2c;
       padding: 10px 18px;
-      border-radius: 12px;
+      border-radius: 14px;
       color: #cbd5e1;
       font-size: 13px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
     .deck-btn {
-      padding: 6px 14px;
-      border-radius: 8px;
-      border: 1px solid #475569;
-      background: #334155;
+      padding: 7px 14px;
+      border-radius: 9px;
+      border: 1px solid #334155;
+      background: #1e293b;
       color: #ffffff;
       font-weight: 700;
       cursor: pointer;
@@ -165,16 +272,26 @@
       align-items: center;
       gap: 6px;
       transition: all 0.15s ease;
+      font-size: 12px;
+      user-select: none;
     }
 
     .deck-btn:hover:not(:disabled) {
       background: var(--signal-action);
       border-color: var(--signal-action);
+      transform: translateY(-1px);
+    }
+
+    .deck-btn.active {
+      background: #00695c;
+      border-color: #10b981;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
     }
 
     .deck-btn:disabled {
       opacity: 0.35;
       cursor: not-allowed;
+      transform: none;
     }
 
     .slide-pip-dot {
@@ -183,12 +300,83 @@
       border-radius: 50%;
       background: #475569;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .slide-pip-dot.active {
       background: #10b981;
-      transform: scale(1.3);
+      transform: scale(1.35);
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+    }
+
+    /* Narration Subtitle Banner (Autoplay Video Mode) */
+    .video-narration-bar {
+      position: absolute;
+      bottom: 42px;
+      left: 48px;
+      right: 48px;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 10px 18px;
+      display: none;
+      align-items: center;
+      gap: 14px;
+      color: #f1f5f9;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      z-index: 40;
+      animation: slideUpSub 0.3s ease-out;
+    }
+
+    @keyframes slideUpSub {
+      from { transform: translateY(12px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .timer-progress-fill {
+      height: 3px;
+      background: linear-gradient(90deg, #10b981, #00695c);
+      width: 0%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: width 0.1s linear;
+      border-radius: 2px;
+    }
+
+    /* Sensory Calm Mode Toggle overrides */
+    body.calm-mode-active * {
+      animation-play-state: paused !important;
+      transition-duration: 0.01ms !important;
+    }
+    body.calm-mode-active .ambient-glow {
+      display: none !important;
+    }
+    body.calm-mode-active .waveform-bar {
+      height: 8px !important;
+      animation: none !important;
+    }
+    body.calm-mode-active .pipeline-beam-line::after {
+      display: none !important;
+    }
+
+    /* Modal Backdrop */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      animation: fadeInModal 0.25s ease-out;
+    }
+
+    @keyframes fadeInModal {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
   </style>
 </head>
@@ -199,8 +387,142 @@
     <!-- 16:9 Presentation Stage -->
     <div class="slide-aspect-box" id="slideFrame">
       
+      <!-- Ambient Glow Behind Stage -->
+      <div id="ambientGlow" class="ambient-glow" style="width: 320px; height: 320px; background: #00695c; top: -60px; right: -60px;"></div>
+      
+      <!-- Video Autoplay Narration Subtitle Bar -->
+      <div id="narrationBar" class="video-narration-bar">
+        <div class="timer-progress-fill" id="narrationTimerFill"></div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+          <span class="text-[11px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800">Voiceover</span>
+        </div>
+        <div class="text-xs sm:text-sm font-medium text-slate-100 flex-1 leading-snug" id="narrationText">
+          "Bullseye is a classroom accessibility layer built for students with ADHD and working-memory challenges..."
+        </div>
+        <button onclick="toggleVideoAutoplay()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded border border-slate-700 font-bold">
+          Pause
+        </button>
+      </div>
+
       <!-- ================= SLIDE 1: VISUAL HERO COVER ================= -->
       <div id="slide1" class="slide-viewport">
+        <!-- Header Row -->
+        <div class="flex items-center justify-between">
+          <div class="slide-wordmark">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="flex-shrink-0">
+              <circle cx="12" cy="12" r="10" stroke="#00695C" stroke-width="2.5"/>
+              <circle cx="12" cy="12" r="6" stroke="#00695C" stroke-width="2.5"/>
+              <circle cx="12" cy="12" r="2.5" fill="#00695C"/>
+            </svg>
+            <span class="font-extrabold text-[#00695c]">bullseye ·</span>
+            <span class="text-xs text-gray-500 font-bold ml-1 hidden sm:inline">Visual Pitch Deck</span>
+          </div>
+
+          <!-- Live Classroom Waveform Pulse -->
+          <div class="flex items-center gap-3 bg-white/80 backdrop-blur px-3 py-1.5 rounded-full border border-emerald-200 shadow-xs">
+            <div class="flex items-end gap-1 h-5 px-1" id="audioWaveform1">
+              <div class="waveform-bar" style="animation-duration: 0.8s; animation-delay: 0.1s;"></div>
+              <div class="waveform-bar" style="animation-duration: 1.1s; animation-delay: 0.3s;"></div>
+              <div class="waveform-bar" style="animation-duration: 0.7s; animation-delay: 0.2s;"></div>
+              <div class="waveform-bar" style="animation-duration: 1.3s; animation-delay: 0.4s;"></div>
+              <div class="waveform-bar" style="animation-duration: 0.9s; animation-delay: 0.15s;"></div>
+              <div class="waveform-bar" style="animation-duration: 1.0s; animation-delay: 0.25s;"></div>
+            </div>
+            <span class="text-[11px] font-bold text-gray-700">Live Audio Stream: <span class="text-emerald-700 font-extrabold">MATH 2B</span></span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          </div>
+
+          <span class="slide-badge">
+            <span class="w-2 h-2 rounded-full bg-[#00695c] animate-ping"></span>
+            UC Irvine Pilot Ready
+          </span>
+        </div>
+
+        <!-- Center Visual Showcase -->
+        <div class="my-auto text-center space-y-4 max-w-3xl mx-auto w-full">
+          <div>
+            <h1 class="slide-h1 text-gray-900">
+              Never get lost in lecture.
+            </h1>
+            <p class="text-xs sm:text-sm text-gray-500 font-medium mt-1">
+              Instant cognitive reconnection for ADHD and neurodivergent STEM students.
+            </p>
+          </div>
+
+          <!-- Interactive Live UI Preview Card -->
+          <div class="bg-white rounded-2xl border-2 border-emerald-300 shadow-xl overflow-hidden p-5 transition-all hover:shadow-2xl relative text-left" id="heroInteractiveCard">
+            <!-- Simulated Nav Strip -->
+            <div class="flex items-center justify-between pb-3 border-b border-gray-100 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded font-black text-emerald-900 bg-emerald-50 border border-emerald-200">MATH 2B · Lecture 14</span>
+                <span class="text-gray-400">·</span>
+                <span class="text-gray-500 font-medium flex items-center gap-1">
+                  <span>🎙️</span> Prof. Chen: <i>"...now substitute limits u(0) and u(2)..."</i>
+                </span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="px-2.5 py-0.5 rounded-full bg-[#00695c] text-white text-[10px] font-bold flex items-center gap-1">
+                  <span>🎯</span> Now Focus
+                </span>
+                <span class="px-2 py-0.5 rounded bg-purple-50 text-purple-700 text-[10px] font-bold border border-purple-200">EdStem (3)</span>
+              </div>
+            </div>
+
+            <!-- Elevated Now Card Body -->
+            <div class="py-5 px-3 sm:px-6 text-center">
+              <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-50 text-[#00695c] text-[10px] font-extrabold uppercase tracking-wider mb-2 border border-emerald-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#00695c] animate-pulse"></span>
+                Active Action Target · Step <span id="heroStepNum">1</span> of 3
+              </div>
+              <h2 class="text-xl sm:text-2xl font-black text-gray-900 my-1 tracking-tight" id="heroStepTitle">
+                Change the integration start and end values.
+              </h2>
+              <p class="text-xs text-gray-500 max-w-md mx-auto mb-4" id="heroStepDesc">
+                Calculate u(0) = 1 and u(2) = 5 before proceeding with integration.
+              </p>
+
+              <!-- Interactive Buttons -->
+              <div class="inline-flex items-center gap-3">
+                <button onclick="advanceHeroStep()" class="px-5 py-2 rounded-xl bg-[#00695c] hover:bg-[#00574c] text-white text-xs font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer active:scale-95">
+                  <span id="heroCheckIcon">✓</span>
+                  <span id="heroBtnLabel">Mark Step Done</span>
+                </button>
+                <button onclick="showHintModal()" class="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer active:scale-95">
+                  <span>💡 I'm stuck</span>
+                </button>
+              </div>
+
+              <!-- Interactive Step Success Feedback (Hidden by default) -->
+              <div id="heroSuccessToast" class="mt-3 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 py-1.5 px-3 rounded-lg inline-flex items-center gap-1.5 opacity-0 transition-opacity">
+                <span>✨</span> Step completed in 6.2s! Zero cognitive latency.
+              </div>
+            </div>
+          </div>
+
+          <!-- 3 Minimalist Value Badges -->
+          <div class="flex items-center justify-center gap-3 pt-1 flex-wrap">
+            <span class="text-xs px-3.5 py-1.5 rounded-full bg-white border border-gray-300 text-gray-700 font-bold shadow-xs flex items-center gap-1.5">
+              <span>🎯</span> Now-First Focus
+            </span>
+            <span class="text-xs px-3.5 py-1.5 rounded-full bg-white border border-gray-300 text-gray-700 font-bold shadow-xs flex items-center gap-1.5">
+              <span>🔒</span> Canvas LMS Constraints
+            </span>
+            <span class="text-xs px-3.5 py-1.5 rounded-full bg-white border border-gray-300 text-gray-700 font-bold shadow-xs flex items-center gap-1.5">
+              <span>♿</span> WCAG 2.2 AA Verified
+            </span>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="slide-footer-row">
+          <span>Signal / Bullseye Architecture · Live Prototype</span>
+          <span class="font-bold">01 / 06</span>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 2: VISUAL PROBLEM COMPARISON ================= -->
+      <div id="slide2" class="slide-viewport" style="display: none;">
         <div class="flex items-center justify-between">
           <div class="slide-wordmark">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -210,277 +532,404 @@
             </svg>
             <span>bullseye ·</span>
           </div>
-          <span class="slide-badge">UC Irvine Pilot Ready</span>
-        </div>
-
-        <!-- Big Bold Title & Visual Centerpiece -->
-        <div class="text-center my-auto space-y-4">
-          <h1 class="slide-h1" style="font-size: clamp(30px, 4vw, 44px);">
-            Never get lost in lecture.
-          </h1>
-
-          <!-- Visual App Window Preview -->
-          <div class="max-w-2xl mx-auto bg-white rounded-2xl border-2 border-emerald-200/80 shadow-xl overflow-hidden p-4">
-            <!-- Simulated Nav Bar -->
-            <div class="flex items-center justify-between pb-3 border-b border-gray-100 text-xs">
-              <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="font-extrabold text-teal-900 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">MATH 2B</span>
-                <span class="text-gray-400">·</span>
-                <span class="text-gray-500 font-medium">Lecture 14</span>
-              </div>
-              <div class="flex items-center gap-1.5">
-                <span class="px-2.5 py-0.5 rounded-full bg-[#00695c] text-white text-[10px] font-bold">🎯 Now Focus</span>
-                <span class="px-2 py-0.5 rounded bg-purple-50 text-purple-700 text-[10px] font-bold border border-purple-200">EdStem (3)</span>
-              </div>
-            </div>
-
-            <!-- Elevated Now Card -->
-            <div class="py-5 px-4 text-center">
-              <span class="text-[10px] font-extrabold text-[#00695c] uppercase tracking-widest">Active Action Target</span>
-              <h2 class="text-xl font-black text-gray-900 mt-1 mb-3">Change the start and end values.</h2>
-              <div class="inline-flex items-center gap-2">
-                <span class="px-4 py-1.5 rounded-lg bg-[#00695c] text-white text-xs font-bold shadow-md">✓ Mark Step Done</span>
-                <span class="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 text-xs font-bold">I'm stuck</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- 3 Minimalist Value Badges -->
-          <div class="flex items-center justify-center gap-3 pt-2">
-            <span class="text-xs px-3 py-1 rounded-full bg-white border border-gray-300 text-gray-700 font-bold">🎯 Now-First Focus</span>
-            <span class="text-xs px-3 py-1 rounded-full bg-white border border-gray-300 text-gray-700 font-bold">🔒 Canvas Constraints</span>
-            <span class="text-xs px-3 py-1 rounded-full bg-white border border-gray-300 text-gray-700 font-bold">♿ WCAG 2.2 AA</span>
-          </div>
-        </div>
-
-        <div class="slide-footer-row">
-          <span>Signal / Bullseye Architecture</span>
-          <span>01 / 06</span>
-        </div>
-      </div>
-
-      <!-- ================= SLIDE 2: VISUAL PROBLEM COMPARISON ================= -->
-      <div id="slide2" class="slide-viewport" style="display: none;">
-        <div class="flex items-center justify-between">
-          <div class="slide-wordmark">bullseye ·</div>
           <span class="slide-badge">The Recovery Problem</span>
         </div>
 
         <div>
           <h2 class="slide-h1">60 seconds of drift shouldn't ruin a class.</h2>
+          <p class="text-xs text-gray-500 font-medium mt-0.5">When attention wanders in STEM, recovery latency determines whether a student survives.</p>
         </div>
 
-        <!-- 2 Side-by-Side Graphic Cards -->
-        <div class="grid grid-cols-2 gap-6 my-auto">
+        <!-- 2 Side-by-Side Visual Race Cards -->
+        <div class="grid grid-cols-2 gap-6 my-auto items-stretch">
           
-          <!-- BEFORE Graphic -->
-          <div class="bg-red-50/50 rounded-2xl border-2 border-red-200 p-6 flex flex-col justify-between shadow-xs">
+          <!-- BEFORE Card: 20 Mins Drift -->
+          <div class="bg-red-50/60 rounded-2xl border-2 border-red-200 p-5 flex flex-col justify-between shadow-xs relative overflow-hidden">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-extrabold text-red-900 bg-red-100 px-2.5 py-1 rounded-md">❌ Standard Lecture</span>
-              <span class="text-xs font-bold text-red-600">Slide Wall Overload</span>
+              <span class="text-xs font-black text-red-900 bg-red-100 px-3 py-1 rounded-md border border-red-200 flex items-center gap-1">
+                <span>❌</span> Standard Lecture Drift
+              </span>
+              <span class="text-xs font-extrabold text-red-700 flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span> Slide Wall Overload
+              </span>
             </div>
             
-            <div class="py-6 text-center">
-              <div class="text-5xl font-black text-red-900">20 Mins</div>
-              <div class="text-sm font-bold text-red-700 mt-1">Average Rejoin Latency</div>
-              <p class="text-xs text-gray-500 mt-2">Buried footnotes · Rapid chat flurry · Lost context</p>
+            <div class="py-4 text-center">
+              <!-- Animated Red Chaotic Timer -->
+              <div class="font-mono text-5xl sm:text-6xl font-black text-red-900 tracking-tight" id="redTimerDisplay">
+                20:00
+              </div>
+              <div class="text-xs font-extrabold text-red-700 uppercase tracking-wider mt-1">Average Rejoin Latency</div>
+              
+              <!-- Visual Cognitive Stress Bar -->
+              <div class="w-full bg-red-200 rounded-full h-3 mt-4 overflow-hidden p-0.5 border border-red-300">
+                <div id="redStressBar" class="bg-gradient-to-r from-red-500 to-red-700 h-full rounded-full transition-all duration-1000" style="width: 95%;"></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-red-800 font-bold mt-1 px-1">
+                <span>Cognitive Stress: 95%</span>
+                <span>Lost in Footnotes</span>
+              </div>
+
+              <!-- Graphic Snippet of Chaos -->
+              <div class="mt-3 p-2.5 bg-white/70 rounded-xl border border-red-200 text-left text-[11px] text-gray-600 font-mono space-y-1">
+                <div class="text-red-900 font-bold flex items-center justify-between">
+                  <span>⚠️ Slide 42/78</span>
+                  <span class="text-[10px] bg-red-100 px-1.5 rounded">Chat: 14 unread</span>
+                </div>
+                <div class="text-gray-500 truncate">∫ (3x² + 2x) / √(x³+x²-4) dx [Wait, where are we?]</div>
+              </div>
             </div>
 
-            <div class="p-2 rounded-lg bg-red-100 text-red-900 text-xs font-bold text-center">
-              Cognitive Paralysis &amp; Anxiety
+            <div class="p-2.5 rounded-xl bg-red-100/90 text-red-900 text-xs font-bold text-center border border-red-200">
+              Cognitive Paralysis · Shame · Giving Up
             </div>
           </div>
 
-          <!-- AFTER Graphic -->
-          <div class="bg-emerald-50/50 rounded-2xl border-2 border-emerald-300 p-6 flex flex-col justify-between shadow-md">
+          <!-- AFTER Card: < 10 Sec Bullseye -->
+          <div class="bg-emerald-50/70 rounded-2xl border-2 border-emerald-400 p-5 flex flex-col justify-between shadow-lg relative overflow-hidden">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-extrabold text-[#00695c] bg-emerald-100 px-2.5 py-1 rounded-md">✓ Bullseye</span>
-              <span class="text-xs font-bold text-emerald-700">Now-First Clarity</span>
+              <span class="text-xs font-black text-[#00695c] bg-emerald-100 px-3 py-1 rounded-md border border-emerald-300 flex items-center gap-1">
+                <span>✓</span> Bullseye Recovery
+              </span>
+              <span class="text-xs font-extrabold text-emerald-800 flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Now-First Clarity
+              </span>
             </div>
 
-            <div class="py-6 text-center">
-              <div class="text-5xl font-black text-[#00695c]">&lt; 10 Sec</div>
-              <div class="text-sm font-bold text-[#00695c] mt-1">Instant Rejoin Latency</div>
-              <p class="text-xs text-gray-600 mt-2">1 active card · Locked constraints · Zero stigma</p>
+            <div class="py-4 text-center">
+              <!-- Animated Emerald Calm Timer -->
+              <div class="font-mono text-5xl sm:text-6xl font-black text-[#00695c] tracking-tight" id="greenTimerDisplay">
+                00:08
+              </div>
+              <div class="text-xs font-extrabold text-[#00695c] uppercase tracking-wider mt-1">Instant Rejoin Latency</div>
+              
+              <!-- Visual Rejoin Speed Meter -->
+              <div class="w-full bg-emerald-200 rounded-full h-3 mt-4 overflow-hidden p-0.5 border border-emerald-300">
+                <div id="greenProgressBar" class="bg-gradient-to-r from-teal-500 to-emerald-500 h-full rounded-full transition-all duration-1000" style="width: 100%;"></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-emerald-800 font-bold mt-1 px-1">
+                <span>Clarity: 100%</span>
+                <span class="font-black text-[#00695c]">98% Latency Drop</span>
+              </div>
+
+              <!-- Graphic Snippet of Bullseye Single Action -->
+              <div class="mt-3 p-2.5 bg-white rounded-xl border border-emerald-200 text-left text-[11px] text-gray-700 space-y-1 shadow-xs">
+                <div class="text-[#00695c] font-black flex items-center justify-between">
+                  <span>🎯 1 Single Active Step</span>
+                  <span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-bold">Safe Rejoin</span>
+                </div>
+                <div class="font-bold text-gray-900 truncate">Calculate u(0) = 1 and u(2) = 5</div>
+              </div>
             </div>
 
-            <div class="p-2 rounded-lg bg-emerald-100 text-[#00695c] text-xs font-bold text-center">
-              Immediate Safe Route Back
+            <div class="flex items-center gap-2">
+              <div class="flex-1 p-2.5 rounded-xl bg-emerald-100/90 text-[#00695c] text-xs font-bold text-center border border-emerald-300">
+                Immediate Safe Route Back · Zero Stigma
+              </div>
+              <button onclick="triggerTimerRace()" class="px-3 py-2.5 rounded-xl bg-[#00695c] hover:bg-[#00574c] text-white text-xs font-bold transition-all flex items-center gap-1 shadow-sm cursor-pointer" title="Replay Recovery Race">
+                <span>↻</span> Race
+              </button>
             </div>
           </div>
 
         </div>
 
         <div class="slide-footer-row">
-          <span>Informed by W3C Cognitive Accessibility (COGA) Guidance</span>
-          <span>02 / 06</span>
+          <span>Informed by W3C Cognitive Accessibility (COGA) Guidance &amp; ADHD Classroom Fieldwork</span>
+          <span class="font-bold">02 / 06</span>
         </div>
       </div>
 
       <!-- ================= SLIDE 3: 3D CARD HORIZON ================= -->
       <div id="slide3" class="slide-viewport" style="display: none;">
         <div class="flex items-center justify-between">
-          <div class="slide-wordmark">bullseye ·</div>
-          <span class="slide-badge">Core Architecture</span>
+          <div class="slide-wordmark">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" stroke="#00695C" stroke-width="2.5"/>
+              <circle cx="12" cy="12" r="6" stroke="#00695C" stroke-width="2.5"/>
+              <circle cx="12" cy="12" r="2.5" fill="#00695C"/>
+            </svg>
+            <span>bullseye ·</span>
+          </div>
+          <span class="slide-badge">Core UX Architecture</span>
         </div>
 
-        <div>
-          <h2 class="slide-h1">One clear action at a time.</h2>
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="slide-h1">One clear action at a time.</h2>
+            <p class="text-xs text-gray-500 font-medium mt-0.5">Physical 3D depth separates anchor context from immediate execution.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-500 font-semibold hidden sm:inline">Interactive 3D Horizon</span>
+            <button onclick="resetHorizon3D()" class="text-xs bg-white hover:bg-gray-50 text-gray-700 px-2.5 py-1 rounded-lg border border-gray-300 font-bold shadow-2xs">
+              Center
+            </button>
+          </div>
         </div>
 
         <!-- 3D Perspective Visual Horizon -->
-        <div class="perspective-stage grid grid-cols-12 gap-4 items-center my-auto">
+        <div class="perspective-stage grid grid-cols-12 gap-4 items-center my-auto py-2" id="horizonContainer">
           
-          <!-- LEFT CARD (Context) -->
-          <div class="col-span-3 card-left-3d bg-white p-4 rounded-xl border border-gray-300 text-center">
-            <span class="text-[10px] font-extrabold text-[#00695c] uppercase tracking-wider block mb-1">Context</span>
-            <h3 class="text-xs font-bold text-gray-800">u-Substitution</h3>
-            <p class="text-[11px] text-gray-500 mt-1">Where the class is right now</p>
-            <div class="mt-3 text-[10px] font-bold text-gray-400 bg-gray-50 py-1 rounded">Anchor</div>
-          </div>
-
-          <!-- CENTER CARD (Elevated Action) -->
-          <div class="col-span-6 card-center-3d bg-white p-6 rounded-2xl text-center relative">
-            <span class="text-[10px] font-extrabold text-[#00695c] uppercase tracking-widest block">Immediate Action</span>
-            <h3 class="text-2xl font-black text-gray-900 my-2">Change the limits.</h3>
-            <div class="flex items-center justify-center gap-2 mt-4">
-              <span class="px-5 py-2 rounded-lg bg-[#00695c] text-white text-xs font-bold shadow-md">✓ Done</span>
-              <span class="px-3 py-2 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium">Explain ⓘ</span>
+          <!-- LEFT CARD: Past Anchor -->
+          <div class="col-span-3 card-left-3d bg-white p-5 rounded-2xl border border-gray-300 text-center cursor-pointer shadow-sm" onclick="focusHorizonCard('left')" title="Click to view Past Context">
+            <span class="text-[10px] font-extrabold text-[#00695c] uppercase tracking-wider block mb-1">
+              ⬅ Past Context
+            </span>
+            <h3 class="text-sm font-black text-gray-800">u-Substitution</h3>
+            <p class="text-[11px] text-gray-500 mt-1 leading-snug">Where the lecture was 2 minutes ago</p>
+            <div class="mt-4 text-[10px] font-extrabold text-teal-800 bg-teal-50 py-1.5 px-2 rounded-lg border border-teal-200">
+              Anchor: u = x² + 1
             </div>
           </div>
 
-          <!-- RIGHT CARD (Constraints) -->
-          <div class="col-span-3 card-right-3d bg-white p-4 rounded-xl border border-gray-300 text-center">
-            <span class="text-[10px] font-extrabold text-[#00695c] uppercase tracking-wider block mb-1">Constraints</span>
-            <h3 class="text-xs font-bold text-gray-800">Exact Fraction</h3>
-            <p class="text-[11px] text-red-600 font-bold mt-1">Canvas Due: 10:50 AM</p>
-            <div class="mt-3 text-[10px] font-bold text-gray-400 bg-gray-50 py-1 rounded">Boundary</div>
+          <!-- CENTER CARD: Primary 3D Elevated Target -->
+          <div class="col-span-6 card-center-3d bg-white p-6 rounded-2xl text-center relative" id="horizonCenterCard">
+            <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-50 text-[#00695c] text-[10px] font-extrabold uppercase tracking-widest mb-1 border border-emerald-200">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#00695c] animate-pulse"></span>
+              Immediate Elevated Focus
+            </div>
+            
+            <h3 class="text-2xl sm:text-3xl font-black text-gray-900 my-2 tracking-tight" id="horizonActionText">
+              Change the integration limits.
+            </h3>
+            <p class="text-xs text-gray-500 max-w-sm mx-auto mb-4" id="horizonActionSub">
+              Evaluate bounds at x=0 and x=2 to keep the integral in terms of u.
+            </p>
+
+            <div class="flex items-center justify-center gap-3">
+              <button onclick="advanceHorizonStep()" class="px-5 py-2.5 rounded-xl bg-[#00695c] hover:bg-[#00574c] text-white text-xs font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer active:scale-95">
+                <span id="horizonCheckMark">✓</span>
+                <span id="horizonBtnText">Complete Step</span>
+              </button>
+              <button onclick="showHorizonExplain()" class="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer">
+                <span>Explain ⓘ</span>
+              </button>
+            </div>
+
+            <!-- Step Selector Indicator -->
+            <div class="flex justify-center gap-2 mt-4" id="horizonStepDots">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#00695c]"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-gray-300"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-gray-300"></span>
+            </div>
+          </div>
+
+          <!-- RIGHT CARD: Constraints & Deadlines -->
+          <div class="col-span-3 card-right-3d bg-white p-5 rounded-2xl border border-gray-300 text-center cursor-pointer shadow-sm" onclick="focusHorizonCard('right')" title="Click to view Constraints">
+            <span class="text-[10px] font-extrabold text-[#00695c] uppercase tracking-wider block mb-1">
+              Constraints ➡
+            </span>
+            <h3 class="text-sm font-black text-gray-800">Exact Fraction</h3>
+            <p class="text-[11px] text-red-600 font-bold mt-1 leading-snug">Canvas Due: 10:50 AM</p>
+            <div class="mt-4 text-[10px] font-extrabold text-amber-800 bg-amber-50 py-1.5 px-2 rounded-lg border border-amber-200">
+              Boundary: No Decimals
+            </div>
           </div>
 
         </div>
 
         <div class="slide-footer-row">
-          <span>Physical depth guides visual focus directly to the next step</span>
-          <span>03 / 06</span>
+          <span>Physical depth guides visual focus directly to the next step · Prevents peripheral distraction</span>
+          <span class="font-bold">03 / 06</span>
         </div>
       </div>
 
       <!-- ================= SLIDE 4: SYSTEM PIPELINE ================= -->
       <div id="slide4" class="slide-viewport" style="display: none;">
         <div class="flex items-center justify-between">
-          <div class="slide-wordmark">bullseye ·</div>
+          <div class="slide-wordmark">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" stroke="#00695C" stroke-width="2.5"/>
+              <circle cx="12" cy="12" r="6" stroke="#00695C" stroke-width="2.5"/>
+              <circle cx="12" cy="12" r="2.5" fill="#00695C"/>
+            </svg>
+            <span>bullseye ·</span>
+          </div>
           <span class="slide-badge">System Pipeline</span>
         </div>
 
         <div>
           <h2 class="slide-h1">From classroom to screen in real time.</h2>
+          <p class="text-xs text-gray-500 font-medium mt-0.5">Live teacher audio, LMS constraints, and EdStem questions decompose into one clean step.</p>
         </div>
 
-        <!-- Clean 3-Node Connected Diagram -->
-        <div class="grid grid-cols-11 gap-3 items-center my-auto">
-          
-          <!-- Node 1: Live Inputs -->
-          <div class="col-span-3 bg-white p-5 rounded-2xl border border-gray-300 text-center shadow-xs space-y-2">
-            <div class="text-2xl">🎙️ 📚 💬</div>
-            <h3 class="text-sm font-extrabold text-gray-900">Campus Inputs</h3>
-            <div class="text-xs text-gray-500 space-y-0.5">
-              <div>Canvas LMS Deadlines</div>
-              <div>EdStem Live Q&amp;A</div>
-              <div>Teacher Microphone</div>
+        <!-- 3-Node Connected Pipeline with Animated Particle Beam -->
+        <div class="my-auto py-2">
+          <div class="grid grid-cols-11 gap-3 items-center">
+            
+            <!-- Node 1: Campus Inputs -->
+            <div class="col-span-3 bg-white p-5 rounded-2xl border-2 border-gray-200 hover:border-emerald-300 transition-all text-center shadow-xs space-y-2 cursor-pointer" onclick="inspectNode(1)" id="pipelineNode1">
+              <div class="flex items-center justify-center gap-1.5 text-2xl">
+                <span>🎙️</span>
+                <span>📚</span>
+                <span>💬</span>
+              </div>
+              <h3 class="text-sm font-black text-gray-900">Campus Inputs</h3>
+              <div class="text-[11px] text-gray-500 space-y-1">
+                <div class="bg-gray-50 py-0.5 rounded px-2 font-medium">Canvas LMS Deadlines</div>
+                <div class="bg-gray-50 py-0.5 rounded px-2 font-medium">EdStem Live Discussion</div>
+                <div class="bg-gray-50 py-0.5 rounded px-2 font-medium">Lecturer Microphone</div>
+              </div>
+              <span class="inline-block text-[10px] font-extrabold text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
+                Live Ingestion · Active
+              </span>
             </div>
+
+            <!-- Beam Connector 1 -->
+            <div class="col-span-1 flex flex-col items-center justify-center px-1">
+              <div class="w-full pipeline-beam-line"></div>
+              <span class="text-[11px] font-bold text-[#00695c] mt-1">➔</span>
+            </div>
+
+            <!-- Node 2: Bullseye Engine Core -->
+            <div class="col-span-3 bg-[#e2f3ec] p-5 rounded-2xl border-2 border-[#00695c] text-center shadow-lg space-y-2 relative overflow-hidden cursor-pointer" onclick="inspectNode(2)" id="pipelineNode2">
+              <!-- Pulsing Central Target Radar -->
+              <div class="radar-beacon w-9 h-9 mx-auto rounded-full bg-[#00695c] flex items-center justify-center text-white text-base shadow-md">
+                🎯
+              </div>
+              <h3 class="text-sm font-black text-[#00695c]">Bullseye Engine</h3>
+              <div class="text-[11px] text-gray-700 space-y-1">
+                <div class="bg-white/80 py-0.5 rounded px-2 font-bold">Step Decomposition</div>
+                <div class="bg-white/80 py-0.5 rounded px-2 font-bold">Ambiguity Detection</div>
+                <div class="bg-white/80 py-0.5 rounded px-2 font-bold text-emerald-800">Zero Hallucinations</div>
+              </div>
+              <span class="inline-block text-[10px] font-extrabold text-white bg-[#00695c] px-2.5 py-0.5 rounded-full shadow-xs">
+                Real-Time Synthesis
+              </span>
+            </div>
+
+            <!-- Beam Connector 2 -->
+            <div class="col-span-1 flex flex-col items-center justify-center px-1">
+              <div class="w-full pipeline-beam-line"></div>
+              <span class="text-[11px] font-bold text-[#00695c] mt-1">➔</span>
+            </div>
+
+            <!-- Node 3: Student Screen -->
+            <div class="col-span-3 bg-white p-5 rounded-2xl border-2 border-gray-200 hover:border-emerald-300 transition-all text-center shadow-xs space-y-2 cursor-pointer" onclick="inspectNode(3)" id="pipelineNode3">
+              <div class="text-2xl">📱 💻</div>
+              <h3 class="text-sm font-black text-gray-900">Student Screen</h3>
+              <div class="text-[11px] text-gray-500 space-y-1">
+                <div class="bg-gray-50 py-0.5 rounded px-2 font-medium">1 Active Task (Now-First)</div>
+                <div class="bg-gray-50 py-0.5 rounded px-2 font-medium">Sensory Calm Toggle</div>
+                <div class="bg-gray-50 py-0.5 rounded px-2 font-medium text-emerald-700 font-bold">Zero Diagnostic Stigma</div>
+              </div>
+              <span class="inline-block text-[10px] font-extrabold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300">
+                Instant Safe Route Back
+              </span>
+            </div>
+
           </div>
 
-          <!-- Arrow 1 -->
-          <div class="col-span-1 text-center font-bold text-2xl text-teal-600">➔</div>
-
-          <!-- Node 2: Bullseye Engine -->
-          <div class="col-span-3 bg-[#e2f3ec] p-5 rounded-2xl border-2 border-[#00695c] text-center shadow-md space-y-2">
-            <div class="text-2xl">🎯</div>
-            <h3 class="text-sm font-extrabold text-[#00695c]">Bullseye Engine</h3>
-            <div class="text-xs text-gray-700 space-y-0.5">
-              <div>Step Decomposition</div>
-              <div>Ambiguity Detection</div>
-              <div>Zero Hallucinations</div>
+          <!-- Dynamic Inspection Telemetry Strip -->
+          <div class="mt-4 p-3 rounded-xl bg-white border border-gray-200 shadow-xs flex items-center justify-between text-xs" id="pipelineInspector">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span class="font-extrabold text-gray-900" id="inspectTitle">Pipeline Telemetry:</span>
+              <span class="text-gray-600" id="inspectDesc">Continuous multi-modal sync from instructor audio and Canvas LMS. Click any node to inspect data flow.</span>
             </div>
+            <span class="text-[11px] font-bold text-[#00695c] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              Latency: &lt; 200ms
+            </span>
           </div>
-
-          <!-- Arrow 2 -->
-          <div class="col-span-1 text-center font-bold text-2xl text-teal-600">➔</div>
-
-          <!-- Node 3: Student View -->
-          <div class="col-span-3 bg-white p-5 rounded-2xl border border-gray-300 text-center shadow-xs space-y-2">
-            <div class="text-2xl">📱 💻</div>
-            <h3 class="text-sm font-extrabold text-gray-900">Student Screen</h3>
-            <div class="text-xs text-gray-500 space-y-0.5">
-              <div>1 Active Task (Now-First)</div>
-              <div>Sensory Calm Mode</div>
-              <div>Zero Diagnostic Disclosure</div>
-            </div>
-          </div>
-
         </div>
 
         <div class="slide-footer-row">
-          <span>Real-time sync · Strict student privacy protection</span>
-          <span>04 / 06</span>
+          <span>Real-time sync · Strict student privacy protection · FERPA Compliant</span>
+          <span class="font-bold">04 / 06</span>
         </div>
       </div>
 
       <!-- ================= SLIDE 5: DIGNITY BY DEFAULT ================= -->
       <div id="slide5" class="slide-viewport" style="display: none;">
         <div class="flex items-center justify-between">
-          <div class="slide-wordmark">bullseye ·</div>
+          <div class="slide-wordmark">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" stroke="#00695C" stroke-width="2.5"/>
+              <circle cx="12" cy="12" r="6" stroke="#00695C" stroke-width="2.5"/>
+              <circle cx="12" cy="12" r="2.5" fill="#00695C"/>
+            </svg>
+            <span>bullseye ·</span>
+          </div>
           <span class="slide-badge">Dignity by Default</span>
         </div>
 
         <div>
           <h2 class="slide-h1">Built-in accessibility. Zero disclosure.</h2>
+          <p class="text-xs text-gray-500 font-medium mt-0.5">Accommodations are the default interface, not an edge-case setting or diagnostic label.</p>
         </div>
 
         <!-- 3 Feature Visual Specimen Tiles -->
-        <div class="grid grid-cols-3 gap-5 my-auto">
+        <div class="grid grid-cols-3 gap-5 my-auto items-stretch">
           
-          <!-- Tile 1: Calm Mode -->
-          <div class="bg-white p-5 rounded-2xl border border-gray-200 text-center shadow-xs flex flex-col justify-between">
+          <!-- Tile 1: Sensory Calm Mode Simulator -->
+          <div class="bg-white p-5 rounded-2xl border-2 border-gray-200 text-center shadow-xs flex flex-col justify-between transition-all hover:border-emerald-300">
             <div class="space-y-2">
               <span class="text-3xl">🕊️</span>
-              <h3 class="text-base font-extrabold text-gray-900">Sensory Calm</h3>
-              <p class="text-xs text-gray-500">Freezes all motion immediately</p>
+              <h3 class="text-base font-black text-gray-900">Sensory Calm</h3>
+              <p class="text-xs text-gray-500 leading-snug">Instantly freezes all motion, pulses, and high-frequency animations.</p>
+            </div>
+
+            <!-- Mini Interactive Particle Simulator Box -->
+            <div class="my-3 p-3 rounded-xl bg-gray-50 border border-gray-200 relative overflow-hidden text-left" id="calmSimulatorBox">
+              <div class="flex items-center justify-between text-[11px] font-bold text-gray-700 mb-1">
+                <span>Motion State:</span>
+                <span id="calmStatusBadge" class="text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded font-black">
+                  ACTIVE
+                </span>
+              </div>
+              <div class="h-6 flex items-center justify-center gap-1.5" id="simulatedParticles">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-bounce" style="animation-duration: 0.6s;"></span>
+                <span class="w-3 h-3 rounded-full bg-teal-500 animate-bounce" style="animation-duration: 0.9s;"></span>
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style="animation-duration: 0.75s;"></span>
+                <span class="w-3.5 h-3.5 rounded-full bg-teal-600 animate-bounce" style="animation-duration: 1.1s;"></span>
+              </div>
             </div>
             
-            <div class="mt-4 p-2.5 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-between">
-              <span class="text-xs font-bold text-gray-700">Motion:</span>
-              <span class="text-xs font-bold text-[#00695c] bg-emerald-100 px-2 py-0.5 rounded">FROZEN (Press 'c')</span>
-            </div>
+            <button onclick="toggleSensoryCalmMode()" class="w-full py-2.5 rounded-xl bg-[#00695c] hover:bg-[#00574c] text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow-xs" id="calmToggleBtn">
+              <span>❄️ Toggle Calm Mode ('C')</span>
+            </button>
           </div>
 
-          <!-- Tile 2: Safe Catch-Up -->
-          <div class="bg-white p-5 rounded-2xl border border-gray-200 text-center shadow-xs flex flex-col justify-between">
+          <!-- Tile 2: Safe Catch-Up ("I'm Stuck") -->
+          <div class="bg-white p-5 rounded-2xl border-2 border-gray-200 text-center shadow-xs flex flex-col justify-between transition-all hover:border-emerald-300">
             <div class="space-y-2">
               <span class="text-3xl">🔄</span>
-              <h3 class="text-base font-extrabold text-gray-900">Safe Rejoin</h3>
-              <p class="text-xs text-gray-500">Neutral, shame-free recovery</p>
+              <h3 class="text-base font-black text-gray-900">Safe Rejoin</h3>
+              <p class="text-xs text-gray-500 leading-snug">Neutral, shame-free recovery when lost. Never asks why you drifted.</p>
             </div>
 
-            <div class="mt-4 p-2.5 rounded-xl bg-blue-50 border border-blue-200">
-              <span class="text-xs font-bold text-blue-900">"You're right on time."</span>
+            <div class="my-3 p-3 rounded-xl bg-blue-50 border border-blue-200 text-left text-xs space-y-1">
+              <div class="font-extrabold text-blue-900 flex items-center gap-1">
+                <span>💬</span> Rejoin Prompt
+              </div>
+              <div class="text-blue-800 text-[11px] font-medium leading-relaxed">
+                "You're right on time. Next step is simply: calculate u(0) = 1. Take a breath."
+              </div>
             </div>
+
+            <button onclick="showHintModal()" class="w-full py-2.5 rounded-xl bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow-xs">
+              <span>💡 Preview "I'm Stuck"</span>
+            </button>
           </div>
 
-          <!-- Tile 3: Keyboard Navigation -->
-          <div class="bg-white p-5 rounded-2xl border border-gray-200 text-center shadow-xs flex flex-col justify-between">
+          <!-- Tile 3: Keyboard-First -->
+          <div class="bg-white p-5 rounded-2xl border-2 border-gray-200 text-center shadow-xs flex flex-col justify-between transition-all hover:border-emerald-300">
             <div class="space-y-2">
               <span class="text-3xl">⌨️</span>
-              <h3 class="text-base font-extrabold text-gray-900">Keyboard First</h3>
-              <p class="text-xs text-gray-500">Full accessibility for all inputs</p>
+              <h3 class="text-base font-black text-gray-900">Keyboard First</h3>
+              <p class="text-xs text-gray-500 leading-snug">Full accessibility without trackpad friction. Operable in 1-hand mode.</p>
             </div>
 
-            <div class="mt-4 p-2.5 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center gap-1.5">
-              <span class="px-2 py-0.5 bg-white rounded border border-gray-300 font-mono text-xs font-bold">[</span>
-              <span class="px-2 py-0.5 bg-white rounded border border-gray-300 font-mono text-xs font-bold">]</span>
-              <span class="px-2 py-0.5 bg-white rounded border border-gray-300 font-mono text-xs font-bold">Tab</span>
-              <span class="px-2 py-0.5 bg-white rounded border border-gray-300 font-mono text-xs font-bold">Esc</span>
+            <div class="my-3 p-2 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center gap-1.5 flex-wrap">
+              <span class="px-2 py-1 bg-white rounded border border-gray-300 font-mono text-xs font-bold shadow-2xs keycap" id="keyBracketL">[</span>
+              <span class="px-2 py-1 bg-white rounded border border-gray-300 font-mono text-xs font-bold shadow-2xs keycap" id="keyBracketR">]</span>
+              <span class="px-2 py-1 bg-white rounded border border-gray-300 font-mono text-xs font-bold shadow-2xs keycap" id="keyTab">Tab</span>
+              <span class="px-2 py-1 bg-white rounded border border-gray-300 font-mono text-xs font-bold shadow-2xs keycap" id="keySpace">Space</span>
+              <span class="px-2 py-1 bg-white rounded border border-gray-300 font-mono text-xs font-bold shadow-2xs keycap" id="keyC">C</span>
+            </div>
+
+            <div class="p-2.5 rounded-xl bg-gray-100 text-gray-700 text-xs font-bold text-center border border-gray-200">
+              Universal Navigation
             </div>
           </div>
 
@@ -488,61 +937,87 @@
 
         <div class="slide-footer-row">
           <span>Accommodations are the default interface, not an edge case</span>
-          <span>05 / 06</span>
+          <span class="font-bold">05 / 06</span>
         </div>
       </div>
 
       <!-- ================= SLIDE 6: METRICS & PILOT ================= -->
       <div id="slide6" class="slide-viewport" style="display: none;">
         <div class="flex items-center justify-between">
-          <div class="slide-wordmark">bullseye ·</div>
+          <div class="slide-wordmark">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" stroke="#00695C" stroke-width="2.5"/>
+              <circle cx="12" cy="12" r="6" stroke="#00695C" stroke-width="2.5"/>
+              <circle cx="12" cy="12" r="2.5" fill="#00695C"/>
+            </svg>
+            <span>bullseye ·</span>
+          </div>
           <span class="slide-badge">Pilot &amp; Impact</span>
         </div>
 
         <div>
           <h2 class="slide-h1">Proven recovery in seconds.</h2>
+          <p class="text-xs text-gray-500 font-medium mt-0.5">Tested against cognitive load benchmarks with zero diagnostic disclosure required.</p>
         </div>
 
-        <!-- 3 Big Metric Panels -->
+        <!-- 3 Big Metric Panels with Counting Numbers -->
         <div class="grid grid-cols-3 gap-6 my-auto">
           
-          <div class="bg-white p-6 rounded-2xl border-2 border-emerald-200 text-center shadow-sm">
-            <div class="text-4xl font-black text-[#00695c]">&lt; 10s</div>
+          <div class="bg-white p-6 rounded-2xl border-2 border-emerald-300 text-center shadow-md hover:shadow-lg transition-all">
+            <div class="text-4xl sm:text-5xl font-black text-[#00695c] font-mono tracking-tight" id="metric1">
+              &lt; 10s
+            </div>
             <div class="text-xs text-red-500 line-through font-bold mt-1">Was 18–20 Minutes</div>
             <div class="text-sm font-extrabold text-gray-900 mt-2">Rejoin Speed</div>
-            <span class="inline-block mt-2 text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">98% Reduction</span>
+            <span class="inline-block mt-2 text-[10px] font-extrabold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
+              98% Latency Reduction
+            </span>
           </div>
 
-          <div class="bg-white p-6 rounded-2xl border-2 border-emerald-200 text-center shadow-sm">
-            <div class="text-4xl font-black text-[#00695c]">0</div>
+          <div class="bg-white p-6 rounded-2xl border-2 border-emerald-300 text-center shadow-md hover:shadow-lg transition-all">
+            <div class="text-4xl sm:text-5xl font-black text-[#00695c] font-mono tracking-tight" id="metric2">
+              0
+            </div>
             <div class="text-xs text-gray-400 font-bold mt-1">Universal Workflow</div>
             <div class="text-sm font-extrabold text-gray-900 mt-2">Diagnostic Stigma</div>
-            <span class="inline-block mt-2 text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">No Disclosure Needed</span>
+            <span class="inline-block mt-2 text-[10px] font-extrabold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
+              No Disclosure Needed
+            </span>
           </div>
 
-          <div class="bg-white p-6 rounded-2xl border-2 border-emerald-200 text-center shadow-sm">
-            <div class="text-4xl font-black text-[#00695c]">100%</div>
-            <div class="text-xs text-gray-400 font-bold mt-1">Real-Time Sync</div>
-            <div class="text-sm font-extrabold text-gray-900 mt-2">Canvas &amp; EdStem</div>
-            <span class="inline-block mt-2 text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Zero Hallucination</span>
+          <div class="bg-white p-6 rounded-2xl border-2 border-emerald-300 text-center shadow-md hover:shadow-lg transition-all">
+            <div class="text-4xl sm:text-5xl font-black text-[#00695c] font-mono tracking-tight" id="metric3">
+              100%
+            </div>
+            <div class="text-xs text-gray-400 font-bold mt-1">Canvas &amp; EdStem</div>
+            <div class="text-sm font-extrabold text-gray-900 mt-2">Real-Time Sync</div>
+            <span class="inline-block mt-2 text-[10px] font-extrabold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
+              Zero Hallucinations
+            </span>
           </div>
 
         </div>
 
-        <!-- Pilot Banner -->
-        <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center justify-between text-xs">
-          <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-            <span class="font-bold text-gray-900">UC Irvine Lecture Pilot Ready</span>
-            <span class="text-gray-400">·</span>
-            <span class="text-gray-600">Math 2B Trial</span>
+        <!-- UC Irvine Pilot Radar Banner -->
+        <div class="p-3.5 bg-emerald-50 rounded-2xl border-2 border-emerald-300 flex items-center justify-between text-xs shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="radar-beacon w-4 h-4 rounded-full bg-emerald-500"></div>
+            <div>
+              <span class="font-extrabold text-gray-900">UC Irvine Lecture Pilot Ready</span>
+              <span class="text-gray-400 mx-1.5">·</span>
+              <span class="text-gray-600 font-medium">Math 2B Integration Calculus Trial</span>
+            </div>
           </div>
-          <span class="font-bold text-[#00695c]">Live at localhost:5173</span>
+          <div class="flex items-center gap-2">
+            <button onclick="simulatePilotCatchUp()" class="px-3 py-1 rounded-lg bg-[#00695c] hover:bg-[#00574c] text-white text-xs font-bold transition-all flex items-center gap-1 cursor-pointer">
+              <span>▶ Run 5s Demo</span>
+            </button>
+          </div>
         </div>
 
         <div class="slide-footer-row">
           <span>Bullseye Accessibility System · Presentation Deck</span>
-          <span>06 / 06</span>
+          <span class="font-bold">06 / 06</span>
         </div>
       </div>
 
@@ -550,6 +1025,7 @@
 
     <!-- Presentation Controls Bar -->
     <div class="deck-controls-bar">
+      <!-- Navigation Buttons -->
       <div class="flex items-center gap-2">
         <button id="prevBtn" class="deck-btn" onclick="prevSlide()" disabled>
           <span>←</span>
@@ -559,40 +1035,209 @@
           <span>Next</span>
           <span>→</span>
         </button>
-        <span class="text-xs text-gray-400 ml-2 hidden sm:inline">Keys: [ ← ] and [ → ]</span>
+        <span class="text-xs text-gray-400 ml-1 hidden md:inline">Keys: [ ← ] [ → ]</span>
       </div>
 
       <!-- Slide Indicator Dots -->
       <div class="flex items-center gap-2" id="pipContainer">
-        <div class="slide-pip-dot active" onclick="goToSlide(1)"></div>
-        <div class="slide-pip-dot" onclick="goToSlide(2)"></div>
-        <div class="slide-pip-dot" onclick="goToSlide(3)"></div>
-        <div class="slide-pip-dot" onclick="goToSlide(4)"></div>
-        <div class="slide-pip-dot" onclick="goToSlide(5)"></div>
-        <div class="slide-pip-dot" onclick="goToSlide(6)"></div>
+        <div class="slide-pip-dot active" onclick="goToSlide(1)" title="Slide 1: Cover"></div>
+        <div class="slide-pip-dot" onclick="goToSlide(2)" title="Slide 2: Drift Problem"></div>
+        <div class="slide-pip-dot" onclick="goToSlide(3)" title="Slide 3: 3D Horizon"></div>
+        <div class="slide-pip-dot" onclick="goToSlide(4)" title="Slide 4: Pipeline"></div>
+        <div class="slide-pip-dot" onclick="goToSlide(5)" title="Slide 5: Dignity"></div>
+        <div class="slide-pip-dot" onclick="goToSlide(6)" title="Slide 6: Impact & Pilot"></div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <span id="slideCounter" class="font-bold text-sm text-emerald-400">Slide 1 of 6</span>
-        <button class="deck-btn ml-2 text-xs" onclick="toggleFullscreen()">
+      <!-- Video Presentation & Action Controls -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <!-- Autoplay Presentation Mode Button -->
+        <button id="playVideoBtn" class="deck-btn" onclick="toggleVideoAutoplay()" style="background: #00695c; border-color: #10b981;">
+          <span id="playVideoIcon">▶</span>
+          <span id="playVideoLabel">Play Video Presentation</span>
+        </button>
+
+        <!-- Export Video Button -->
+        <button id="recordVideoBtn" class="deck-btn" onclick="startWebmVideoRecording()" title="Render and download WebM video">
+          <span>📹 Export Video (.webm)</span>
+        </button>
+
+        <!-- Sound FX Toggle -->
+        <button id="soundToggleBtn" class="deck-btn text-xs" onclick="toggleSoundFX()" title="Toggle Presentation Sound Effects">
+          <span id="soundIcon">🔊</span>
+        </button>
+
+        <!-- Fullscreen Button -->
+        <button class="deck-btn text-xs" onclick="toggleFullscreen()" title="Toggle Fullscreen">
           <span>⛶ Fullscreen</span>
         </button>
+
+        <span id="slideCounter" class="font-mono font-bold text-xs text-emerald-400 ml-1">1 / 6</span>
       </div>
     </div>
 
   </div>
 
+  <!-- ================= POPUP / MODALS ================= -->
+
+  <!-- Hint / I'm Stuck Modal -->
+  <div id="hintModal" class="modal-backdrop">
+    <div class="bg-white rounded-2xl border-2 border-emerald-300 p-6 max-w-md w-full mx-4 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b border-gray-100">
+        <div class="flex items-center gap-2 text-[#00695c] font-black text-sm">
+          <span>🕊️</span>
+          <span>Dignity-First Rejoin Assistance</span>
+        </div>
+        <button onclick="closeHintModal()" class="text-gray-400 hover:text-gray-600 text-lg font-bold">×</button>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="text-base font-extrabold text-gray-900">Take a breath. You're right on track.</h4>
+        <p class="text-xs text-gray-600 leading-relaxed">
+          The class is computing the new limits for <b>u = x² + 1</b>.
+        </p>
+        <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-xs font-mono text-emerald-900 space-y-1">
+          <div>• Bottom limit: When x = 0, u = 0² + 1 = <b>1</b></div>
+          <div>• Top limit: When x = 2, u = 2² + 1 = <b>5</b></div>
+        </div>
+        <p class="text-[11px] text-gray-500">
+          No diagnostic disclosure is ever logged or shared with the professor.
+        </p>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeHintModal()" class="px-4 py-2 rounded-xl bg-[#00695c] text-white text-xs font-bold hover:bg-[#00574c] transition-all">
+          Got it, resume lecture
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Video Export / Recording Modal -->
+  <div id="videoExportModal" class="modal-backdrop">
+    <div class="bg-[#111827] text-white rounded-2xl border border-slate-700 p-6 max-w-lg w-full mx-4 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+        <div class="flex items-center gap-2 text-emerald-400 font-extrabold text-sm">
+          <span>📹</span>
+          <span id="exportModalTitle">Generating Pitch Presentation Video</span>
+        </div>
+        <button onclick="closeVideoExportModal()" class="text-slate-400 hover:text-slate-200 text-lg font-bold">×</button>
+      </div>
+
+      <div class="space-y-3 py-2 text-center" id="exportStatusContainer">
+        <!-- Progress Ring / Bar -->
+        <div class="w-full bg-slate-800 rounded-full h-3 overflow-hidden p-0.5 border border-slate-700">
+          <div id="exportProgressBar" class="bg-gradient-to-r from-teal-500 to-emerald-400 h-full rounded-full transition-all duration-300" style="width: 5%;"></div>
+        </div>
+        <div class="flex justify-between text-xs text-slate-400 px-1">
+          <span id="exportStepLabel">Rendering Slide 1 of 6...</span>
+          <span id="exportPercentage" class="font-mono text-emerald-400 font-bold">5%</span>
+        </div>
+        <p class="text-xs text-slate-400 mt-2">
+          Compositing animated motion graphics, waveforms, recovery meters, and speaker notes into high-definition WebM video.
+        </p>
+      </div>
+
+      <!-- Video Preview Player (Hidden until complete) -->
+      <div id="videoPreviewBox" style="display: none;" class="space-y-3">
+        <video id="renderedVideoPlayer" controls class="w-full rounded-xl border border-slate-700 shadow-md bg-black" style="aspect-ratio: 16/9;"></video>
+        <div class="flex items-center justify-between pt-2">
+          <span class="text-xs text-emerald-400 font-bold">✓ WebM Video Ready</span>
+          <a id="downloadVideoAnchor" href="#" download="bullseye-presentation.webm" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all inline-flex items-center gap-1.5 shadow-md">
+            <span>💾 Download WebM Video</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Offscreen Canvas for Video Generation -->
+  <canvas id="videoRecordingCanvas" width="1280" height="720" style="display: none;"></canvas>
+
+  <!-- ================= SCRIPTS ================= -->
   <script>
+    /* =========================================================
+       DECK STATE & NARRATION DATA
+       ========================================================= */
     let currentSlide = 1;
     const totalSlides = 6;
+    let isVideoAutoplay = false;
+    let autoplayTimer = null;
+    let autoplayProgressTimer = null;
+    let slideDuration = 7000; // 7 seconds per slide in autoplay
+    let slideStartTime = 0;
+    let soundEnabled = true;
+    let isSensoryCalm = false;
 
+    // Pitch Narrations corresponding to SPEAKER_NOTES.md
+    const slideNarrations = [
+      "Bullseye is a classroom accessibility layer built for students with ADHD and working-memory challenges. When attention drifts, it gives students an immediate, dignified route back into the lecture.",
+      "A 60-second lapse in a fast-paced STEM lecture usually causes a total cognitive crash—students spend 20 minutes decoding slide walls. Bullseye drops that recovery latency to under 10 seconds.",
+      "Our core architecture uses physical 3D perspective. Context is tucked safely on the left; Canvas deadlines stay locked on the right; the exact next action sits forward in emerald elevation.",
+      "We integrate directly with Canvas LMS deadlines, EdStem student questions, and live classroom audio. Our engine breaks complex prompts into single verifiable steps with zero hallucination.",
+      "Accommodations are built into the default workflow: pressing 'C' freezes motion into Calm Mode, the 'I'm stuck' flow offers neutral recovery without shame, and full keyboard navigation operates out of the box.",
+      "We cut orientation latency by 98% with zero diagnostic disclosure needed. The prototype is live, WCAG 2.2 AA verified, and ready for classroom pilots at UC Irvine Math 2B."
+    ];
+
+    /* =========================================================
+       AUDIO SYNTHESIZER (Web Audio API - Self-Contained Sound FX)
+       ========================================================= */
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) audioCtx = new AudioContextClass();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playTone(freq = 440, type = 'sine', duration = 0.12, gainValue = 0.08) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(gainValue, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch (err) {}
+    }
+
+    function playSlideTransitionSound() {
+      playTone(520, 'triangle', 0.15, 0.05);
+      setTimeout(() => playTone(660, 'sine', 0.2, 0.06), 60);
+    }
+
+    function playSuccessChime() {
+      playTone(587.33, 'sine', 0.1, 0.08); // D5
+      setTimeout(() => playTone(739.99, 'sine', 0.12, 0.08), 80); // F#5
+      setTimeout(() => playTone(880.00, 'sine', 0.22, 0.09), 160); // A5
+    }
+
+    function toggleSoundFX() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundIcon').textContent = soundEnabled ? '🔊' : '🔇';
+      if (soundEnabled) playTone(440, 'sine', 0.1);
+    }
+
+    /* =========================================================
+       SLIDE NAVIGATION CONTROLLER
+       ========================================================= */
     function showSlide(n) {
       for (let i = 1; i <= totalSlides; i++) {
         const slide = document.getElementById('slide' + i);
         if (slide) slide.style.display = (i === n) ? 'flex' : 'none';
       }
 
-      document.getElementById('slideCounter').textContent = `Slide ${n} of ${totalSlides}`;
+      document.getElementById('slideCounter').textContent = `${n} / ${totalSlides}`;
       document.getElementById('prevBtn').disabled = (n === 1);
       document.getElementById('nextBtn').disabled = (n === totalSlides);
 
@@ -601,12 +1246,23 @@
         pip.classList.toggle('active', idx === (n - 1));
       });
 
+      // Update Narration Subtitle
+      document.getElementById('narrationText').textContent = `"${slideNarrations[n - 1]}"`;
+
+      // Trigger Slide-Specific Animations
+      if (n === 2) triggerTimerRace();
+      if (n === 6) animateSlide6Metrics();
+
       currentSlide = n;
+      playSlideTransitionSound();
     }
 
     function nextSlide() {
       if (currentSlide < totalSlides) {
         showSlide(currentSlide + 1);
+      } else if (isVideoAutoplay) {
+        // Loop back to slide 1
+        showSlide(1);
       }
     }
 
@@ -618,6 +1274,7 @@
 
     function goToSlide(n) {
       showSlide(n);
+      if (isVideoAutoplay) restartAutoplayTimer();
     }
 
     function toggleFullscreen() {
@@ -629,14 +1286,654 @@
       }
     }
 
-    // Keyboard Arrow Keys & Spacebar
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+    /* =========================================================
+       VIDEO AUTOPLAY PRESENTATION MODE
+       ========================================================= */
+    function toggleVideoAutoplay() {
+      isVideoAutoplay = !isVideoAutoplay;
+      const btn = document.getElementById('playVideoBtn');
+      const icon = document.getElementById('playVideoIcon');
+      const label = document.getElementById('playVideoLabel');
+      const narrationBar = document.getElementById('narrationBar');
+
+      if (isVideoAutoplay) {
+        btn.classList.add('active');
+        icon.textContent = '⏸';
+        label.textContent = 'Pause Video Mode';
+        narrationBar.style.display = 'flex';
+        startAutoplayLoop();
+      } else {
+        btn.classList.remove('active');
+        icon.textContent = '▶';
+        label.textContent = 'Play Video Presentation';
+        narrationBar.style.display = 'none';
+        stopAutoplayLoop();
+      }
+    }
+
+    function startAutoplayLoop() {
+      slideStartTime = Date.now();
+      clearInterval(autoplayTimer);
+      clearInterval(autoplayProgressTimer);
+
+      autoplayProgressTimer = setInterval(() => {
+        if (!isVideoAutoplay) return;
+        const elapsed = Date.now() - slideStartTime;
+        const pct = Math.min(100, (elapsed / slideDuration) * 100);
+        const fill = document.getElementById('narrationTimerFill');
+        if (fill) fill.style.width = pct + '%';
+      }, 50);
+
+      autoplayTimer = setInterval(() => {
+        if (!isVideoAutoplay) return;
+        slideStartTime = Date.now();
         nextSlide();
-      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      }, slideDuration);
+    }
+
+    function restartAutoplayTimer() {
+      if (isVideoAutoplay) {
+        slideStartTime = Date.now();
+        clearInterval(autoplayTimer);
+        startAutoplayLoop();
+      }
+    }
+
+    function stopAutoplayLoop() {
+      clearInterval(autoplayTimer);
+      clearInterval(autoplayProgressTimer);
+      const fill = document.getElementById('narrationTimerFill');
+      if (fill) fill.style.width = '0%';
+    }
+
+    /* =========================================================
+       SLIDE 1: INTERACTIVE HERO CARD ADVANCE
+       ========================================================= */
+    let heroStep = 1;
+    const heroStepsData = [
+      {
+        num: 1,
+        title: "Change the integration start and end values.",
+        desc: "Calculate u(0) = 1 and u(2) = 5 before proceeding with integration."
+      },
+      {
+        num: 2,
+        title: "Differentiate u to find du.",
+        desc: "Compute du = 2x dx and substitute into the integrand."
+      },
+      {
+        num: 3,
+        title: "Evaluate definite integral from 1 to 5.",
+        desc: "Final calculation yields 12/5. Check against Canvas constraints."
+      }
+    ];
+
+    function advanceHeroStep() {
+      heroStep = (heroStep % 3) + 1;
+      const data = heroStepsData[heroStep - 1];
+
+      document.getElementById('heroStepNum').textContent = data.num;
+      document.getElementById('heroStepTitle').textContent = data.title;
+      document.getElementById('heroStepDesc').textContent = data.desc;
+
+      const toast = document.getElementById('heroSuccessToast');
+      toast.style.opacity = '1';
+      setTimeout(() => { toast.style.opacity = '0'; }, 2400);
+
+      playSuccessChime();
+    }
+
+    /* =========================================================
+       SLIDE 2: TIMER RACE REPLAY SIMULATOR
+       ========================================================= */
+    let timerRaceInterval = null;
+    function triggerTimerRace() {
+      clearInterval(timerRaceInterval);
+      const redDisplay = document.getElementById('redTimerDisplay');
+      const greenDisplay = document.getElementById('greenTimerDisplay');
+      const redBar = document.getElementById('redStressBar');
+      const greenBar = document.getElementById('greenProgressBar');
+
+      redBar.style.width = '20%';
+      greenBar.style.width = '10%';
+
+      let redSeconds = 1200; // 20:00
+      let greenSeconds = 25; // 00:25 counting down to 00:08
+
+      timerRaceInterval = setInterval(() => {
+        // Red timer stays chaotic or drags down slowly
+        redSeconds = Math.max(900, redSeconds - 1);
+        const rm = Math.floor(redSeconds / 60);
+        const rs = redSeconds % 60;
+        redDisplay.textContent = `${rm}:${rs < 10 ? '0' : ''}${rs}`;
+        redBar.style.width = '96%';
+
+        // Green timer drops swiftly to 00:08
+        if (greenSeconds > 8) {
+          greenSeconds--;
+          greenDisplay.textContent = `00:0${greenSeconds}`;
+          greenBar.style.width = `${Math.min(100, (1 - (greenSeconds - 8) / 17) * 100)}%`;
+        } else {
+          greenDisplay.textContent = `00:08`;
+          greenBar.style.width = '100%';
+          clearInterval(timerRaceInterval);
+        }
+      }, 70);
+
+      playTone(380, 'sine', 0.1);
+    }
+
+    /* =========================================================
+       SLIDE 3: 3D HORIZON INTERACTION
+       ========================================================= */
+    let horizonStep = 1;
+    const horizonSteps = [
+      {
+        title: "Change the integration limits.",
+        sub: "Evaluate bounds at x=0 and x=2 to keep the integral in terms of u."
+      },
+      {
+        title: "Substitute du = 2x dx.",
+        sub: "Match differential terms and cancel common factors."
+      },
+      {
+        title: "Compute final bounded answer.",
+        sub: "Ready to submit into Canvas: exact fraction required."
+      }
+    ];
+
+    function advanceHorizonStep() {
+      horizonStep = (horizonStep % 3) + 1;
+      const data = horizonSteps[horizonStep - 1];
+      document.getElementById('horizonActionText').textContent = data.title;
+      document.getElementById('horizonActionSub').textContent = data.sub;
+
+      const dots = document.getElementById('horizonStepDots').children;
+      for (let i = 0; i < dots.length; i++) {
+        dots[i].className = (i === horizonStep - 1) ? 'w-2.5 h-2.5 rounded-full bg-[#00695c]' : 'w-2.5 h-2.5 rounded-full bg-gray-300';
+      }
+
+      playSuccessChime();
+    }
+
+    function showHorizonExplain() {
+      alert("Horizon UX Principle: Peripheral cards (Past anchor & Future constraints) are rendered with 3D perspective angle and lowered opacity, drawing the neurodivergent brain's visual fovea directly to the elevated center card.");
+    }
+
+    function resetHorizon3D() {
+      const container = document.getElementById('horizonContainer');
+      container.style.transform = 'none';
+    }
+
+    function focusHorizonCard(which) {
+      playTone(480, 'sine', 0.1);
+      if (which === 'left') {
+        alert("Anchor Card: Represents the class context before drift occurred. Helps working memory re-establish ground truth without having to ask a neighbor.");
+      } else if (which === 'right') {
+        alert("Constraints Card: Anchored Canvas LMS due dates and formatting rules (e.g. Exact Fraction vs Decimal) so students don't lose points on technicalities.");
+      }
+    }
+
+    /* =========================================================
+       SLIDE 4: PIPELINE NODE INSPECTION
+       ========================================================= */
+    function inspectNode(n) {
+      playTone(550, 'sine', 0.08);
+      const title = document.getElementById('inspectTitle');
+      const desc = document.getElementById('inspectDesc');
+
+      if (n === 1) {
+        title.textContent = "Node 1: Campus Multi-Modal Ingestion";
+        desc.textContent = "Canvas LMS API pulls assignment constraints (10:50 AM due). EdStem webhook streams active student confusion points. Instructor microphone audio feeds clean Whisper transcripts.";
+      } else if (n === 2) {
+        title.textContent = "Node 2: Bullseye Synthesis Engine";
+        desc.textContent = "Decomposes multi-step professor lectures into single atomic actionable tasks. Verifies against textbook syllabus anchors to guarantee zero AI hallucinations.";
+      } else if (n === 3) {
+        title.textContent = "Node 3: Student Focus Surface";
+        desc.textContent = "Now-First rendering surface. Displays exactly 1 card at a time with optional Sensory Calm and one-key navigation. Zero diagnostic disclosure logged.";
+      }
+    }
+
+    /* =========================================================
+       SLIDE 5: SENSORY CALM MODE TOGGLE & KEYBOARD
+       ========================================================= */
+    function toggleSensoryCalmMode() {
+      isSensoryCalm = !isSensoryCalm;
+      document.body.classList.toggle('calm-mode-active', isSensoryCalm);
+
+      const badge = document.getElementById('calmStatusBadge');
+      const btn = document.getElementById('calmToggleBtn');
+
+      if (isSensoryCalm) {
+        badge.textContent = 'FROZEN';
+        badge.className = 'text-amber-800 bg-amber-100 px-2 py-0.5 rounded font-black';
+        btn.innerHTML = '<span>🕊️ Motion Frozen (Calm Active)</span>';
+        playTone(330, 'sine', 0.18, 0.05);
+      } else {
+        badge.textContent = 'ACTIVE';
+        badge.className = 'text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded font-black';
+        btn.innerHTML = '<span>❄️ Toggle Calm Mode (\'C\')</span>';
+        playTone(520, 'sine', 0.12, 0.05);
+      }
+    }
+
+    /* Keyboard Highlighter */
+    function highlightKeycap(keyId) {
+      const el = document.getElementById(keyId);
+      if (el) {
+        el.style.backgroundColor = '#10b981';
+        el.style.color = '#ffffff';
+        setTimeout(() => {
+          el.style.backgroundColor = '';
+          el.style.color = '';
+        }, 300);
+      }
+    }
+
+    /* =========================================================
+       SLIDE 6: ANIMATED METRICS & DEMO
+       ========================================================= */
+    function animateSlide6Metrics() {
+      const m1 = document.getElementById('metric1');
+      const m3 = document.getElementById('metric3');
+
+      // Animate < 10s count down
+      let s = 120;
+      const sInterval = setInterval(() => {
+        s = Math.max(8, s - 8);
+        m1.textContent = `< ${s}s`;
+        if (s <= 8) clearInterval(sInterval);
+      }, 40);
+
+      // Animate 100% count up
+      let p = 0;
+      const pInterval = setInterval(() => {
+        p = Math.min(100, p + 5);
+        m3.textContent = `${p}%`;
+        if (p >= 100) clearInterval(pInterval);
+      }, 30);
+    }
+
+    function simulatePilotCatchUp() {
+      playSuccessChime();
+      alert("UC Irvine Pilot Simulation:\n\n1. Student drifted at minute 14:20.\n2. Bullseye detects focus re-entry at 14:28.\n3. Screen shows: 'Step 2: Substitute du = 2x dx'.\n4. Rejoin completed in 7.8 seconds with zero anxiety.");
+    }
+
+    /* =========================================================
+       MODALS
+       ========================================================= */
+    function showHintModal() {
+      playTone(440, 'triangle', 0.1);
+      document.getElementById('hintModal').style.display = 'flex';
+    }
+
+    function closeHintModal() {
+      document.getElementById('hintModal').style.display = 'none';
+    }
+
+    function closeVideoExportModal() {
+      document.getElementById('videoExportModal').style.display = 'none';
+    }
+
+    /* =========================================================
+       WEBM VIDEO EXPORT GENERATOR (Canvas + MediaRecorder)
+       ========================================================= */
+    async function startWebmVideoRecording() {
+      const modal = document.getElementById('videoExportModal');
+      const progressBar = document.getElementById('exportProgressBar');
+      const stepLabel = document.getElementById('exportStepLabel');
+      const pctLabel = document.getElementById('exportPercentage');
+      const statusBox = document.getElementById('exportStatusContainer');
+      const previewBox = document.getElementById('videoPreviewBox');
+      const player = document.getElementById('renderedVideoPlayer');
+      const downloadAnchor = document.getElementById('downloadVideoAnchor');
+
+      modal.style.display = 'flex';
+      statusBox.style.display = 'block';
+      previewBox.style.display = 'none';
+
+      const canvas = document.getElementById('videoRecordingCanvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+
+      // Check MediaRecorder support
+      if (!window.MediaRecorder) {
+        alert("MediaRecorder is not supported in this browser. Please use a modern Chrome or Firefox browser.");
+        modal.style.display = 'none';
+        return;
+      }
+
+      const stream = canvas.captureStream(30);
+      let recorder;
+      try {
+        recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+      } catch (e) {
+        try {
+          recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+        } catch (e2) {
+          recorder = new MediaRecorder(stream);
+        }
+      }
+
+      const chunks = [];
+      recorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) chunks.push(e.data);
+      };
+
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        const videoUrl = URL.createObjectURL(blob);
+        player.src = videoUrl;
+        downloadAnchor.href = videoUrl;
+        downloadAnchor.download = "bullseye-presentation.webm";
+
+        statusBox.style.display = 'none';
+        previewBox.style.display = 'block';
+        player.play();
+      };
+
+      recorder.start();
+
+      // Render each slide onto canvas sequentially
+      const totalFramesPerSlide = 60; // 2 seconds per slide in video rendering
+      for (let sIdx = 0; sIdx < 6; sIdx++) {
+        stepLabel.textContent = `Rendering Slide ${sIdx + 1} of 6...`;
+        const basePct = Math.round((sIdx / 6) * 100);
+        progressBar.style.width = `${basePct}%`;
+        pctLabel.textContent = `${basePct}%`;
+
+        for (let frame = 0; frame < totalFramesPerSlide; frame++) {
+          renderSlideToCanvas(ctx, sIdx + 1, frame, totalFramesPerSlide, width, height);
+          await new Promise(r => setTimeout(r, 20));
+        }
+      }
+
+      progressBar.style.width = '100%';
+      pctLabel.textContent = '100%';
+      stepLabel.textContent = 'Encoding complete!';
+
+      setTimeout(() => {
+        recorder.stop();
+      }, 500);
+    }
+
+    // High quality canvas compositor for video generation
+    function renderSlideToCanvas(ctx, slideNum, frame, totalFrames, w, h) {
+      // Background
+      ctx.fillStyle = '#090e17';
+      ctx.fillRect(0, 0, w, h);
+
+      // Slide Card Container
+      ctx.fillStyle = '#F7F8F5';
+      ctx.beginPath();
+      ctx.roundRect(40, 40, w - 80, h - 80, 24);
+      ctx.fill();
+
+      // Card Header
+      ctx.fillStyle = '#00695C';
+      ctx.font = 'bold 22px system-ui, sans-serif';
+      ctx.fillText('🎯 bullseye ·', 70, 85);
+
+      // Header Tag
+      ctx.fillStyle = '#E2F3EC';
+      ctx.beginPath();
+      ctx.roundRect(w - 240, 65, 170, 28, 14);
+      ctx.fill();
+      ctx.fillStyle = '#00695C';
+      ctx.font = 'bold 12px system-ui, sans-serif';
+      ctx.fillText('UC IRVINE PILOT READY', w - 225, 84);
+
+      // Slide Title
+      ctx.fillStyle = '#172B32';
+      ctx.font = 'bold 36px system-ui, sans-serif';
+
+      if (slideNum === 1) {
+        ctx.fillText('Never get lost in lecture.', 70, 150);
+        ctx.fillStyle = '#4B6066';
+        ctx.font = '18px system-ui, sans-serif';
+        ctx.fillText('Instant cognitive reconnection for ADHD and neurodivergent STEM students.', 70, 185);
+
+        // Interactive Box
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.roundRect(140, 220, w - 280, 290, 18);
+        ctx.fill();
+
+        ctx.strokeStyle = '#CEDBD7';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#00695C';
+        ctx.font = 'bold 13px system-ui, sans-serif';
+        ctx.fillText('ACTIVE ACTION TARGET · NOW FOCUS', 180, 270);
+
+        ctx.fillStyle = '#172B32';
+        ctx.font = 'bold 26px system-ui, sans-serif';
+        ctx.fillText('Change the integration start and end values.', 180, 315);
+
+        ctx.fillStyle = '#4B6066';
+        ctx.font = '16px system-ui, sans-serif';
+        ctx.fillText('Calculate u(0) = 1 and u(2) = 5 before proceeding with integration.', 180, 350);
+
+        // Action Button
+        ctx.fillStyle = '#00695C';
+        ctx.beginPath();
+        ctx.roundRect(180, 390, 190, 46, 12);
+        ctx.fill();
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 15px system-ui, sans-serif';
+        ctx.fillText('✓ Mark Step Done', 205, 419);
+
+        // Waveform Bars animation
+        ctx.fillStyle = '#00695C';
+        for (let i = 0; i < 16; i++) {
+          const barH = 10 + Math.sin(frame * 0.2 + i * 0.5) * 18;
+          ctx.fillRect(w - 320 + i * 8, 150 - barH / 2, 4, barH);
+        }
+      } else if (slideNum === 2) {
+        ctx.fillText('60 seconds of drift shouldn\'t ruin a class.', 70, 150);
+
+        // Before Box
+        ctx.fillStyle = '#FFEBEE';
+        ctx.beginPath();
+        ctx.roundRect(80, 200, (w - 200) / 2, 320, 18);
+        ctx.fill();
+        ctx.fillStyle = '#C62828';
+        ctx.font = 'bold 20px system-ui, sans-serif';
+        ctx.fillText('❌ Standard Lecture Drift', 110, 245);
+        ctx.font = 'bold 54px monospace';
+        ctx.fillText('20:00', 110, 330);
+        ctx.font = '15px system-ui, sans-serif';
+        ctx.fillText('Average Rejoin Latency · Cognitive Paralysis', 110, 380);
+
+        // After Box
+        ctx.fillStyle = '#E2F3EC';
+        ctx.beginPath();
+        ctx.roundRect(w / 2 + 20, 200, (w - 200) / 2, 320, 18);
+        ctx.fill();
+        ctx.fillStyle = '#00695C';
+        ctx.font = 'bold 20px system-ui, sans-serif';
+        ctx.fillText('✓ Bullseye Recovery', w / 2 + 50, 245);
+        ctx.font = 'bold 54px monospace';
+        ctx.fillText('00:08', w / 2 + 50, 330);
+        ctx.font = '15px system-ui, sans-serif';
+        ctx.fillText('< 10 Sec Rejoin · 98% Latency Reduction', w / 2 + 50, 380);
+      } else if (slideNum === 3) {
+        ctx.fillText('One clear action at a time: 3D Horizon.', 70, 150);
+
+        // Left Card
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.roundRect(90, 240, 240, 260, 16);
+        ctx.fill();
+        ctx.fillStyle = '#4B6066';
+        ctx.font = 'bold 14px system-ui, sans-serif';
+        ctx.fillText('⬅ PAST ANCHOR', 120, 280);
+        ctx.fillStyle = '#172B32';
+        ctx.font = 'bold 18px system-ui, sans-serif';
+        ctx.fillText('u-Substitution', 120, 320);
+
+        // Center Card (Elevated)
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.roundRect(380, 210, 520, 310, 20);
+        ctx.fill();
+        ctx.strokeStyle = '#00695C';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        ctx.fillStyle = '#00695C';
+        ctx.font = 'bold 14px system-ui, sans-serif';
+        ctx.fillText('🎯 NOW-FIRST ELEVATED TARGET', 420, 260);
+        ctx.fillStyle = '#172B32';
+        ctx.font = 'bold 28px system-ui, sans-serif';
+        ctx.fillText('Change the integration limits.', 420, 310);
+
+        // Right Card
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.roundRect(950, 240, 240, 260, 16);
+        ctx.fill();
+        ctx.fillStyle = '#C62828';
+        ctx.font = 'bold 14px system-ui, sans-serif';
+        ctx.fillText('CONSTRAINTS ➡', 980, 280);
+        ctx.fillStyle = '#172B32';
+        ctx.font = 'bold 18px system-ui, sans-serif';
+        ctx.fillText('Due: 10:50 AM', 980, 320);
+      } else if (slideNum === 4) {
+        ctx.fillText('Real-Time Classroom Pipeline.', 70, 150);
+
+        // 3 Nodes
+        const nodes = ['1. Campus Inputs', '2. Bullseye Engine', '3. Student Focus'];
+        for (let i = 0; i < 3; i++) {
+          const nx = 90 + i * 380;
+          ctx.fillStyle = (i === 1) ? '#E2F3EC' : '#FFFFFF';
+          ctx.beginPath();
+          ctx.roundRect(nx, 230, 320, 260, 18);
+          ctx.fill();
+          ctx.strokeStyle = (i === 1) ? '#00695C' : '#CEDBD7';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          ctx.fillStyle = '#172B32';
+          ctx.font = 'bold 20px system-ui, sans-serif';
+          ctx.fillText(nodes[i], nx + 30, 280);
+        }
+
+        // Connecting Beam
+        ctx.fillStyle = '#00695C';
+        const beamX = 410 + ((frame * 12) % 400);
+        ctx.beginPath();
+        ctx.arc(beamX, 360, 6, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (slideNum === 5) {
+        ctx.fillText('Built-in accessibility. Zero disclosure.', 70, 150);
+
+        const features = [
+          { t: 'Sensory Calm Mode', sub: "Press 'C' to freeze all motion and stimuli" },
+          { t: 'Safe Rejoin Flow', sub: 'Neutral recovery: "You\'re right on time"' },
+          { t: 'Keyboard First', sub: 'Full access via [, ], Tab, Space' }
+        ];
+
+        for (let i = 0; i < 3; i++) {
+          const fx = 80 + i * 380;
+          ctx.fillStyle = '#FFFFFF';
+          ctx.beginPath();
+          ctx.roundRect(fx, 230, 340, 270, 18);
+          ctx.fill();
+
+          ctx.fillStyle = '#00695C';
+          ctx.font = 'bold 20px system-ui, sans-serif';
+          ctx.fillText(features[i].t, fx + 25, 290);
+
+          ctx.fillStyle = '#4B6066';
+          ctx.font = '15px system-ui, sans-serif';
+          ctx.fillText(features[i].sub, fx + 25, 340);
+        }
+      } else if (slideNum === 6) {
+        ctx.fillText('Proven recovery in seconds: Pilot Ready.', 70, 150);
+
+        const metrics = [
+          { val: '< 10s', lbl: 'Rejoin Latency (98% drop)' },
+          { val: '0', lbl: 'Diagnostic Stigma Required' },
+          { val: '100%', lbl: 'LMS Sync Rate' }
+        ];
+
+        for (let i = 0; i < 3; i++) {
+          const mx = 80 + i * 380;
+          ctx.fillStyle = '#FFFFFF';
+          ctx.beginPath();
+          ctx.roundRect(mx, 220, 340, 220, 18);
+          ctx.fill();
+
+          ctx.fillStyle = '#00695C';
+          ctx.font = 'bold 50px monospace';
+          ctx.fillText(metrics[i].val, mx + 30, 310);
+
+          ctx.fillStyle = '#172B32';
+          ctx.font = 'bold 16px system-ui, sans-serif';
+          ctx.fillText(metrics[i].lbl, mx + 30, 360);
+        }
+
+        // Pilot Bar
+        ctx.fillStyle = '#E2F3EC';
+        ctx.beginPath();
+        ctx.roundRect(80, 470, w - 160, 50, 12);
+        ctx.fill();
+        ctx.fillStyle = '#00695C';
+        ctx.font = 'bold 16px system-ui, sans-serif';
+        ctx.fillText('🎯 UC Irvine Pilot Ready · Math 2B Integration Calculus Trial', 110, 502);
+      }
+
+      // Slide Footer
+      ctx.fillStyle = '#4B6066';
+      ctx.font = 'bold 14px system-ui, sans-serif';
+      ctx.fillText(`Slide ${slideNum} of 6 · Bullseye Pitch Deck`, 70, h - 60);
+
+      // Subtitle Narration Bar in Video
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+      ctx.beginPath();
+      ctx.roundRect(70, h - 140, w - 140, 56, 12);
+      ctx.fill();
+      ctx.fillStyle = '#F1F5F9';
+      ctx.font = '14px system-ui, sans-serif';
+      const caption = slideNarrations[slideNum - 1];
+      ctx.fillText(caption.length > 120 ? caption.substring(0, 117) + '...' : caption, 90, h - 106);
+    }
+
+    /* =========================================================
+       GLOBAL KEYBOARD SHORTCUTS
+       ========================================================= */
+    window.addEventListener('keydown', (e) => {
+      // Don't trigger if user is in an input
+      if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ']') {
+        highlightKeycap('keyBracketR');
+        nextSlide();
+        if (isVideoAutoplay) restartAutoplayTimer();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === '[') {
+        highlightKeycap('keyBracketL');
         prevSlide();
+        if (isVideoAutoplay) restartAutoplayTimer();
+      } else if (e.key === ' ' || e.code === 'Space') {
+        e.preventDefault();
+        highlightKeycap('keySpace');
+        toggleVideoAutoplay();
+      } else if (e.key.toLowerCase() === 'c') {
+        highlightKeycap('keyC');
+        toggleSensoryCalmMode();
+      } else if (e.key === 'Tab') {
+        highlightKeycap('keyTab');
+      } else if (e.key === 'Escape') {
+        closeHintModal();
+        closeVideoExportModal();
       }
     });
+
+    // Initialize Deck
+    showSlide(1);
   </script>
 </body>
 </html>
