@@ -75,7 +75,7 @@ To spin up both the frontend client and backend server with a single command:
 
 ```bash
 # Clone the repository
-git clone https://github.com/jgundara07-afk/classroom-accessibility-promptathon.git
+git clone https://github.com/rvira/classroom-accessibility-promptathon.git
 cd classroom-accessibility-promptathon
 
 # Copy sample environment variables
