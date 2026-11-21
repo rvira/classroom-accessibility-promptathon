@@ -58,8 +58,8 @@ export function InteractiveBackground({ calm = false, isCalm = false }: Interact
     let targetMouseX = -9999
     let targetMouseY = -9999
 
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const isMotionReduced = () => effectiveCalm || mediaQuery.matches
+    // ADHD Cognitive Quiet: Zero background motion by default (motion reduced)
+    const isMotionReduced = () => true
 
     const initParticles = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
