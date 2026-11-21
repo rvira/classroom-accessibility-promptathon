@@ -329,7 +329,7 @@ describe('Bullseye Classroom API Routes', () => {
       expect(res.status).toBe(200)
       expect(res.body.scaffoldId).toBeDefined()
       expect(res.body.tier).toBe(1)
-      expect(res.body.tierLabel).toBe('Attentional Orienting')
+      expect(res.body.tierLabel).toBe('Where to Look')
       expect(res.body.scaffoldPrompt).toContain('LIATE')
       expect(res.body.guardrailTriggered).toBe(false)
     })
@@ -366,7 +366,7 @@ describe('Bullseye Classroom API Routes', () => {
 
       expect(res.status).toBe(200)
       expect(res.body.tier).toBe(2)
-      expect(res.body.tierLabel).toBe('Conceptual Bridging')
+      expect(res.body.tierLabel).toBe('Key Concept')
       expect(res.body.scaffoldPrompt).toContain('@functools.wraps')
     })
   })
