@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
 import {
+  BarChart3,
   BookOpen,
   Calendar,
-  Compass,
   Download,
   ListOrdered,
   RotateCcw,
@@ -13,14 +13,14 @@ import {
 import { CanvasLogo, EdStemLogo } from './BrandLogos'
 import { type Translations } from '../i18n'
 
-export type ViewMode = 'now' | 'overview' | 'rejoin' | 'edstem' | 'source' | 'calendar' | 'socratic'
+export type ViewMode = 'now' | 'overview' | 'rejoin' | 'edstem' | 'source' | 'calendar' | 'socratic' | 'teacher'
 
 interface SideNavProps {
   isOpen: boolean
   onClose: () => void
   activeView: ViewMode
   onSelectView: (view: ViewMode) => void
-  onOpenTour: () => void
+  onOpenTour?: () => void
   onExportTelemetry?: () => void
   edstemCount: number
   t: Translations
@@ -31,7 +31,6 @@ export function SideNav({
   onClose,
   activeView,
   onSelectView,
-  onOpenTour,
   onExportTelemetry,
   edstemCount,
   t,
@@ -92,11 +91,6 @@ export function SideNav({
 
   const handleNavClick = (view: ViewMode) => {
     onSelectView(view)
-    onClose()
-  }
-
-  const handleTourClick = () => {
-    onOpenTour()
     onClose()
   }
 
@@ -286,18 +280,18 @@ export function SideNav({
             </button>
           )}
 
-          {/* Welcome Tour */}
+          {/* Teacher & Cognitive Analytics Dashboard */}
           <button
             type="button"
-            className="sidenav-item tour-link"
-            onClick={handleTourClick}
+            className={`sidenav-item ${activeView === 'teacher' ? 'active' : ''}`}
+            onClick={() => handleNavClick('teacher')}
           >
             <div className="sidenav-item-icon">
-              <Compass size={18} aria-hidden="true" />
+              <BarChart3 size={18} aria-hidden="true" />
             </div>
             <div className="sidenav-item-text">
-              <span className="item-title">{t.welcomeTour}</span>
-              <span className="item-sub">Interface Guide</span>
+              <span className="item-title">Teacher Dashboard</span>
+              <span className="item-badge live">Cognitive Pulse</span>
             </div>
           </button>
         </nav>
