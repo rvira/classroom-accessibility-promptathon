@@ -5,7 +5,7 @@
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-00695C?style=for-the-badge&logo=vercel)](https://classroom-accessibility-promptathon.vercel.app/)
 [![WCAG 2.2 AA](https://img.shields.io/badge/WCAG%202.2-AA%20Verified-emerald?style=for-the-badge)](https://www.w3.org/WAI/standards-guidelines/wcag/)
-[![CI Status](https://img.shields.io/github/actions/workflow/status/jgundara07-afk/classroom-accessibility-promptathon/ci.yml?branch=main&label=CI&style=for-the-badge)](https://github.com/jgundara07-afk/classroom-accessibility-promptathon/actions)
+[![CI Status](https://img.shields.io/github/actions/workflow/status/rvira/classroom-accessibility-promptathon/ci.yml?branch=main&label=CI&style=for-the-badge)](https://github.com/rvira/classroom-accessibility-promptathon/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 ---
@@ -95,13 +95,55 @@ Bullseye is grounded in peer-reviewed cognitive load theory and participatory co
 
 ---
 
+## 🛠️ Architecture & Technical Stack
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      Client Layer (React 18)                 │
+│  • Triadic Spatial Horizon (Left: Anchor | Mid: Active | R) │
+│  • Atkinson Hyperlegible Typography (WCAG 2.2 AA Verified) │
+│  • Sensory Calm Protocol (prefers-reduced-motion / 'c' key) │
+│  • Real-Time Audio Telemetry & Safe Rejoin Modal            │
+└──────────────┬──────────────────────────────┬───────────────┘
+               │ HTTP / JSON                  │ WebSocket (ws://)
+               ▼                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                 Node.js / Express API Server                │
+│  • Multi-Course Lecture Horizons (MATH 2B, PHYS 7C, CHEM 1A)│
+│  • Safe Rejoin NLP Matcher (10-second recovery bounds)      │
+│  • Canvas LMS & EdStem Q&A Invariant Cache                  │
+│  • Real-Time Audio Pulse Broadcaster (48kHz Stream)         │
+└─────────────────────────────────────────────────────────────┘
+```
+
+- **Frontend Application:** React 18, TypeScript, Vite, Tailwind CSS, Lucide Icons, Canvas Drawing API.
+- **Backend Service:** Node.js, Express, `ws` (WebSockets), TypeScript.
+- **Verification Harness:** Vitest integration test suite (24 passing test suites).
+- **Deployment:** Vercel (Edge-optimized client and server routes).
+
+---
+
+## 📋 Project Status & Verification Checklist
+
+- [x] **Core Triadic Horizon:** Spatial organization separating context anchor, active directive, and invariant constraints.
+- [x] **Safe Rejoin Algorithm:** Natural language drift query matching against real-time lecture audio transcription.
+- [x] **Sensory Calm Mode:** One-key (`c`) particle and glow freeze with automatic `prefers-reduced-motion` compliance.
+- [x] **Multi-Course Roster Support:** Full lecture horizon state for MATH 2B, PHYS 7C, CHEM 1A, and ICS 33.
+- [x] **Real-Time Telemetry:** Bi-directional WebSocket stream broadcasting audio pulse and instructor checkpoint milestones.
+- [x] **Canvas LMS & EdStem Integration:** Live sync for rubric criteria, countdown timers, and instructor-verified answers.
+- [x] **Test & Build Integrity:** 24 Vitest integration tests covering all REST and WebSocket routes; clean production Vite build.
+- [ ] **Research Telemetry Exporter:** Automated export of student catch-up latency and cognitive load markers to CSV/Parquet for educational data analytics.
+- [ ] **Socratic Scaffolding Agent:** Integration with LangGraph-based pedagogical guardrails to provide Socratic hints during coding and math exercises.
+
+---
+
 ## Quickstart Guide
 
 ### Option A: Run Locally with npm
 
 ```bash
 # Clone the repository
-git clone https://github.com/jgundara07-afk/classroom-accessibility-promptathon.git
+git clone https://github.com/rvira/classroom-accessibility-promptathon.git
 cd classroom-accessibility-promptathon
 
 # 1. Start the Backend API & WebSocket Server
