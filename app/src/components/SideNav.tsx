@@ -3,15 +3,17 @@ import {
   BookOpen,
   Calendar,
   Compass,
+  Download,
   ListOrdered,
   RotateCcw,
+  Sparkles,
   Target,
   X,
 } from 'lucide-react'
 import { CanvasLogo, EdStemLogo } from './BrandLogos'
 import { type Translations } from '../i18n'
 
-export type ViewMode = 'now' | 'overview' | 'rejoin' | 'edstem' | 'source' | 'calendar'
+export type ViewMode = 'now' | 'overview' | 'rejoin' | 'edstem' | 'source' | 'calendar' | 'socratic'
 
 interface SideNavProps {
   isOpen: boolean
@@ -19,6 +21,7 @@ interface SideNavProps {
   activeView: ViewMode
   onSelectView: (view: ViewMode) => void
   onOpenTour: () => void
+  onExportTelemetry?: () => void
   edstemCount: number
   t: Translations
 }
@@ -29,6 +32,7 @@ export function SideNav({
   activeView,
   onSelectView,
   onOpenTour,
+  onExportTelemetry,
   edstemCount,
   t,
 }: SideNavProps) {
@@ -246,6 +250,41 @@ export function SideNav({
               <span className="item-sub">10s Zero-Anxiety Catch Up</span>
             </div>
           </button>
+
+          {/* Socratic Scaffolding Assistant */}
+          <button
+            type="button"
+            className={`sidenav-item ${activeView === 'socratic' ? 'active' : ''}`}
+            onClick={() => handleNavClick('socratic')}
+          >
+            <div className="sidenav-item-icon">
+              <Sparkles size={18} aria-hidden="true" />
+            </div>
+            <div className="sidenav-item-text">
+              <span className="item-title">Socratic Guide</span>
+              <span className="item-sub">Tiered Hints (No Spoilers)</span>
+            </div>
+          </button>
+
+          {/* Research Telemetry Exporter */}
+          {onExportTelemetry && (
+            <button
+              type="button"
+              className="sidenav-item"
+              onClick={() => {
+                onExportTelemetry()
+                onClose()
+              }}
+            >
+              <div className="sidenav-item-icon">
+                <Download size={18} aria-hidden="true" />
+              </div>
+              <div className="sidenav-item-text">
+                <span className="item-title">Research Telemetry</span>
+                <span className="item-badge live">Export CSV</span>
+              </div>
+            </button>
+          )}
 
           {/* Welcome Tour */}
           <button

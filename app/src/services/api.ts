@@ -871,4 +871,143 @@ export const api = {
       }
     }
   },
+
+  // Research Telemetry & Analytics
+  async recordTelemetryEvent(event: {
+    sessionId?: string
+    courseId?: string
+    moduleContext?: string
+    eventType: string
+    metrics?: {
+      dwellDurationMs?: number
+      rejoinLatencyMs?: number
+      cognitiveFrictionScore?: number
+    }
+    metadata?: Record<string, unknown>
+  }): Promise<{ success: boolean; eventId?: string }> {
+    return fetchWithFallback(
+      `${API_BASE_URL}/api/telemetry/events`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(event),
+      },
+      { success: true, eventId: 'local-evt-' + Date.now() }
+    )
+  },
+
+  async fetchTelemetryStats(): Promise<any> {
+    return fetchWithFallback(
+      `${API_BASE_URL}/api/telemetry/stats`,
+      {},
+      {
+        status: 'ok',
+        stats: {
+          totalEvents: 14,
+          activeSessions: 3,
+          averageRejoinLatencyMs: 7850,
+          sensoryCalmEngagementRate: 18.2,
+          averageCognitiveFriction: 3.4,
+          eventBreakdown: {
+            DRIFT_RECOVERY_INITIATED: 4,
+            CHECKPOINT_COMPLETED: 5,
+            SENSORY_CALM_TOGGLED: 2,
+            SCAFFOLD_HINT_REQUESTED: 3,
+          },
+        },
+      }
+    )
+  },
+
+  async exportTelemetryCSV(): Promise<string> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/telemetry/export?format=csv`)
+      if (res.ok) {
+        return await res.text()
+      }
+    } catch {
+      // Fallback to local generated CSV
+    }
+
+    const headers = [
+      'eventId',
+      'sessionId',
+      'timestamp',
+      'courseId',
+      'moduleContext',
+      'eventType',
+      'dwellDurationMs',
+      'rejoinLatencyMs',
+      'cognitiveFrictionScore',
+      'metadata',
+    ]
+
+    const fallbackRows = [
+      headers.join(','),
+      `"evt-local-01","sess-client","${new Date(Date.now() - 600000).toISOString()}","MATH-2B","Integration by Parts","DRIFT_RECOVERY_INITIATED",42000,8200,4.8,"{""recoverySuccess"":true}"`,
+      `"evt-local-02","sess-client","${new Date(Date.now() - 480000).toISOString()}","MATH-2B","Integration by Parts","CHECKPOINT_COMPLETED",65000,,2.1,"{""step"":2}"`,
+      `"evt-local-03","sess-client","${new Date(Date.now() - 300000).toISOString()}","PHYS-7C","Underdamped Oscillation","SENSORY_CALM_TOGGLED",85000,,6.2,"{""hotkey"":""c""}"`,
+      `"evt-local-04","sess-client","${new Date().toISOString()}","PHYS-7C","Quasi-frequency","SCAFFOLD_HINT_REQUESTED",38000,9100,5.4,"{""tier"":1}"`,
+    ]
+
+    return fallbackRows.join('\n')
+  },
+
+  // Socratic Scaffolding Assistant
+  async requestSocraticScaffold(req: {
+    courseCode?: string
+    domain?: 'math' | 'physics' | 'code' | 'chemistry' | 'general'
+    currentProblem: string
+    activeStep: string
+    studentQuery?: string
+    scaffoldingTier?: 1 | 2 | 3 | 4
+  }): Promise<{
+    scaffoldId: string
+    tier: number
+    tierLabel: string
+    scaffoldPrompt: string
+    probingQuestion: string
+    nextActionCue: string
+    guardrailTriggered: boolean
+    guardrailExplanation?: string
+  }> {
+    const isAnswerRequest = /give me the answer|what is the answer|tell me the answer|just do it|write the code/i.test(
+      req.studentQuery || ''
+    )
+
+    const tier = req.scaffoldingTier || 1
+    const tierLabels = [
+      'Attentional Orienting',
+      'Conceptual Bridging',
+      'Procedural Decomposition',
+      'Verification & Closure',
+    ]
+
+    const fallbackResponse = {
+      scaffoldId: 'scaffold-' + Date.now(),
+      tier,
+      tierLabel: tierLabels[tier - 1] || 'Attentional Orienting',
+      scaffoldPrompt: isAnswerRequest
+        ? 'Direct solution withheld to support independent problem solving. Observe the governing constraints first.'
+        : `Focus on ${req.activeStep}. In this stage, isolate the known inputs before performing the transformation.`,
+      probingQuestion:
+        'Which component of the problem or equation differentiates into a simpler term?',
+      nextActionCue:
+        'Write out your initial step or variable assignment in your notes before calculating.',
+      guardrailTriggered: isAnswerRequest,
+      guardrailExplanation: isAnswerRequest
+        ? 'Full answer withheld to prevent cognitive offloading. Let us solve the next micro-step together.'
+        : undefined,
+    }
+
+    return fetchWithFallback(
+      `${API_BASE_URL}/api/socratic/scaffold`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(req),
+      },
+      fallbackResponse
+    )
+  },
 }

@@ -6,6 +6,8 @@ import { lectureRouter } from './routes/lecture.js'
 import { canvasRouter } from './routes/canvas.js'
 import { edstemRouter } from './routes/edstem.js'
 import { rejoinRouter } from './routes/rejoin.js'
+import { telemetryRouter } from './routes/telemetry.js'
+import { socraticRouter } from './routes/socratic.js'
 
 export function createApp(): Express {
   const app = express()
@@ -28,6 +30,8 @@ export function createApp(): Express {
   app.use('/api/canvas', canvasRouter)
   app.use('/api/edstem', edstemRouter)
   app.use('/api/rejoin', rejoinRouter)
+  app.use('/api/telemetry', telemetryRouter)
+  app.use('/api/socratic', socraticRouter)
 
   // 404 handler
   app.use((_req, res) => {
@@ -45,6 +49,10 @@ export function createApp(): Express {
         'GET /api/edstem/threads',
         'POST /api/edstem/threads',
         'POST /api/rejoin',
+        'POST /api/telemetry/events',
+        'GET /api/telemetry/stats',
+        'GET /api/telemetry/export',
+        'POST /api/socratic/scaffold',
         'GET /ws/live (WebSocket)',
       ],
     })
