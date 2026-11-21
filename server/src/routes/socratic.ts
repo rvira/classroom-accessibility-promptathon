@@ -30,16 +30,16 @@ function detectAnswerRequest(query?: string): boolean {
 
 function resolveTierLabel(
   tier: ScaffoldingTier
-): 'Attentional Orienting' | 'Conceptual Bridging' | 'Procedural Decomposition' | 'Verification & Closure' {
+): string {
   switch (tier) {
     case 1:
-      return 'Attentional Orienting'
+      return 'Where to Look'
     case 2:
-      return 'Conceptual Bridging'
+      return 'Key Concept'
     case 3:
-      return 'Procedural Decomposition'
+      return 'Step-by-Step'
     case 4:
-      return 'Verification & Closure'
+      return 'Worked Setup'
   }
 }
 

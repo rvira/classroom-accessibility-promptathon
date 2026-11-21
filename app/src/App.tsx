@@ -522,8 +522,31 @@ function Technical({ block, t }: { block: BlockKey; t: Translations }) {
 }
 
 export default function App() {
-  // Requirement 4: On initial load, default to Calendar Schedule & Live Class Selection
-  const [activeView, setActiveView] = useState<ViewMode>('calendar')
+  // Support URL view parameter: ?view=teacher, ?view=socratic, ?view=now, etc.
+  const [activeView, setActiveView] = useState<ViewMode>(() => {
+    try {
+      const params = new URLSearchParams(window.location.search)
+      const v = params.get('view') as ViewMode
+      if (
+        v &&
+        [
+          'now',
+          'overview',
+          'rejoin',
+          'edstem',
+          'source',
+          'calendar',
+          'socratic',
+          'teacher',
+        ].includes(v)
+      ) {
+        return v
+      }
+    } catch {
+      // ignore
+    }
+    return 'calendar'
+  })
   const [openTech, setOpenTech] = useState<BlockKey | null>(null)
   const [profileOpen, setProfileOpen] = useState(false)
   const [recordingActive, setRecordingActive] = useState(true)
@@ -578,9 +601,22 @@ export default function App() {
   const [newQuestionText, setNewQuestionText] = useState<string>('')
 
   // Socratic Scaffolder State
-  const [socraticQuery, setSocraticQuery] = useState<string>('Why do we assign u = x instead of u = cos(x)?')
+  const [socraticQuery, setSocraticQuery] = useState<string>(
+    'Why do we assign u = x instead of u = cos(x)?'
+  )
   const [socraticTier, setSocraticTier] = useState<1 | 2 | 3 | 4>(1)
-  const [socraticResponse, setSocraticResponse] = useState<any>(null)
+  const [socraticResponse, setSocraticResponse] = useState<any>({
+    scaffoldId: 'scaffold-init',
+    tier: 1,
+    tierLabel: 'Where to Look',
+    scaffoldPrompt:
+      'Focus on Selecting u and dv via LIATE. In this stage, isolate the known inputs before performing the transformation. Identify which factor is Algebraic (x) and which is Trigonometric (cos(x)).',
+    probingQuestion:
+      'Which component of the problem or equation differentiates into a simpler term? In LIATE, does Algebraic come before Trigonometric?',
+    nextActionCue:
+      'Write out your initial step: assign u = x (earlier in LIATE) and dv = cos(x) dx before calculating.',
+    guardrailTriggered: false,
+  })
   const [socraticLoading, setSocraticLoading] = useState<boolean>(false)
 
   // ADHD Revamp: Working-Memory Externalization & Catch-up Sheet States

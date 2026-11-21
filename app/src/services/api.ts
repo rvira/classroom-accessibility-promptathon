@@ -976,24 +976,59 @@ export const api = {
     )
 
     const tier = req.scaffoldingTier || 1
-    const tierLabels = [
-      'Attentional Orienting',
-      'Conceptual Bridging',
-      'Procedural Decomposition',
-      'Verification & Closure',
-    ]
+    const tierLabels: Record<number, string> = {
+      1: 'Where to Look',
+      2: 'Key Concept',
+      3: 'Step-by-Step',
+      4: 'Worked Setup',
+    }
+
+    const tierContent: Record<number, { prompt: string; probing: string; action: string }> = {
+      1: {
+        prompt:
+          'Focus on Selecting u and dv via LIATE. In this stage, isolate the known inputs before performing the transformation. Identify which factor is Algebraic (x) and which is Trigonometric (cos(x)).',
+        probing:
+          'Which component of the problem or equation differentiates into a simpler term? In LIATE, does Algebraic come before Trigonometric?',
+        action:
+          'Write out your initial step: assign u = x (earlier in LIATE) and dv = cos(x) dx before calculating.',
+      },
+      2: {
+        prompt:
+          'In Integration by Parts (∫ u dv = uv − ∫ v du), we pick u so its derivative du is strictly simpler than u. Notice that for u = x, the derivative du = dx reduces the polynomial power from 1 to 0 (a constant). If you instead chose u = cos(x), then dv = x dx would force v = x²/2, which raises the power to x² and makes the problem harder!',
+        probing:
+          'Why is integrating ∫ 1 · sin(x) dx dramatically easier than integrating ∫ x² · sin(x) dx?',
+        action:
+          'Set u = x (Algebraic factor) and dv = cos(x) dx (Trigonometric factor) in your notes.',
+      },
+      3: {
+        prompt:
+          'Execute the standard 2x2 Integration by Parts substitution box:\n1. u = x ⟹ du = dx\n2. dv = cos(x) dx ⟹ v = ∫ cos(x) dx = sin(x)\nNow plug these 4 parts into the formula: ∫ u dv = u·v − ∫ v du.',
+        probing:
+          'What is the remaining integral: ∫ v du = ∫ sin(x) dx? Don\'t forget the negative sign in the formula!',
+        action:
+          'Write: ∫ x cos(x) dx = x sin(x) − ∫ sin(x) dx on your worksheet.',
+      },
+      4: {
+        prompt:
+          'Here is the complete structural breakdown (without final answer leakage):\n\n∫ x cos(x) dx = x sin(x) − (−cos(x)) + C = x sin(x) + cos(x) + C\n\nNotice: Differentiating your answer confirms it reproduces the original problem: d/dx [x sin(x) + cos(x)] = (sin(x) + x cos(x)) − sin(x) = x cos(x).',
+        probing:
+          'How did picking u = x allow the sin(x) and −sin(x) terms to cancel out cleanly during differentiation?',
+        action:
+          'Record the verified antiderivative x sin(x) + cos(x) + C on your worksheet.',
+      },
+    }
+
+    const currentTierData = tierContent[tier] || tierContent[1]
 
     const fallbackResponse = {
       scaffoldId: 'scaffold-' + Date.now(),
       tier,
-      tierLabel: tierLabels[tier - 1] || 'Attentional Orienting',
+      tierLabel: tierLabels[tier] || 'Where to Look',
       scaffoldPrompt: isAnswerRequest
-        ? 'Direct solution withheld to support independent problem solving. Observe the governing constraints first.'
-        : `Focus on ${req.activeStep}. In this stage, isolate the known inputs before performing the transformation.`,
-      probingQuestion:
-        'Which component of the problem or equation differentiates into a simpler term?',
-      nextActionCue:
-        'Write out your initial step or variable assignment in your notes before calculating.',
+        ? 'Direct solution withheld to support independent problem solving. Take this micro-step first.'
+        : currentTierData.prompt,
+      probingQuestion: currentTierData.probing,
+      nextActionCue: currentTierData.action,
       guardrailTriggered: isAnswerRequest,
       guardrailExplanation: isAnswerRequest
         ? 'Full answer withheld to prevent cognitive offloading. Let us solve the next micro-step together.'

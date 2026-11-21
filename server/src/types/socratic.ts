@@ -14,7 +14,7 @@ export interface SocraticScaffoldRequest {
 export interface SocraticScaffoldResponse {
   scaffoldId: string
   tier: ScaffoldingTier
-  tierLabel: 'Attentional Orienting' | 'Conceptual Bridging' | 'Procedural Decomposition' | 'Verification & Closure'
+  tierLabel: string
   scaffoldPrompt: string
   probingQuestion: string
   nextActionCue: string

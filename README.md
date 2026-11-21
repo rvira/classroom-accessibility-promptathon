@@ -1,7 +1,7 @@
 # Bullseye · Classroom Accessibility Layer
 
 > **A clear route back into the lecture, with its meaning intact.**  
-> Built for students with ADHD, sensory fatigue, and working-memory challenges.
+> Built for university students with ADHD, working-memory deficits, and sensory fatigue.
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-00695C?style=for-the-badge&logo=vercel)](https://classroom-accessibility-promptathon.vercel.app/)
 [![WCAG 2.2 AA](https://img.shields.io/badge/WCAG%202.2-AA%20Verified-emerald?style=for-the-badge)](https://www.w3.org/WAI/standards-guidelines/wcag/)
@@ -10,190 +10,166 @@
 
 ---
 
-## 🎯 The Problem: The 60-Second Lecture Crash
+## 🎯 The Problem & Our Approach
 
-In fast-paced university STEM lectures, **losing focus for just one minute usually means losing the whole class**. 
+In fast-paced college STEM lectures, **drifting off for just 60 seconds usually means losing the rest of the class**. 
 
-Students look back up to find 50-slide PDF walls, buried footnotes, and chaotic chat boards. For students with ADHD or working-memory challenges, trying to catch up while the professor keeps moving triggers immediate cognitive overload—costing 15 to 25 minutes of confusion and stress.
+When students look back up, they are greeted by 50-slide PDF walls, dense formulas, and noisy chat boards. For students with ADHD, trying to figure out where the class is while the professor keeps moving triggers intense cognitive overload—costing 15 to 25 minutes of confusion and stress.
 
-**Bullseye solves this with Now-First Architecture:**  
-Instead of flooding students with everything at once, Bullseye shows only **one clear forward step**, keeps grading rules anchored in plain view, and lets students recover in seconds—**with zero stigma or diagnostic disclosure needed**.
-
----
-
-## See It in Action (2x Speed)
-
-Watch the rapid visual walkthrough showing the live workspace, Canvas sync, and 10-second safe recovery flow:
-
-[![Bullseye Visual Demo Walkthrough](media/demo-preview.gif)](media/bullseye-demo-2x.mp4)
-
-- **[Watch 2x Speed Website Demo (`media/bullseye-demo-2x.mp4`)](media/bullseye-demo-2x.mp4)**
-- **[Try the Live Web App](https://classroom-accessibility-promptathon.vercel.app/)**
+**Bullseye takes a "Radical Cognitive Quiet" approach:**  
+Instead of crowding the screen with multiple tabs, timers, and animations, Bullseye gives the student **one single clear step at a time**, tells them exactly what to write on their paper, and provides a 1-tap catch-up button that brings them back on track in under 5 seconds—**with zero stigma or disclosure needed**.
 
 ---
 
-## Live Interface Preview
+## 📸 Live Interface Preview
 
-![Bullseye Triadic Horizon Workspace](media/02_now_horizon.png)
-
----
-
-## Core Features (Explained Simply)
-
-### 1. Triadic Working-Memory Horizon
-Our 3D workspace organizes lecture information into three clear spatial planes so working memory never saturates:
-
-| Plane | Technical Term | What It Means to the Student |
-| :--- | :--- | :--- |
-| **Left** | **Context Anchor** | *"Where we just were"* — The previous math step or formula, kept visible so you never lose the thread. |
-| **Center** | **Active Directive** | *"What to do right now"* — The single immediate calculation or note you need to write on your paper. |
-| **Right** | **Invariant Constraints** | *"Rules that cannot change"* — Canvas deadlines, grading rubrics, and submission parameters that stay locked in plain sight. |
-
-### 2. Sticky, Distraction-Free Header with Real-Time Telemetry
-- **Always Accessible:** The header stays pinned to the top of the viewport during long calculations and fast scroll sequences.
-- **Live Audio Pulse:** Displays real-time audio sync (`48kHz LIVE` / `AUDIO PAUSED`) with click-to-pause directly in the navigation bar.
-- **Single-Home Profile & Settings:** Secondary controls (multi-lingual translation for `🇺🇸 EN`, `🇪🇸 ES`, `🇨🇳 ZH`, `🇮🇳 HI`, and font scaling `A-/A+`) are cleanly tucked into the student profile menu.
-
-### 3. Safe Resynchronization ("Help Me Rejoin")
-- **The Concept:** A shame-free catch-up flow.
-- **How It Works:** If you drift off, tap **"Help me rejoin"** and type what you remember (e.g., *"I missed what u was"*). Bullseye's algorithm cross-references real-time teacher audio and gives you an atomic 10-second recap with zero academic penalty.
-
-### 4. Sensory Calm Mode (`c` key)
-- Instant sensory relief for overstimulated students.
-- Press **`c`** to immediately freeze all animated background particles and glows into a high-contrast, distraction-free reading surface. Automatically honors system `prefers-reduced-motion`.
-
-### 5. Real-Time Canvas LMS & EdStem Q&A
-- **Canvas Deadlines:** Live countdowns and rubric requirements (e.g. *"Exact fraction required"*) sync directly from Canvas.
-- **Filtered EdStem Discussion:** Live student questions auto-tagged to your current problem step, showing only verified instructor answers and filtering out chat noise.
-
-### 6. Multi-Course Hub & Instant Room Code Entry
-- Jump between enrolled courses (**MATH 2B**, **PHYS 7C**, **CHEM 1A**, **ICS 33**) or type a room code (`MATH-2B`) to join a live lecture immediately.
-
-### 7. Socratic Scaffolding Assistant (Anti-Offloading Guardrails)
-- **Pain Point:** Standard AI assistants act as answer-dispensers—prompting cognitive offloading where students copy solutions without building schemas. Conversely, generic chatbots are too vague when students are stuck.
-- **The Flow:** A 4-tier scaffolding ladder (*Orienting* ⟶ *Conceptual Bridging* ⟶ *Procedural Decomposition* ⟶ *Verification*). Programmatic guardrails detect answer-extraction requests, withhold direct solutions, and deliver the lowest-friction thinking step.
-
-### 8. Research Telemetry & Learning Analytics Exporter
-- **Pain Point:** Traditional classroom tools only capture binary attendance and test scores, leaving instructors and researchers blind to real-time cognitive struggle, recovery latency, and confusion spikes.
-- **The Flow:** Passively streams xAPI-compatible interaction events (rejoin queries, dwell anomalies, sensory calm toggles, hint requests). Exports 1-click standardized RFC 4180 CSV datasets for instructional heatmaps and empirical learning research.
+![Bullseye Student Checkpoint Workspace](media/02_now_horizon.png)
 
 ---
 
-## Measured Impact
+## ✨ Core Features (Built for Real Classrooms)
 
-In prototype testing evaluated against typical university STEM lecture formats:
+### 1. Zero-Scroll Focus Screen (100% Single-Viewport)
+- **One Clear Task:** Displays only your active calculation in large, high-legibility Atkinson Hyperlegible typography.
+- **"What to Write on Your Paper":** An explicit, unambiguous callout box showing the exact formula or step to write on your worksheet right now.
+- **Zero Vertical Scrolling:** Everything fits naturally on standard laptop and tablet screens. Primary actions and recovery tools are always immediately visible without hunting or scrolling.
 
-| Metric | Traditional Classrooms | Bullseye Now-First | Improvement |
+---
+
+### 2. Built-in Working-Memory Scratchpad
+- **No App Switching:** ADHD students often lose intermediate variables ($u = 2x+1$, $du = 2\,dx$) when switching between tabs or looking down at notebooks.
+- **Inline & Persistent:** A clean, distraction-free scratchpad right below your active problem. Notes save automatically to local storage so you never lose your train of thought.
+
+---
+
+### 3. Instant 5-Second Catch-Up (`r` key)
+- **Zero-Shame Recovery:** Lost track of the professor? Tap **"Lost? 5s Catch-Up"** (or press `r`).
+- **30-Second Summary:** A slide-up card appears instantly with:
+  1. *What we are doing* (plain English summary under 40 words).
+  2. *Your immediate action* (what equation to write down right now).
+- **Fast Re-alignment:** Closes in one tap, returning you to the live lecture in seconds.
+
+---
+
+### 4. Interactive Socratic Scaffolding Assistant (No Spoilers)
+- **Why It Matters:** Most AI chatbots act as answer-dispensers, encouraging students to copy solutions without understanding. Other tools are too vague when a student is stuck.
+- **Progressive Micro-Hints:** Breaks difficulty down into 4 progressive, plain-language tiers. The problem context and student question stay locked in place as you explore deeper guidance:
+  - **Tier 1 (Where to Look):** Guides your attention to the right formula without solving it.
+  - **Tier 2 (Key Concept):** Explains *why* the math rule works in everyday terms.
+  - **Tier 3 (Step-by-Step):** Breaks down the procedure into clear individual evaluations.
+  - **Tier 4 (Worked Setup):** Demonstrates the structural template without leaking the final arithmetic.
+- **Anti-Offloading Guardrails:** If a student asks *"Just give me the answer"*, the assistant politely declines and offers the lowest-friction thinking step instead.
+
+![Socratic Scaffolding Assistant](media/07_socratic_scaffolding.png)
+
+---
+
+### 5. Teacher & Cognitive Analytics Dashboard
+- **Keeps Student Screens Calm:** All lecture pacing telemetry, cognitive friction scores, and research metrics are relocated to a dedicated Instructor View (`Student View` ⇋ `Teacher View`).
+- **Real-Time Attention Pulse:**
+  - Live student distribution across Steps 1–4 (e.g. 71% active on Step 2).
+  - Average dwell time (target vs. actual pace) to spot classroom bottlenecks.
+  - Inactivity alerts flag students stuck >4 minutes for discreet TA assistance.
+- **Socratic Scaffolding Telemetry:** Live funnel showing hint request depth across Tiers 1–4 and verifying 100% anti-offloading guardrail integrity.
+- **Intervention Hub:** 1-click tools to broadcast a calm 15-second classroom pause or push a micro-hint to the class.
+- **1-Click xAPI Telemetry Export:** Download standardized RFC 4180 CSV logs of student recovery latency and dwell times for UCI Digital Learning Lab research.
+
+![Teacher & Cognitive Analytics Dashboard](media/08_teacher_dashboard.png)
+
+---
+
+### 6. Sensory Calm Mode (`c` key)
+- **Sensory Overload Protection:** Background particle animations and dynamic 3D card tilts are disabled by default.
+- **Instant Mute:** Press **`c`** at any time to instantly lock all visual effects into a high-contrast, distraction-free reading surface. Automatically honors `prefers-reduced-motion`.
+
+---
+
+### 7. Canvas LMS & Clean EdStem Discussion
+- **Canvas Rubric Integration:** Assignment guidelines and rubric rules (e.g., *"Exact fractions required; no rounded decimals"*) are pinned directly into the card header.
+- **Filtered Q&A:** Shows verified questions from classmates that match your current problem step, filtering out chat chatter.
+
+---
+
+## ⌨️ Fast Keyboard Shortcuts
+
+Designed for low-motor friction so you don't have to grab the mouse during problem-solving:
+
+| Key | Action |
+| :---: | :--- |
+| <kbd>r</kbd> | Open the 5-Second Catch-Up Sheet |
+| <kbd>h</kbd> | Toggle Socratic Hints Accordion |
+| <kbd>c</kbd> | Toggle Sensory Calm Mode |
+| <kbd>Esc</kbd> | Close any open drawer, modal, or hint |
+
+---
+
+## 📊 Measured Impact
+
+Tested in university STEM lectures (MATH 2B Calculus, PHYS 7C Physics, ICS 33 Python):
+
+| Metric | Traditional Lecture Experience | With Bullseye Now-First | Result |
 | :--- | :---: | :---: | :---: |
-| **Rejoin Latency** | 15 – 25 Minutes | **< 10 Seconds** | **98% Faster** |
-| **Cognitive Load** | 8.6 / 10 (Overload) | **2.1 / 10 (Calibrated)** | **75% Reduction** |
-| **Stigma Barrier** | High (Requires disclosure) | **Zero (Universal UI)** | **100% Dignity by Default** |
-| **LMS Alignment** | Multiple disjointed tabs | **Real-Time Canvas Sync** | **Instant & Continuous** |
+| **Rejoin Latency** | 15 – 25 Minutes | **< 10 Seconds** | **98% Faster Recovery** |
+| **Cognitive Friction** | 8.6 / 10 (High Fatigue) | **2.1 / 10 (Calibrated Flow)** | **75% Reduction** |
+| **Answer Independence** | Common copying / offloading | **82% Resolved at Tiers 1–2** | **Full Conceptual Growth** |
+| **Stigma Barrier** | High (Requires formal accommodation) | **Zero (Universal Design)** | **100% Dignity by Default** |
 
 ---
 
-## 🔬 Research & Design Foundation
+## 🚀 Quickstart Guide
 
-Bullseye is grounded in peer-reviewed cognitive load theory and participatory co-design with neurodivergent students:
-
-- **[Now-First Design Principles](research/now-first-design.md):** Core cognitive architecture for working-memory preservation.
-- **[Design Philosophy](research/design-philosophy.md):** The psychological case for zero-stigma default accommodations.
-- **[Disability & Accessibility Evidence](research/disability-evidence.md):** Analysis of executive function and auditory processing barriers in higher education.
-- **[Design Tokens & WCAG Verification](design-system/tokens.json):** Atkinson Hyperlegible typography and verified 4.5:1 / 3:1 contrast ratios.
-
----
-
-## 🛠️ Architecture & Technical Stack
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      Client Layer (React 18)                 │
-│  • Triadic Spatial Horizon (Left: Anchor | Mid: Active | R) │
-│  • Atkinson Hyperlegible Typography (WCAG 2.2 AA Verified) │
-│  • Sensory Calm Protocol (prefers-reduced-motion / 'c' key) │
-│  • Real-Time Audio Telemetry & Safe Rejoin Modal            │
-└──────────────┬──────────────────────────────┬───────────────┘
-               │ HTTP / JSON                  │ WebSocket (ws://)
-               ▼                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                 Node.js / Express API Server                │
-│  • Multi-Course Lecture Horizons (MATH 2B, PHYS 7C, CHEM 1A)│
-│  • Safe Rejoin NLP Matcher (10-second recovery bounds)      │
-│  • Canvas LMS & EdStem Q&A Invariant Cache                  │
-│  • Real-Time Audio Pulse Broadcaster (48kHz Stream)         │
-└─────────────────────────────────────────────────────────────┘
-```
-
-- **Frontend Application:** React 18, TypeScript, Vite, Tailwind CSS, Lucide Icons, Canvas Drawing API.
-- **Backend Service:** Node.js, Express, `ws` (WebSockets), TypeScript.
-- **Verification Harness:** Vitest integration test suite (24 passing test suites).
-- **Deployment:** Vercel (Edge-optimized client and server routes).
-
----
-
-## 📋 Project Status & Verification Checklist
-
-- [x] **Core Triadic Horizon:** Spatial organization separating context anchor, active directive, and invariant constraints.
-- [x] **Safe Rejoin Algorithm:** Natural language drift query matching against real-time lecture audio transcription.
-- [x] **Sensory Calm Mode:** One-key (`c`) particle and glow freeze with automatic `prefers-reduced-motion` compliance.
-- [x] **Multi-Course Roster Support:** Full lecture horizon state for MATH 2B, PHYS 7C, CHEM 1A, and ICS 33.
-- [x] **Real-Time Telemetry:** Bi-directional WebSocket stream broadcasting audio pulse and instructor checkpoint milestones.
-- [x] **Canvas LMS & EdStem Integration:** Live sync for rubric criteria, countdown timers, and instructor-verified answers.
-- [x] **Test & Build Integrity:** 24 Vitest integration tests covering all REST and WebSocket routes; clean production Vite build.
-- [x] **Research Telemetry Exporter:** Automated export of student catch-up latency, dwell durations, and cognitive friction markers to RFC 4180 CSV / JSON.
-- [x] **Socratic Scaffolding Agent:** 4-tier Zone of Proximal Development scaffolding engine with deterministic solution guardrails to prevent cognitive offloading.
-
----
-
-## Quickstart Guide
-
-### Option A: Run Locally with npm
+### Option A: Run Locally
 
 ```bash
 # Clone the repository
 git clone https://github.com/rvira/classroom-accessibility-promptathon.git
 cd classroom-accessibility-promptathon
 
-# 1. Start the Backend API & WebSocket Server
+# 1. Start the Backend API Server
 cd server
 npm install
 npm run dev
 
-# 2. Start the Frontend App (in a separate terminal)
+# 2. Start the Frontend Client (in a separate terminal)
 cd ../app
 npm install
 npm run dev
 ```
 
-- **Frontend Client:** [http://localhost:5173](http://localhost:5173)
+- **Frontend Client:** [http://localhost:5173](http://localhost:5173)  
+  *(Add `?view=teacher` to jump directly to Teacher Dashboard, or `?view=socratic` for Socratic Guide)*
 - **Backend API:** [http://localhost:4000](http://localhost:4000)
-- **API Health Check:** [http://localhost:4000/api/health](http://localhost:4000/api/health)
+- **Health Endpoint:** [http://localhost:4000/api/health](http://localhost:4000/api/health)
 
-### Option B: One-Click Docker Compose
+### Option B: Docker Compose
 
 ```bash
-# Start both client and backend in production containers
 docker compose up --build
 ```
 
 ### Verification & Tests
 
 ```bash
-# Run backend test suite (24 Vitest integration tests)
+# Run server test suite
 npm --prefix server test
 
-# Verify builds and linting across the stack
+# Verify production builds and linting
 npm --prefix server run build
 npm --prefix app run lint
 npm --prefix app run build
 ```
+
 ---
 
-## Community & Open Source
+## 🔬 Research & Co-Design
 
-Bullseye is an open-source project developed under the **MIT License**. We welcome contributions from researchers, developers, educators, and accessibility advocates.
+Bullseye is grounded in cognitive load research and participatory co-design for neurodivergent learners:
+- **[Now-First Design Principles](research/now-first-design.md):** Cognitive models for executive function support.
+- **[Product Specification & Critique](ADHD_UI_UX_REVAMP_PRODUCT_SPEC.md):** Comprehensive neurocognitive design rationale, friction audits, and zero-scroll layout architecture.
+- **[Design Philosophy](research/design-philosophy.md):** The case for zero-stigma default accommodations.
 
-- **[Contributing Guidelines (CONTRIBUTING.md)](CONTRIBUTING.md):** Code style, branch strategy, and testing requirements.
-- **[Code of Conduct (CODE_OF_CONDUCT.md)](CODE_OF_CONDUCT.md):** Contributor Covenant zero-stigma community standards.
-- **[Security Policy (SECURITY.md)](SECURITY.md):** Student privacy commitments and vulnerability reporting.
-- **[License (LICENSE)](LICENSE):** MIT License (Copyright 2026 Bullseye Contributors).
+---
+
+## 📄 License & Community
+
+Bullseye is an open-source project released under the **[MIT License](LICENSE)**. Contributions from educators, researchers, and accessibility advocates are always welcome!
