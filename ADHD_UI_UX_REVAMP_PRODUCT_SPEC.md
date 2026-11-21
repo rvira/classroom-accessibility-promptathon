@@ -394,12 +394,48 @@ With the revamp approved for implementation, the following changes are deployed 
 
 ---
 
-## 11. Conclusion & Strategic Value
+## 11. v3 Evolution: Zero-Scroll Viewport, Socratic Scaffolding Demo & Teacher Cognitive Portal
+
+Based on real classroom feedback and user observation, four critical enhancements were made in v3:
+
+### 1. Removing Meta-Pedagogical Clutter from the Student Surface
+Students with ADHD require actionable, direct guidance without academic meta-labels:
+- **Removed Jargon Badges:** Replaced scientific labels (`TIER 1: ATTENTIONAL ORIENTING`, `Anti-Offloading Guardrail Active`) with plain-language student tabs (`1. Where to Look`, `2. Key Concept`, `3. Step-by-Step`, `4. Worked Setup`).
+- **Removed Ambient Pacing Bar:** Relocated minute-level discussion timers (`Class Pace: Normal discussion window · ~3 mins`) away from the student screen to prevent time-blindness anxiety.
+- **Removed Bulky Rubric Banner:** Consolidated the 50px amber Canvas bottom banner into an inline header badge (`📋 Rule: Exact Fractions`), freeing critical vertical space.
+- **Pruned Navigation:** Removed redundant "Welcome Tour" from SideNav; preserved cleanly within the profile help dropdown.
+
+### 2. Zero-Scroll Viewport Guarantee (`100vh`)
+Previously, stacked progress tracks, pacing bars, and rubric banners caused vertical page overflow. Students had to scroll down to discover the `[ 🔄 Lost? 5s Catch-Up ]` button.
+- Replaced the 140px `horizon-step-flow-bar` with a sleek 36px `compact-step-bar`.
+- The entire student checkpoint stream now fits strictly inside `100vh` across all standard desktop viewports ($\ge 720\text{px}$).
+- **`[ 🔄 Lost? 5s Catch-Up ]` is guaranteed to be 100% visible on first render without any mouse wheel movement.**
+
+### 3. Real Demonstration of the Socratic Scaffolding Assistant
+Rather than a theoretical prompt, the Socratic Scaffolding Assistant features an interactive, 4-tier demonstration grounded in an authentic University Calculus lecture problem ($\int_0^4 (2x+1)^3 \, dx$, transforming limits with $u = 2x + 1$):
+- **Tier 1 (Where to Look):** Focuses attention on $u = 2x+1$ and the lower limit $x=0$.
+- **Tier 2 (Key Concept):** Explains why definite integrals in $u$-variables cannot keep old $x$-limits.
+- **Tier 3 (Calculation Steps):** Procedurally guides $u(0)=1$, $u(4)=9$, and factoring out $\frac{1}{2}$.
+- **Tier 4 (Worked Setup):** Demonstrates the structural setup $\frac{1}{2} \int_1^9 u^3 du$ without calculating the final arithmetic, preserving student active evaluation and Canvas submission readiness.
+- Students can interactively click between tiers or tap `Advance to Next Tier →` to experience scaffolded ZPD guidance that never leaks answers.
+
+### 4. Dedicated Teacher & Cognitive Analytics Dashboard
+All research telemetry, cognitive friction indicators, and class-level pacing metrics have been consolidated into an Instructor Portal accessible via the header switcher (`Student View` ⇋ `Teacher View`) and SideNav:
+- **Class Attention & Pacing Pulse:** Real-time distribution across Steps 1–4, average dwell time (3m 12s on Step 2), and cognitive friction index (2.4 / 10).
+- **Socratic Scaffolding Funnel:** Real-time request volume across Tiers 1–4, showing an 82% self-sufficiency rate and 100% anti-offloading guardrail integrity.
+- **Re-Orientation & Catch-Up Signals:** Live log of students triggering the 5-second Catch-Up tool with re-synchronization times.
+- **Intervention Controls:** 1-click `Broadcast 15s Pause` and `Push Step 2 Micro-Hint`.
+- **xAPI Research Telemetry:** 1-click RFC 4180 CSV export and live JSON event logging for UCI Digital Learning Lab researchers.
+
+---
+
+## 12. Conclusion & Strategic Value
 
 This redesign changes Bullseye from an **"interactive tech demo"** into an **indispensable cognitive prosthetic**.
 
 By stripping away the 3D perspectives, particle visual effects, and fragmented screens, we honor the core reality of the ADHD learner: **their struggle is not a lack of intelligence, but an overload of sensory stimuli and executive friction.** 
 
 When the interface gets out of the way and presents only **one clear forward step**, the student stays locked into the lecture, keeps their dignity intact, and never falls behind.
+
 
 

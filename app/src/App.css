@@ -5659,11 +5659,113 @@ input:focus-visible {
   border-color: #00695c;
 }
 
-/* Socratic Scaffolder Inline Accordion */
+/* Compact Step Progress Bar (Zero-Scroll ADHD Ergonomics) */
+.compact-step-bar {
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto 12px auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(20, 22, 26, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.compact-step-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.compact-step-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #00695c;
+  background: rgba(0, 105, 92, 0.1);
+  padding: 2px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.compact-step-title {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.compact-step-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.compact-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.compact-pill.done {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #15803d;
+}
+
+.compact-pill.active {
+  background: #00695c;
+  border-color: #00695c;
+  color: #ffffff;
+}
+
+.compact-pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.compact-pill.upcoming:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.hero-header-tags {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hero-rubric-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #b45309;
+  background: #fef3c7;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid #fde68a;
+}
+
+/* Socratic Scaffolder Inline Accordion & Real Demonstration */
 .socratic-inline-wrap {
   border: 1px solid #bae6fd;
   border-radius: 10px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   overflow: hidden;
   background: #f0f9ff;
 }
@@ -5673,7 +5775,7 @@ input:focus-visible {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: 10px 16px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -5681,47 +5783,97 @@ input:focus-visible {
 }
 
 .socratic-toggle-title {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 800;
   color: #0369a1;
 }
 
 .socratic-toggle-sub {
-  font-size: 0.76rem;
+  font-size: 0.75rem;
   color: #0284c7;
   font-weight: 600;
 }
 
 .socratic-inline-body {
-  padding: 14px 18px;
+  padding: 12px 16px;
   border-top: 1px solid #e0f2fe;
   background: #ffffff;
 }
 
-.socratic-tier-pills {
+.socratic-tier-tabs {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 6px;
+  margin-bottom: 12px;
+  overflow-x: auto;
 }
 
-.socratic-pill-active {
-  font-size: 0.72rem;
+.socratic-tier-tab {
+  padding: 5px 11px;
+  border-radius: 8px;
+  border: 1px solid #bae6fd;
+  background: #f0f9ff;
+  color: #0369a1;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.socratic-tier-tab:hover {
+  background: #e0f2fe;
+}
+
+.socratic-tier-tab.active {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+}
+
+.socratic-hint-display {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.socratic-hint-title-row {
+  margin-bottom: 6px;
+}
+
+.socratic-hint-step-name {
+  font-size: 0.78rem;
   font-weight: 800;
   color: #0284c7;
-  background: #e0f2fe;
-  padding: 3px 8px;
-  border-radius: 6px;
   text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-.socratic-guardrail-chip {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #059669;
-  background: #ecfdf5;
-  padding: 3px 8px;
+.socratic-advance-row {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.socratic-next-tier-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #f0fdf4;
+  border: 1px solid #86efac;
   border-radius: 6px;
+  color: #15803d;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.socratic-next-tier-btn:hover {
+  background: #dcfce7;
+  border-color: #4ade80;
 }
 
 .socratic-hint-prompt {
@@ -6016,6 +6168,514 @@ input:focus-visible {
 
 .catchup-resume-btn:hover {
   background: #004d40;
+  transform: translateY(-1px);
+}
+
+/* Header Role Switcher Pill */
+.header-role-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.header-role-toggle:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.header-role-toggle.active {
+  background: #4f46e5;
+  border-color: #4f46e5;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+}
+
+/* ==========================================================================
+   TEACHER & COGNITIVE ANALYTICS DASHBOARD
+   ========================================================================== */
+.teacher-dashboard-container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: clamp(16px, 2vw, 28px);
+}
+
+.teacher-dash-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.teacher-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.teacher-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #4f46e5;
+  color: #ffffff;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.teacher-live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.teacher-dash-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+  font-family: var(--display, sans-serif);
+}
+
+.teacher-dash-sub {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.btn-switch-student-view {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  color: #334155;
+  font-weight: 700;
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-switch-student-view:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.teacher-broadcast-alert,
+.teacher-export-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+  font-weight: 700;
+  font-size: 0.88rem;
+  margin-bottom: 20px;
+}
+
+.teacher-dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+  gap: 20px;
+}
+
+.teacher-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+}
+
+.teacher-card.full-width {
+  grid-column: 1 / -1;
+}
+
+.teacher-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.card-head-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-head-title h2 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.card-head-stat {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #4f46e5;
+  background: #eef2ff;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.guardrail-status-pill {
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: #059669;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.catchup-count-chip {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #0d9488;
+  background: #f0fdfa;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.xapi-counter-chip {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #4f46e5;
+  background: #eef2ff;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+/* Step Multi-Bar Meter */
+.step-distribution-section {
+  margin-bottom: 18px;
+}
+
+.dist-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 8px;
+}
+
+.dist-active-focus {
+  color: #00695c;
+  font-weight: 800;
+}
+
+.dist-multi-bar {
+  display: flex;
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #e2e8f0;
+  margin-bottom: 10px;
+}
+
+.bar-slice.step-1 { background: #94a3b8; }
+.bar-slice.step-2 { background: #00695c; }
+.bar-slice.step-3 { background: #0284c7; }
+.bar-slice.step-4 { background: #8b5cf6; }
+
+.dist-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.74rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legend-dot.step-1 { background: #94a3b8; }
+.legend-dot.step-2 { background: #00695c; }
+.legend-dot.step-3 { background: #0284c7; }
+.legend-dot.step-4 { background: #8b5cf6; }
+
+.teacher-metric-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.metric-tile {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-tile-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.metric-tile-val {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.metric-tile-sub {
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.teacher-alert-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+.teacher-alert-box.warning {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  color: #92400e;
+}
+
+/* Socratic Funnel Bars */
+.socratic-funnel-section {
+  margin-bottom: 16px;
+}
+
+.funnel-title, .timeline-title, .actions-hub-title {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #334155;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.funnel-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.funnel-row {
+  display: grid;
+  grid-template-columns: 150px 1fr 65px;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+}
+
+.funnel-tier-name {
+  font-weight: 700;
+  color: #475569;
+}
+
+.funnel-track {
+  height: 10px;
+  background: #f1f5f9;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.funnel-fill.tier-1 { background: #38bdf8; height: 100%; }
+.funnel-fill.tier-2 { background: #60a5fa; height: 100%; }
+.funnel-fill.tier-3 { background: #818cf8; height: 100%; }
+.funnel-fill.tier-4 { background: #a78bfa; height: 100%; }
+
+.funnel-val {
+  font-weight: 800;
+  color: #0f172a;
+  text-align: right;
+}
+
+.guardrail-efficacy-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.efficacy-metric {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-num {
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.metric-desc {
+  font-size: 0.74rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* Catch-Up Timeline */
+.catchup-timeline-section {
+  margin-bottom: 16px;
+}
+
+.catchup-event-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.catchup-event-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+.event-time {
+  font-weight: 800;
+  color: #00695c;
+  background: rgba(0, 105, 92, 0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+}
+
+.event-desc {
+  color: #334155;
+  font-weight: 600;
+}
+
+.teacher-action-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-teacher-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+}
+
+.btn-teacher-action.pause {
+  color: #c2410c;
+  border-color: #fed7aa;
+  background: #fff7ed;
+}
+
+.btn-teacher-action.pause:hover {
+  background: #ffedd5;
+}
+
+.btn-teacher-action.hint {
+  color: #4338ca;
+  border-color: #c7d2fe;
+  background: #eef2ff;
+}
+
+.btn-teacher-action.hint:hover {
+  background: #e0e7ff;
+}
+
+/* Telemetry Export Panel */
+.telemetry-export-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.telemetry-info-text p {
+  margin: 0;
+  font-size: 0.86rem;
+  color: #475569;
+  line-height: 1.5;
+  max-width: 650px;
+}
+
+.btn-export-telemetry {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #4f46e5;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 0.88rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+  transition: all 0.15s ease;
+}
+
+.btn-export-telemetry:hover {
+  background: #4338ca;
   transform: translateY(-1px);
 }
 

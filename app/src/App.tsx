@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import {
   AlertTriangle,
   ArrowRight,
+  BarChart3,
   Check,
   CheckCircle,
   ChevronLeft,
@@ -19,6 +20,7 @@ import '@fontsource/atkinson-hyperlegible/700.css'
 import { InteractiveBackground } from './components/InteractiveBackground'
 import { CanvasLogo, EdStemLogo } from './components/BrandLogos'
 import { SideNav, type ViewMode } from './components/SideNav'
+import { TeacherDashboard } from './components/TeacherDashboard'
 import { api } from './services/api'
 import {
   translations,
@@ -27,6 +29,54 @@ import {
   type Translations,
 } from './i18n'
 import './App.css'
+
+interface SocraticDemoTier {
+  tier: 1 | 2 | 3 | 4
+  tabLabel: string
+  title: string
+  prompt: string
+  probing: string
+  action: string
+}
+
+const socraticDemoTiers: SocraticDemoTier[] = [
+  {
+    tier: 1,
+    tabLabel: '1. Where to Look',
+    title: 'Orienting to the Transformation Formula',
+    prompt:
+      'Focus on your substitution formula: u = 2x + 1. Your original lower limit is x = 0. What does u evaluate to when you plug in x = 0?',
+    probing: 'Do you need to integrate yet, or just calculate the transformed starting point in u?',
+    action: 'Evaluate u(0) = 2(0) + 1 on your paper before calculating the upper bound.',
+  },
+  {
+    tier: 2,
+    tabLabel: '2. Key Concept',
+    title: 'Variable-Bound Consistency Principle',
+    prompt:
+      'Definite integrals evaluate between boundaries of the active variable. When we change the integration variable from x to u, the integral only speaks "u-language". The old x-limits (0 and 4) can never be evaluated with du.',
+    probing: 'If x travels from 0 to 4, what is the exact interval that u travels across?',
+    action: 'Transform both boundaries: calculate u(0) = 1 and u(4) = 2(4) + 1 = 9.',
+  },
+  {
+    tier: 3,
+    tabLabel: '3. Calculation Steps',
+    title: 'Step-by-Step Procedural Decomposition',
+    prompt:
+      'Break the transformation into two explicit evaluations:\n1. Lower bound: x = 0 ⟹ u = 2(0) + 1 = 1\n2. Upper bound: x = 4 ⟹ u = 2(4) + 1 = 9\n3. In Step 1 you found dx = du / 2. Factor out the constant (1/2).',
+    probing: 'How does transforming the limits now save you from back-substituting x at the end?',
+    action: 'Rewrite the integral as ∫₁⁹ u³ · (1/2) du on your worksheet.',
+  },
+  {
+    tier: 4,
+    tabLabel: '4. Worked Setup',
+    title: 'Worked Structural Model (No Final Answer Leak)',
+    prompt:
+      'Here is the complete structural transformation (notice we do not evaluate the final arithmetic for you):\n\n∫₀⁴ (2x + 1)³ dx   ⟹   ∫₁⁹ u³ · (1/2) du   =   (1/2) ∫₁⁹ u³ du\n\nNotice: Because the limits are already in u, you evaluate directly between 1 and 9 without converting back to x!',
+    probing: 'What is the antiderivative of u³ with respect to u using the power rule?',
+    action: 'Integrate u³ to write (1/2) [ u⁴ / 4 ]₁⁹ and compute the final fraction.',
+  },
+]
 
 interface EdstemQuestion {
   id: string
@@ -544,6 +594,7 @@ export default function App() {
     }
   })
   const [socraticInlineOpen, setSocraticInlineOpen] = useState<boolean>(false)
+  const [inlineSocraticTier, setInlineSocraticTier] = useState<1 | 2 | 3 | 4>(1)
   const [catchupSheetOpen, setCatchupSheetOpen] = useState<boolean>(false)
 
   // Persist scratchpad
@@ -734,10 +785,6 @@ export default function App() {
     return () => document.removeEventListener('click', onDocClick)
   }, [])
 
-  // Static stable focal plane: 3D tilt removed to protect ADHD visual stability
-  const handleArenaMouseMove = () => {}
-  const handleArenaMouseLeave = () => {}
-
   const toggleStepCompletion = () => {
     setStepCompleted((prev) => {
       const next = !prev
@@ -838,6 +885,18 @@ export default function App() {
 
         {/* Right: Essential, Focused Action Controls (Strict Single-Home Placement) */}
         <div className="revamped-actions-row">
+          {/* Quick Teacher / Student View Switcher */}
+          <button
+            type="button"
+            className={`header-role-toggle ${activeView === 'teacher' ? 'active' : ''}`}
+            onClick={() => setActiveView(activeView === 'teacher' ? 'now' : 'teacher')}
+            title={activeView === 'teacher' ? 'Switch to Student View' : 'Open Teacher & Cognitive Analytics Dashboard'}
+            aria-label={activeView === 'teacher' ? 'Switch to Student View' : 'Open Teacher & Cognitive Analytics Dashboard'}
+          >
+            <BarChart3 size={15} aria-hidden="true" />
+            <span>{activeView === 'teacher' ? 'Student View' : 'Teacher View'}</span>
+          </button>
+
           {/* Live Audio Telemetry Pill (Single Home for Audio Controls) */}
           <button
             type="button"
@@ -1182,116 +1241,61 @@ export default function App() {
           </section>
         )}
 
-        {/* VIEW 1: NOW FOCUS (3D PERSPECTIVE CARDS) */}
+        {/* VIEW 1: NOW FOCUS (ZERO-SCROLL MONOLITHIC FOCUS STREAM) */}
         {activeView === 'now' && (
           <div
             ref={arenaRef}
             className="now-perspective-arena"
-            onMouseMove={handleArenaMouseMove}
-            onMouseLeave={handleArenaMouseLeave}
           >
-            {/* TRIADIC WORKING-MEMORY HORIZON */}
-            <div className="horizon-step-flow-bar" role="region" aria-label={t.workingMemoryHorizon}>
-              <div className="step-flow-header">
-                <div className="step-flow-badge-wrap">
-                  <span className="step-flow-badge">
-                    <span className="step-flow-beacon" aria-hidden="true" />
-                    <span>{t.checkpointLabel} {activeStepNumber} {t.ofLabel} 4</span>
-                  </span>
-                  <span className="step-flow-desc">
-                    {activeStepNumber === 2
-                      ? t.step2Title
-                      : activeStepNumber === 3
-                      ? t.step3Title
-                      : 'Activity Progress'}
-                  </span>
-                </div>
-                <div className="step-flow-meta">
-                  <span className="step-flow-canvas-tag">
-                    <CanvasLogo size={13} />
-                    <span>{t.canvasWorksheetSync}</span>
-                  </span>
-                  <span className="step-flow-pct">
-                    {stepCompleted ? `75% ${t.completePct}` : `50% ${t.completePct}`}
-                  </span>
-                </div>
-              </div>
-
-              {/* Animated Flowing Progress Track */}
-              <div className="step-flow-track-wrap">
-                <div className="step-flow-track">
-                  <div
-                    className="step-flow-fill"
-                    style={{ width: stepCompleted ? '75%' : '50%' }}
-                  >
-                    <span className="step-flow-shimmer" aria-hidden="true" />
-                    <span className="step-flow-head" aria-hidden="true" />
-                  </div>
-                </div>
-
-                {/* 4 Interactive Step Milestones */}
-                <div className="step-milestones-row">
-                  <button
-                    type="button"
-                    className="step-milestone-chip done"
-                    onClick={() => setActiveView('overview')}
-                    title="View Step 1 (Completed)"
-                  >
-                    <span className="milestone-num"><Check size={12} strokeWidth={3} /></span>
-                    <span className="milestone-text">1. Set u = 2x+1</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    className={`step-milestone-chip ${stepCompleted ? 'done' : 'active'}`}
-                    onClick={() => setActiveView('now')}
-                    title="Step 2 (Current Focus)"
-                  >
-                    <span className="milestone-num">{stepCompleted ? <Check size={12} strokeWidth={3} /> : '2'}</span>
-                    <span className="milestone-text">2. Change Limits</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    className={`step-milestone-chip ${stepCompleted ? 'active' : 'upcoming'}`}
-                    onClick={toggleStepCompletion}
-                    title="Step 3 (Click to advance/undo)"
-                  >
-                    <span className="milestone-num">3</span>
-                    <span className="milestone-text">3. Integrate in u</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    className="step-milestone-chip upcoming"
-                    onClick={() => setActiveView('overview')}
-                    title="View Step 4 (Final Canvas Submit)"
-                  >
-                    <span className="milestone-num">4</span>
-                    <span className="milestone-text">4. Canvas Submit</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* AMBIENT PACING BAR (CALM ORIENTATION, NO PANIC COUNTDOWN) */}
-            <div className="ambient-pacing-bar" role="status" aria-label="Class pace status">
-              <div className="pacing-status-left">
-                <span className="pacing-pulse-dot" aria-hidden="true" />
-                <span className="pacing-text">
-                  Class Pace: Normal discussion window · ~3 mins on Step {activeStepNumber}
+            {/* SLEEK COMPACT PROGRESS BAR (ZERO VERTICAL OVERHEAD) */}
+            <div className="compact-step-bar" role="region" aria-label="Step progress">
+              <div className="compact-step-left">
+                <span className="compact-step-badge">Step {activeStepNumber} of 4</span>
+                <span className="compact-step-title">
+                  {activeStepNumber === 2 ? t.step2Title : activeStepNumber === 3 ? t.step3Title : 'Active Checkpoint'}
                 </span>
               </div>
-              <div className="pacing-shortcuts">
-                <span><kbd>h</kbd> hint</span>
-                <span><kbd>r</kbd> catch-up</span>
-                <span><kbd>c</kbd> calm</span>
+
+              <div className="compact-step-pills">
+                <button
+                  type="button"
+                  className="compact-pill done"
+                  onClick={() => setActiveView('overview')}
+                  title="Step 1: Set u = 2x+1 (Completed)"
+                >
+                  <Check size={11} strokeWidth={3} />
+                  <span>1. Set u</span>
+                </button>
+                <button
+                  type="button"
+                  className="compact-pill active"
+                  title="Step 2: Change Limits (Active Focus)"
+                >
+                  <span className="compact-pill-dot" />
+                  <span>2. Limits</span>
+                </button>
+                <button
+                  type="button"
+                  className="compact-pill upcoming"
+                  onClick={toggleStepCompletion}
+                  title="Step 3: Integrate in u"
+                >
+                  <span>3. Integrate</span>
+                </button>
+                <button
+                  type="button"
+                  className="compact-pill upcoming"
+                  onClick={() => setActiveView('overview')}
+                  title="Step 4: Canvas Submit"
+                >
+                  <span>4. Submit</span>
+                </button>
               </div>
             </div>
 
-            {/* MONOLITHIC FOCUS STREAM (RADICAL SIMPLICITY FOR ADHD) */}
+            {/* MONOLITHIC FOCUS STREAM */}
             <div ref={cardsRowRef} className="monolithic-focus-stream">
-              {/* 1. TOP ANCHOR: CONTEXT ACCORDION (WHERE WE JUST WERE) */}
+              {/* 1. TOP ANCHOR: CONTEXT ACCORDION */}
               <div className="context-anchor-accordion">
                 <button
                   type="button"
@@ -1315,16 +1319,21 @@ export default function App() {
                 )}
               </div>
 
-              {/* 2. HERO ACTIVE DIRECTIVE CARD (THE SINGLE FOCAL PLANE) */}
+              {/* 2. HERO ACTIVE DIRECTIVE CARD */}
               <main className="monolithic-hero-card" role="main" aria-label="Active lecture directive">
                 <div className="hero-card-header">
                   <span className="hero-step-badge">
                     ACTIVE DIRECTIVE · STEP {activeStepNumber} OF 4
                   </span>
-                  <span className="hero-sync-tag">
-                    <CanvasLogo size={13} />
-                    <span>Canvas Synced</span>
-                  </span>
+                  <div className="hero-header-tags">
+                    <span className="hero-rubric-tag" title="Canvas rubric constraint: exact fractions only">
+                      <CanvasLogo size={13} />
+                      <span>Rule: Exact Fractions</span>
+                    </span>
+                    <span className="hero-sync-tag">
+                      <span>Canvas Synced</span>
+                    </span>
+                  </div>
                 </div>
 
                 <h1 className="hero-directive-statement" aria-live="polite">
@@ -1366,7 +1375,7 @@ export default function App() {
                   )}
                 </div>
 
-                {/* Inline Socratic Scaffolder Accordion */}
+                {/* Interactive Socratic Scaffolder Demonstration (No Jargon, Real Demonstration) */}
                 <div className="socratic-inline-wrap">
                   <button
                     type="button"
@@ -1382,18 +1391,47 @@ export default function App() {
 
                   {socraticInlineOpen && (
                     <div className="socratic-inline-body">
-                      <div className="socratic-tier-pills">
-                        <span className="socratic-pill-active">Tier 1: Attentional Orienting</span>
-                        <span className="socratic-guardrail-chip">Anti-Offloading Guardrail Active</span>
+                      {/* 4 Interactive Clickable Tier Tabs */}
+                      <div className="socratic-tier-tabs" role="tablist" aria-label="Hint depth">
+                        {socraticDemoTiers.map((item) => (
+                          <button
+                            key={item.tier}
+                            type="button"
+                            className={`socratic-tier-tab ${inlineSocraticTier === item.tier ? 'active' : ''}`}
+                            onClick={() => setInlineSocraticTier(item.tier)}
+                            role="tab"
+                            aria-selected={inlineSocraticTier === item.tier}
+                          >
+                            <span>{item.tabLabel}</span>
+                          </button>
+                        ))}
                       </div>
-                      <p className="socratic-hint-prompt">
-                        Focus on the substitution formula: u = 2x + 1. Plug in the lower boundary x = 0. What does u evaluate to?
-                      </p>
-                      <div className="socratic-probing-mini">
-                        <strong>Probing Question:</strong> Why do we transform the limits now instead of back-substituting x at the end?
-                      </div>
-                      <div className="socratic-action-mini">
-                        ✓ Action: Calculate u(0) = 1 and u(4) = 9, and write them directly on your integral signs.
+
+                      <div className="socratic-hint-display">
+                        <div className="socratic-hint-title-row">
+                          <span className="socratic-hint-step-name">{socraticDemoTiers[inlineSocraticTier - 1].title}</span>
+                        </div>
+                        <p className="socratic-hint-prompt">
+                          {socraticDemoTiers[inlineSocraticTier - 1].prompt}
+                        </p>
+                        <div className="socratic-probing-mini">
+                          <strong>Reflection Question:</strong> {socraticDemoTiers[inlineSocraticTier - 1].probing}
+                        </div>
+                        <div className="socratic-action-mini">
+                          ✓ Action: {socraticDemoTiers[inlineSocraticTier - 1].action}
+                        </div>
+
+                        {inlineSocraticTier < 4 && (
+                          <div className="socratic-advance-row">
+                            <button
+                              type="button"
+                              className="socratic-next-tier-btn"
+                              onClick={() => setInlineSocraticTier((inlineSocraticTier + 1) as any)}
+                            >
+                              <span>Need deeper guidance? Advance to {socraticDemoTiers[inlineSocraticTier].tabLabel} →</span>
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
@@ -1420,20 +1458,6 @@ export default function App() {
                   </button>
                 </div>
               </main>
-
-              {/* 3. BOTTOM ANCHOR: INVARIANT CONSTRAINTS (RUBRIC & DEADLINES) */}
-              <div className="invariant-anchor-bar">
-                <div className="invariant-bar-left">
-                  <span className="invariant-star-icon" aria-hidden="true">★</span>
-                  <span className="invariant-bar-text">
-                    <strong>Canvas Rubric Rule:</strong> Exact fraction required on worksheet; no rounded decimals. Pair work optional.
-                  </span>
-                </div>
-                <div className="invariant-bar-due">
-                  <CanvasLogo size={14} />
-                  <span>{t.canvasDueToday}</span>
-                </div>
-              </div>
             </div>
 
             {/* STICKY BOTTOM ACTION DOCK (ALWAYS VISIBLE & ANCHORED) */}
@@ -1877,10 +1901,10 @@ export default function App() {
             {/* 4-Tier Scaffolding Ladder Navigation */}
             <div className="socratic-ladder-nav" role="tablist" aria-label="Scaffolding Tiers">
               {[
-                { tier: 1, label: '1. Orienting' },
-                { tier: 2, label: '2. Conceptual Bridging' },
-                { tier: 3, label: '3. Procedural Micro-Step' },
-                { tier: 4, label: '4. Verification' },
+                { tier: 1, label: '1. Where to Look' },
+                { tier: 2, label: '2. Key Concept' },
+                { tier: 3, label: '3. Step-by-Step' },
+                { tier: 4, label: '4. Worked Setup' },
               ].map((item) => (
                 <button
                   key={item.tier}
@@ -1935,7 +1959,7 @@ export default function App() {
 
                 <div className="recap-head">
                   <span className="recap-tag">Tier {socraticResponse.tier}: {socraticResponse.tierLabel}</span>
-                  <span className="recap-audio-sync">Anti-Offloading Guardrail Active</span>
+                  <span className="recap-audio-sync">Guided Socratic Scaffold</span>
                 </div>
 
                 <p className="socratic-prompt-text">
@@ -1969,6 +1993,17 @@ export default function App() {
               </div>
             )}
           </section>
+        )}
+
+        {/* VIEW 7: TEACHER & COGNITIVE ANALYTICS DASHBOARD */}
+        {activeView === 'teacher' && (
+          <TeacherDashboard
+            currentCourse={currentCourse}
+            currentTopic={currentTopic}
+            activeStepNumber={activeStepNumber}
+            onSwitchToStudent={() => setActiveView('now')}
+            t={t}
+          />
         )}
       </main>
 
