@@ -8,7 +8,6 @@ import {
   ChevronRight,
   Compass,
   Globe,
-  Info,
   LogOut,
   Menu,
   RotateCcw,
@@ -534,6 +533,55 @@ export default function App() {
   const [socraticResponse, setSocraticResponse] = useState<any>(null)
   const [socraticLoading, setSocraticLoading] = useState<boolean>(false)
 
+  // ADHD Revamp: Working-Memory Externalization & Catch-up Sheet States
+  const [contextExpanded, setContextExpanded] = useState<boolean>(false)
+  const [scratchpadOpen, setScratchpadOpen] = useState<boolean>(false)
+  const [scratchpadText, setScratchpadText] = useState<string>(() => {
+    try {
+      return localStorage.getItem('bullseye_scratchpad') || 'u = 2x + 1\ndu = 2 dx\nx=0 ⟶ u=1\nx=4 ⟶ u=9'
+    } catch {
+      return 'u = 2x + 1\ndu = 2 dx'
+    }
+  })
+  const [socraticInlineOpen, setSocraticInlineOpen] = useState<boolean>(false)
+  const [catchupSheetOpen, setCatchupSheetOpen] = useState<boolean>(false)
+
+  // Persist scratchpad
+  useEffect(() => {
+    try {
+      localStorage.setItem('bullseye_scratchpad', scratchpadText)
+    } catch {
+      // ignore
+    }
+  }, [scratchpadText])
+
+  // Global Keyboard Shortcuts for Low-Motor Cognitive Ergonomics
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+        if (e.key === 'Escape') target.blur()
+        return
+      }
+
+      if (e.key === 'c' || e.key === 'C') {
+        setCalmMode((prev) => !prev)
+        setToastMessage(!calmMode ? 'Calm Mode Active (Zero motion)' : 'Calm Mode Inactive')
+        setTimeout(() => setToastMessage(null), 2500)
+      } else if (e.key === 'h' || e.key === 'H') {
+        setSocraticInlineOpen((prev) => !prev)
+      } else if (e.key === 'r' || e.key === 'R') {
+        setCatchupSheetOpen((prev) => !prev)
+      } else if (e.key === 'Escape') {
+        setCatchupSheetOpen(false)
+        setDrawerOpen(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleGlobalKeyDown)
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown)
+  }, [calmMode])
+
   const handleExportTelemetry = async () => {
     try {
       const csv = await api.exportTelemetryCSV()
@@ -686,24 +734,9 @@ export default function App() {
     return () => document.removeEventListener('click', onDocClick)
   }, [])
 
-  // 3D Tilt interaction for Now Focus Arena
-  const handleArenaMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (calmMode || !arenaRef.current || !cardsRowRef.current) return
-    const rect = arenaRef.current.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    const centerX = rect.width / 2
-    const centerY = rect.height / 2
-    const rotateX = ((y - centerY) / centerY) * -5
-    const rotateY = ((x - centerX) / centerX) * 6
-    cardsRowRef.current.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
-  }
-
-  const handleArenaMouseLeave = () => {
-    if (cardsRowRef.current) {
-      cardsRowRef.current.style.transform = 'rotateX(0deg) rotateY(0deg)'
-    }
-  }
+  // Static stable focal plane: 3D tilt removed to protect ADHD visual stability
+  const handleArenaMouseMove = () => {}
+  const handleArenaMouseLeave = () => {}
 
   const toggleStepCompletion = () => {
     setStepCompleted((prev) => {
@@ -1241,152 +1274,244 @@ export default function App() {
               </div>
             </div>
 
-            <div ref={cardsRowRef} className="now-cards-row">
-              {/* LEFT CARD: CONTEXT ANCHOR (ANTECEDENT STATE) */}
-              <div className="card-3d card-dimmed">
-                <div className="kicker-row">
-                  <div className="kicker-title-group">
-                    <h2 className="kicker">{t.contextAnchorTitle}</h2>
-                    <span className="kicker-sub">{t.contextAnchorSub}</span>
+            {/* AMBIENT PACING BAR (CALM ORIENTATION, NO PANIC COUNTDOWN) */}
+            <div className="ambient-pacing-bar" role="status" aria-label="Class pace status">
+              <div className="pacing-status-left">
+                <span className="pacing-pulse-dot" aria-hidden="true" />
+                <span className="pacing-text">
+                  Class Pace: Normal discussion window · ~3 mins on Step {activeStepNumber}
+                </span>
+              </div>
+              <div className="pacing-shortcuts">
+                <span><kbd>h</kbd> hint</span>
+                <span><kbd>r</kbd> catch-up</span>
+                <span><kbd>c</kbd> calm</span>
+              </div>
+            </div>
+
+            {/* MONOLITHIC FOCUS STREAM (RADICAL SIMPLICITY FOR ADHD) */}
+            <div ref={cardsRowRef} className="monolithic-focus-stream">
+              {/* 1. TOP ANCHOR: CONTEXT ACCORDION (WHERE WE JUST WERE) */}
+              <div className="context-anchor-accordion">
+                <button
+                  type="button"
+                  className="context-anchor-toggle"
+                  onClick={() => setContextExpanded(!contextExpanded)}
+                  aria-expanded={contextExpanded}
+                >
+                  <span className="context-toggle-icon">{contextExpanded ? '▼' : '▲'}</span>
+                  <span className="context-anchor-summary">
+                    <strong>Previous Step 1 (Completed):</strong> Defined substitution u = 2x + 1 ⟹ du = 2 dx
+                  </span>
+                  <span className="context-anchor-badge">Complete</span>
+                </button>
+                {contextExpanded && (
+                  <div className="context-anchor-body">
+                    <p className="context-text">{t.lectureWhere}</p>
+                    <div className="context-math-box font-mono">
+                      u = 2x + 1  ⟹  du = 2 dx  ⟹  dx = du / 2
+                    </div>
                   </div>
-                  <button
-                    type="button"
-                    className="block-info"
-                    aria-expanded={openTech === 'where'}
-                    aria-label="Show technical specification of antecedent context"
-                    onClick={() => setOpenTech(openTech === 'where' ? null : 'where')}
-                  >
-                    <Info size={15} aria-hidden="true" />
-                  </button>
-                </div>
-                <p className="context">{t.lectureWhere}</p>
+                )}
               </div>
 
-              {/* CENTER CARD: ACTIVE DIRECTIVE (FOCAL EXECUTION) */}
-              <div className="card-3d card-focus">
-                {/* Course Context Header inside Center Card */}
-                <p className="card-course-kicker">{t.lectureCourse}</p>
-
-                <div className="kicker-row center-kicker-row">
-                  <div className="kicker-title-group">
-                    <h2 className="kicker action-kicker">{t.activeDirectiveTitle}</h2>
-                    <span className="kicker-sub">{t.activeDirectiveSub}</span>
-                  </div>
-                  <button
-                    type="button"
-                    className="block-info"
-                    aria-expanded={openTech === 'next'}
-                    aria-label="Show technical specification of active directive"
-                    onClick={() => setOpenTech(openTech === 'next' ? null : 'next')}
-                  >
-                    <Info size={15} aria-hidden="true" />
-                  </button>
+              {/* 2. HERO ACTIVE DIRECTIVE CARD (THE SINGLE FOCAL PLANE) */}
+              <main className="monolithic-hero-card" role="main" aria-label="Active lecture directive">
+                <div className="hero-card-header">
+                  <span className="hero-step-badge">
+                    ACTIVE DIRECTIVE · STEP {activeStepNumber} OF 4
+                  </span>
+                  <span className="hero-sync-tag">
+                    <CanvasLogo size={13} />
+                    <span>Canvas Synced</span>
+                  </span>
                 </div>
 
-                <h1 className="action" aria-live="polite">
+                <h1 className="hero-directive-statement" aria-live="polite">
                   {stepCompleted ? t.lectureNextCompleted : t.lectureNext}
                 </h1>
 
-                {/* Primary Step Completion Button & Stuck Route */}
-                <div className="step-action-bar">
+                {/* Concrete "What to write on your paper" Callout */}
+                <div className="paper-action-callout">
+                  <div className="paper-action-label">What to write on your paper:</div>
+                  <div className="paper-action-text font-mono">
+                    ∫₁⁹ (1/2) u³ du
+                  </div>
+                </div>
+
+                {/* Working-Memory Scratchpad (Externalizing Intermediate Thoughts) */}
+                <div className="scratchpad-inline-wrap">
                   <button
                     type="button"
-                    className={`step-complete-btn ${stepCompleted ? 'completed' : ''}`}
+                    className="scratchpad-toggle-btn"
+                    onClick={() => setScratchpadOpen(!scratchpadOpen)}
+                    aria-expanded={scratchpadOpen}
+                  >
+                    <span>📝 Scratchpad / Working Variables</span>
+                    <span className="scratchpad-hint-chip">
+                      {scratchpadOpen ? 'Collapse' : 'Jot variables (u, du)'}
+                    </span>
+                  </button>
+                  {scratchpadOpen && (
+                    <div className="scratchpad-body">
+                      <textarea
+                        className="scratchpad-textarea font-mono"
+                        value={scratchpadText}
+                        onChange={(e) => setScratchpadText(e.target.value)}
+                        placeholder="Jot temporary math variables here (persists automatically)..."
+                        rows={3}
+                        aria-label="Working memory scratchpad"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Inline Socratic Scaffolder Accordion */}
+                <div className="socratic-inline-wrap">
+                  <button
+                    type="button"
+                    className="socratic-inline-toggle"
+                    onClick={() => setSocraticInlineOpen(!socraticInlineOpen)}
+                    aria-expanded={socraticInlineOpen}
+                  >
+                    <span className="socratic-toggle-title">💡 Need a Hint? (Socratic Scaffolder)</span>
+                    <span className="socratic-toggle-sub">
+                      {socraticInlineOpen ? 'Hide Hint' : 'Micro-step guidance (No spoilers)'}
+                    </span>
+                  </button>
+
+                  {socraticInlineOpen && (
+                    <div className="socratic-inline-body">
+                      <div className="socratic-tier-pills">
+                        <span className="socratic-pill-active">Tier 1: Attentional Orienting</span>
+                        <span className="socratic-guardrail-chip">Anti-Offloading Guardrail Active</span>
+                      </div>
+                      <p className="socratic-hint-prompt">
+                        Focus on the substitution formula: u = 2x + 1. Plug in the lower boundary x = 0. What does u evaluate to?
+                      </p>
+                      <div className="socratic-probing-mini">
+                        <strong>Probing Question:</strong> Why do we transform the limits now instead of back-substituting x at the end?
+                      </div>
+                      <div className="socratic-action-mini">
+                        ✓ Action: Calculate u(0) = 1 and u(4) = 9, and write them directly on your integral signs.
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Primary Step Completion Button */}
+                <div className="hero-action-bar">
+                  <button
+                    type="button"
+                    className={`hero-complete-btn ${stepCompleted ? 'completed' : ''}`}
                     onClick={toggleStepCompletion}
                   >
                     {stepCompleted ? (
                       <>
-                        <RotateCcw size={15} aria-hidden="true" />
+                        <RotateCcw size={16} aria-hidden="true" />
                         <span>{t.undoCheckpoint}</span>
                       </>
                     ) : (
                       <>
-                        <Check size={16} aria-hidden="true" />
-                        <span>{t.completeCheckpoint}</span>
+                        <Check size={16} strokeWidth={3} aria-hidden="true" />
+                        <span>Mark Step {activeStepNumber} Complete</span>
                       </>
                     )}
                   </button>
-
-                  <button
-                    type="button"
-                    className="step-stuck-btn"
-                    onClick={() => setActiveView('rejoin')}
-                  >
-                    {t.resynchronize}
-                  </button>
                 </div>
-              </div>
+              </main>
 
-              {/* RIGHT CARD: INVARIANT CONSTRAINTS (RUBRIC & DEADLINES) */}
-              <div className="card-3d card-dimmed">
-                <div className="kicker-row">
-                  <div className="kicker-title-group">
-                    <h2 className="kicker">{t.invariantConstraintsTitle}</h2>
-                    <span className="kicker-sub">{t.invariantConstraintsSub}</span>
-                  </div>
-                  <button
-                    type="button"
-                    className="block-info"
-                    aria-expanded={openTech === 'keep'}
-                    aria-label="Show technical specification of invariant constraints"
-                    onClick={() => setOpenTech(openTech === 'keep' ? null : 'keep')}
-                  >
-                    <Info size={15} aria-hidden="true" />
-                  </button>
+              {/* 3. BOTTOM ANCHOR: INVARIANT CONSTRAINTS (RUBRIC & DEADLINES) */}
+              <div className="invariant-anchor-bar">
+                <div className="invariant-bar-left">
+                  <span className="invariant-star-icon" aria-hidden="true">★</span>
+                  <span className="invariant-bar-text">
+                    <strong>Canvas Rubric Rule:</strong> Exact fraction required on worksheet; no rounded decimals. Pair work optional.
+                  </span>
                 </div>
-                <p className="constraints">{t.lectureKeep}</p>
-
-                {/* Canvas Verified Deadline */}
-                <div className="card-canvas-badge">
-                  <CanvasLogo size={16} />
+                <div className="invariant-bar-due">
+                  <CanvasLogo size={14} />
                   <span>{t.canvasDueToday}</span>
-                  <span className="canvas-badge-sync-dot" aria-hidden="true" />
                 </div>
               </div>
             </div>
 
-            {/* Surfaced Ambiguity Warning */}
-            <div className="ambiguity-callout" role="alert">
-              <div className="ambiguity-text">
-                <AlertTriangle size={15} className="ambiguity-icon" aria-hidden="true" />
-                <span>
-                  <strong>{t.ambiguityWarning.split(' ')[0]} {t.ambiguityWarning.split(' ')[1]}</strong>{' '}
-                  {t.ambiguityWarning.split(' ').slice(2).join(' ')}
-                </span>
-              </div>
+            {/* STICKY BOTTOM ACTION DOCK (ALWAYS VISIBLE & ANCHORED) */}
+            <div className="sticky-bottom-action-dock" role="navigation" aria-label="Quick classroom actions">
               <button
                 type="button"
-                className="ambiguity-btn"
-                onClick={() => {
-                  navigator.clipboard?.writeText(
-                    'Excuse me Professor, where should we submit the in-class assignment today?'
-                  )
-                  setToastMessage(t.questionCopiedAlert)
-                  setTimeout(() => setToastMessage(null), 3000)
-                }}
+                className="action-dock-btn catchup"
+                onClick={() => setCatchupSheetOpen(true)}
               >
-                {t.askInstructor}
+                <RotateCcw size={15} aria-hidden="true" />
+                <span>Lost? 5s Catch-Up</span>
+                <span className="dock-kbd-chip">r</span>
               </button>
-            </div>
 
-            {/* In-Context EdStem Thread Banner */}
-            <div className="edstem-context-banner">
-              <div className="edstem-context-info">
-                <span className="edstem-icon-badge" aria-hidden="true">
-                  <EdStemLogo size={16} />
-                </span>
-                <span>
-                  <strong>{t.threadTitle}</strong> "Do limits flip if u(0) &gt; u(4)?"
-                </span>
-              </div>
               <button
                 type="button"
-                className="edstem-view-answer-btn"
+                className="action-dock-btn qa"
                 onClick={() => setActiveView('edstem')}
               >
-                {t.viewTAAnswer}
+                <span>💬 Step Q&A ({edstemQuestions.length})</span>
+              </button>
+
+              <button
+                type="button"
+                className="action-dock-btn advance"
+                onClick={toggleStepCompletion}
+              >
+                <span>{stepCompleted ? 'Next: Step 3 ➔' : 'Done with Step ➔'}</span>
               </button>
             </div>
+
+            {/* SLIDE-UP 5-SECOND CATCH-UP SHEET (INLINE DRAWER, NO PAGE TRANSITION) */}
+            {catchupSheetOpen && (
+              <div className="catchup-sheet-overlay" onClick={() => setCatchupSheetOpen(false)}>
+                <div className="catchup-sheet-drawer" onClick={(e) => e.stopPropagation()}>
+                  <div className="catchup-sheet-header">
+                    <div className="catchup-header-title">
+                      <span className="catchup-pulse-icon">🔄</span>
+                      <h3>5-Second Lecture Catch-Up</h3>
+                    </div>
+                    <button
+                      type="button"
+                      className="catchup-close-btn"
+                      onClick={() => setCatchupSheetOpen(false)}
+                      aria-label="Close catch-up drawer"
+                    >
+                      <X size={18} aria-hidden="true" />
+                    </button>
+                  </div>
+
+                  <div className="catchup-sheet-content">
+                    <div className="catchup-what-prof-said">
+                      <span className="catchup-label">What the Professor Just Said:</span>
+                      <p className="catchup-body-text">
+                        "Dr. Smith reiterated that forgetting to transform the bounds is the #1 mistake on Exam 2. The class is now evaluating the lower limit u(0) = 1 and upper limit u(4) = 9."
+                      </p>
+                    </div>
+
+                    <div className="catchup-action-box">
+                      <span className="catchup-action-label">Your Immediate Action:</span>
+                      <p className="catchup-action-instruction">
+                        Put your pencil on line 3 and write the integral from 1 to 9: <code>∫₁⁹ (1/2) u³ du</code>. You are 100% caught up.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="catchup-sheet-footer">
+                    <button
+                      type="button"
+                      className="catchup-resume-btn"
+                      onClick={() => setCatchupSheetOpen(false)}
+                    >
+                      Resume Task with Confidence ➔
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

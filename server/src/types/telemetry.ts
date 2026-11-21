@@ -31,3 +31,4 @@ export interface TelemetrySummaryStats {
   averageCognitiveFriction: number
   eventBreakdown: Record<TelemetryEventType, number>
 }
+
