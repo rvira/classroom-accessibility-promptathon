@@ -20,6 +20,7 @@ import '@fontsource/atkinson-hyperlegible/700.css'
 import { InteractiveBackground } from './components/InteractiveBackground'
 import { CanvasLogo, EdStemLogo } from './components/BrandLogos'
 import { SideNav, type ViewMode } from './components/SideNav'
+import { api } from './services/api'
 import {
   translations,
   type SupportedLanguage,
@@ -527,6 +528,59 @@ export default function App() {
   const [newQuestionModalOpen, setNewQuestionModalOpen] = useState<boolean>(false)
   const [newQuestionText, setNewQuestionText] = useState<string>('')
 
+  // Socratic Scaffolder State
+  const [socraticQuery, setSocraticQuery] = useState<string>('Why do we assign u = x instead of u = cos(x)?')
+  const [socraticTier, setSocraticTier] = useState<1 | 2 | 3 | 4>(1)
+  const [socraticResponse, setSocraticResponse] = useState<any>(null)
+  const [socraticLoading, setSocraticLoading] = useState<boolean>(false)
+
+  const handleExportTelemetry = async () => {
+    try {
+      const csv = await api.exportTelemetryCSV()
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `bullseye_research_telemetry_${Date.now()}.csv`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+      setToastMessage('Research telemetry dataset exported successfully (CSV)')
+      setTimeout(() => setToastMessage(null), 3500)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const handleRequestScaffold = async (tierOverride?: 1 | 2 | 3 | 4) => {
+    setSocraticLoading(true)
+    const tierToUse = tierOverride ?? socraticTier
+    try {
+      const resp = await api.requestSocraticScaffold({
+        courseCode: currentCourse,
+        domain: currentCourse.includes('ICS') ? 'code' : currentCourse.includes('PHYS') ? 'physics' : 'math',
+        currentProblem: 'Integration by Parts: int(x * cos(x) dx)',
+        activeStep: 'Selecting u and dv via LIATE',
+        studentQuery: socraticQuery,
+        scaffoldingTier: tierToUse,
+      })
+      setSocraticResponse(resp)
+      setSocraticTier(resp.tier as any)
+      api.recordTelemetryEvent({
+        courseId: currentCourse,
+        moduleContext: 'Integration by Parts: LIATE',
+        eventType: 'SCAFFOLD_HINT_REQUESTED',
+        metrics: { dwellDurationMs: 25000, cognitiveFrictionScore: resp.guardrailTriggered ? 7.5 : 3.8 },
+        metadata: { tier: resp.tier, guardrailHit: resp.guardrailTriggered },
+      })
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setSocraticLoading(false)
+    }
+  }
+
   // Welcome Tour State
   const [tourOpen, setTourOpen] = useState<boolean>(() => {
     try {
@@ -697,6 +751,7 @@ export default function App() {
         activeView={activeView}
         onSelectView={(v) => setActiveView(v)}
         onOpenTour={openTour}
+        onExportTelemetry={handleExportTelemetry}
         edstemCount={edstemQuestions.length}
         t={t}
       />
@@ -1658,6 +1713,136 @@ export default function App() {
                 </p>
               </div>
             </div>
+          </section>
+        )}
+
+        {/* VIEW 6: GENERAL-PURPOSE SOCRATIC SCAFFOLDING ASSISTANT */}
+        {activeView === 'socratic' && (
+          <section className="socratic-container" aria-label="Socratic Scaffolding Assistant">
+            <div className="view-top-back-row">
+              <button
+                type="button"
+                className="view-back-btn"
+                onClick={() => setActiveView('now')}
+              >
+                {t.backToTask}
+              </button>
+            </div>
+
+            <div className="socratic-header">
+              <div className="socratic-icon-wrap" aria-hidden="true">
+                <Sparkles size={24} strokeWidth={2.4} />
+              </div>
+              <div>
+                <h2 className="socratic-title">Socratic Scaffolding Assistant</h2>
+                <p className="socratic-sub">
+                  Targeted, micro-step guidance aligned to your Zone of Proximal Development without leaking answers.
+                </p>
+              </div>
+            </div>
+
+            {/* Current Context Card */}
+            <div className="socratic-context-card">
+              <div className="socratic-context-label">Current Lecture Context · {currentCourse}</div>
+              <p className="socratic-context-text">
+                {currentTopic}: Problem 2 · Selecting u and dv via LIATE hierarchy
+              </p>
+            </div>
+
+            {/* 4-Tier Scaffolding Ladder Navigation */}
+            <div className="socratic-ladder-nav" role="tablist" aria-label="Scaffolding Tiers">
+              {[
+                { tier: 1, label: '1. Orienting' },
+                { tier: 2, label: '2. Conceptual Bridging' },
+                { tier: 3, label: '3. Procedural Micro-Step' },
+                { tier: 4, label: '4. Verification' },
+              ].map((item) => (
+                <button
+                  key={item.tier}
+                  type="button"
+                  className={`socratic-tier-btn ${socraticTier === item.tier ? 'active' : ''}`}
+                  onClick={() => {
+                    setSocraticTier(item.tier as any)
+                    handleRequestScaffold(item.tier as any)
+                  }}
+                >
+                  <Target size={14} aria-hidden="true" />
+                  {item.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Input Form */}
+            <div className="socratic-form">
+              <label htmlFor="socraticQuery" className="rejoin-label">
+                Where are you getting stuck? (Ask a question or request a guided hint)
+              </label>
+              <input
+                id="socraticQuery"
+                type="text"
+                className="socratic-input"
+                value={socraticQuery}
+                onChange={(e) => setSocraticQuery(e.target.value)}
+                placeholder="e.g., Why do we pick u = x instead of u = cos(x)?"
+              />
+              <div className="socratic-btn-row">
+                <button
+                  type="button"
+                  className="socratic-submit-btn"
+                  onClick={() => handleRequestScaffold()}
+                  disabled={socraticLoading}
+                >
+                  {socraticLoading ? 'Analyzing...' : 'Get Socratic Scaffold'}
+                  <ArrowRight size={16} aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+
+            {/* Response Card */}
+            {socraticResponse && (
+              <div className="socratic-result-card">
+                {socraticResponse.guardrailTriggered && (
+                  <div className="guardrail-alert">
+                    <AlertTriangle size={18} aria-hidden="true" />
+                    <span>{socraticResponse.guardrailExplanation}</span>
+                  </div>
+                )}
+
+                <div className="recap-head">
+                  <span className="recap-tag">Tier {socraticResponse.tier}: {socraticResponse.tierLabel}</span>
+                  <span className="recap-audio-sync">Anti-Offloading Guardrail Active</span>
+                </div>
+
+                <p className="socratic-prompt-text">
+                  {socraticResponse.scaffoldPrompt}
+                </p>
+
+                <div className="socratic-probing-box">
+                  <div className="socratic-probing-label">Probing Reflection Question</div>
+                  <p className="socratic-probing-text">
+                    {socraticResponse.probingQuestion}
+                  </p>
+                </div>
+
+                <div className="socratic-action-cue">
+                  <CheckCircle size={16} aria-hidden="true" />
+                  <span>{socraticResponse.nextActionCue}</span>
+                </div>
+
+                <div className="socratic-card-footer">
+                  <span className="text-muted text-xs">Zero-stigma default · Model assists without solving for you</span>
+                  {socraticTier < 4 && (
+                    <button
+                      type="button"
+                      className="socratic-advance-btn"
+                      onClick={() => handleRequestScaffold(((socraticTier + 1) as any))}
+                    >
+                      Need deeper scaffold? Try Tier {socraticTier + 1} →
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
           </section>
         )}
       </main>

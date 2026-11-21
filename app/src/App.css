@@ -5143,3 +5143,268 @@ input:focus-visible {
   font-weight: 600;
   letter-spacing: 0.02em;
 }
+
+/* =========================================================
+   SOCRATIC SCAFFOLDING ASSISTANT & TELEMETRY STYLES
+   ========================================================= */
+
+.socratic-container {
+  max-width: 860px;
+  margin: 0 auto 60px auto;
+  padding: 24px;
+}
+
+.socratic-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.socratic-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(0, 105, 92, 0.1);
+  color: var(--accent-deep, #00695c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.socratic-title {
+  font-family: var(--display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 0 0 4px 0;
+}
+
+.socratic-sub {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.socratic-context-card {
+  background: var(--surface-card, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.socratic-context-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #0284c7;
+  margin-bottom: 6px;
+}
+
+.socratic-context-text {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+
+.socratic-ladder-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.socratic-tier-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.socratic-tier-btn:hover {
+  background: #e2e8f0;
+}
+
+.socratic-tier-btn.active {
+  background: var(--accent-deep, #00695c);
+  color: #ffffff;
+  border-color: var(--accent-deep, #00695c);
+  box-shadow: 0 2px 8px rgba(0, 105, 92, 0.25);
+}
+
+.socratic-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.socratic-input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border-color, #cbd5e1);
+  background: var(--surface-card, #ffffff);
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.socratic-input:focus {
+  border-color: var(--accent-deep, #00695c);
+}
+
+.socratic-btn-row {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.socratic-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: none;
+  background: var(--accent-deep, #00695c);
+  color: #ffffff;
+  font-family: var(--display);
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.socratic-submit-btn:hover:not(:disabled) {
+  background: #004d40;
+}
+
+.socratic-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.socratic-result-card {
+  background: var(--surface-card, #ffffff);
+  border: 1.5px solid #0284c7;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.08);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.guardrail-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  color: #b45309;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.socratic-prompt-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.5;
+  margin: 0 0 16px 0;
+}
+
+.socratic-probing-box {
+  background: rgba(2, 132, 199, 0.06);
+  border-left: 4px solid #0284c7;
+  border-radius: 0 8px 8px 0;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.socratic-probing-label {
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #0369a1;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.socratic-probing-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+}
+
+.socratic-action-cue {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #15803d;
+  margin-bottom: 16px;
+}
+
+.socratic-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-color, #e2e8f0);
+}
+
+.socratic-advance-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.socratic-advance-btn:hover {
+  background: #e2e8f0;
+}
+
+.telemetry-toast-banner {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #0f172a;
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+  font-size: 0.88rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 9999;
+  animation: slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+

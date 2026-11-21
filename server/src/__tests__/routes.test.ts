@@ -259,6 +259,117 @@ describe('Bullseye Classroom API Routes', () => {
       expect(res.body.immediateActionCue).toContain('+890.3 kJ')
     })
   })
+
+  // 7. Research Telemetry & Analytics Exporter
+  describe('Research Telemetry & Analytics Exporter', () => {
+    it('POST /api/telemetry/events records a student interaction event', async () => {
+      const res = await request(app)
+        .post('/api/telemetry/events')
+        .send({
+          sessionId: 'sess-test-01',
+          courseId: 'MATH-2B',
+          moduleContext: 'Testing Integration Limits',
+          eventType: 'SENSORY_CALM_TOGGLED',
+          metrics: {
+            dwellDurationMs: 45000,
+            cognitiveFrictionScore: 4.2,
+          },
+        })
+
+      expect(res.status).toBe(201)
+      expect(res.body.success).toBe(true)
+      expect(res.body.eventId).toBeDefined()
+      expect(res.body.totalEvents).toBeGreaterThanOrEqual(7)
+    })
+
+    it('GET /api/telemetry/stats returns aggregate cognitive load and struggle metrics', async () => {
+      const res = await request(app).get('/api/telemetry/stats')
+
+      expect(res.status).toBe(200)
+      expect(res.body.status).toBe('ok')
+      expect(res.body.stats.totalEvents).toBeGreaterThanOrEqual(6)
+      expect(res.body.stats.activeSessions).toBeGreaterThanOrEqual(1)
+      expect(typeof res.body.stats.averageRejoinLatencyMs).toBe('number')
+      expect(typeof res.body.stats.sensoryCalmEngagementRate).toBe('number')
+      expect(typeof res.body.stats.averageCognitiveFriction).toBe('number')
+    })
+
+    it('GET /api/telemetry/export?format=csv returns standardized RFC 4180 CSV stream', async () => {
+      const res = await request(app).get('/api/telemetry/export?format=csv')
+
+      expect(res.status).toBe(200)
+      expect(res.headers['content-type']).toContain('text/csv')
+      expect(res.text).toContain('eventId,sessionId,timestamp,courseId,moduleContext,eventType')
+      expect(res.text).toContain('MATH-2B')
+    })
+
+    it('GET /api/telemetry/export?format=json returns full array of telemetry events', async () => {
+      const res = await request(app).get('/api/telemetry/export?format=json')
+
+      expect(res.status).toBe(200)
+      expect(Array.isArray(res.body)).toBe(true)
+      expect(res.body.length).toBeGreaterThanOrEqual(6)
+      expect(res.body[0].eventId).toBeDefined()
+    })
+  })
+
+  // 8. General-Purpose Socratic Scaffolding Agent
+  describe('Socratic Scaffolding Agent', () => {
+    it('POST /api/socratic/scaffold returns Tier 1 attentional orienting hint for Math 2B', async () => {
+      const res = await request(app)
+        .post('/api/socratic/scaffold')
+        .send({
+          courseCode: 'MATH-2B',
+          domain: 'math',
+          currentProblem: 'Evaluate integral of x * cos(x) dx',
+          activeStep: 'Selecting u and dv via LIATE',
+          scaffoldingTier: 1,
+        })
+
+      expect(res.status).toBe(200)
+      expect(res.body.scaffoldId).toBeDefined()
+      expect(res.body.tier).toBe(1)
+      expect(res.body.tierLabel).toBe('Attentional Orienting')
+      expect(res.body.scaffoldPrompt).toContain('LIATE')
+      expect(res.body.guardrailTriggered).toBe(false)
+    })
+
+    it('POST /api/socratic/scaffold triggers deterministic solution guardrail when direct answer requested', async () => {
+      const res = await request(app)
+        .post('/api/socratic/scaffold')
+        .send({
+          courseCode: 'PHYS-7C',
+          domain: 'physics',
+          currentProblem: 'Damped harmonic oscillator quasi-frequency',
+          activeStep: 'Calculate omega_1',
+          studentQuery: 'Just give me the answer please',
+          scaffoldingTier: 1,
+        })
+
+      expect(res.status).toBe(200)
+      expect(res.body.guardrailTriggered).toBe(true)
+      expect(res.body.guardrailExplanation).toBeDefined()
+      expect(res.body.guardrailExplanation).toContain('withheld')
+      expect(res.body.scaffoldPrompt).toBeDefined()
+    })
+
+    it('POST /api/socratic/scaffold handles ICS 33 Python decorator metadata decomposition', async () => {
+      const res = await request(app)
+        .post('/api/socratic/scaffold')
+        .send({
+          courseCode: 'ICS-33',
+          domain: 'code',
+          currentProblem: 'Building memoization decorator',
+          activeStep: 'Metadata preservation',
+          scaffoldingTier: 2,
+        })
+
+      expect(res.status).toBe(200)
+      expect(res.body.tier).toBe(2)
+      expect(res.body.tierLabel).toBe('Conceptual Bridging')
+      expect(res.body.scaffoldPrompt).toContain('@functools.wraps')
+    })
+  })
 })
 
 describe('Bullseye Live WebSocket Server', () => {

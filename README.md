@@ -69,6 +69,14 @@ Our 3D workspace organizes lecture information into three clear spatial planes s
 ### 6. Multi-Course Hub & Instant Room Code Entry
 - Jump between enrolled courses (**MATH 2B**, **PHYS 7C**, **CHEM 1A**, **ICS 33**) or type a room code (`MATH-2B`) to join a live lecture immediately.
 
+### 7. Socratic Scaffolding Assistant (Anti-Offloading Guardrails)
+- **Pain Point:** Standard AI assistants act as answer-dispensers—prompting cognitive offloading where students copy solutions without building schemas. Conversely, generic chatbots are too vague when students are stuck.
+- **The Flow:** A 4-tier scaffolding ladder (*Orienting* ⟶ *Conceptual Bridging* ⟶ *Procedural Decomposition* ⟶ *Verification*). Programmatic guardrails detect answer-extraction requests, withhold direct solutions, and deliver the lowest-friction thinking step.
+
+### 8. Research Telemetry & Learning Analytics Exporter
+- **Pain Point:** Traditional classroom tools only capture binary attendance and test scores, leaving instructors and researchers blind to real-time cognitive struggle, recovery latency, and confusion spikes.
+- **The Flow:** Passively streams xAPI-compatible interaction events (rejoin queries, dwell anomalies, sensory calm toggles, hint requests). Exports 1-click standardized RFC 4180 CSV datasets for instructional heatmaps and empirical learning research.
+
 ---
 
 ## Measured Impact
@@ -132,8 +140,8 @@ Bullseye is grounded in peer-reviewed cognitive load theory and participatory co
 - [x] **Real-Time Telemetry:** Bi-directional WebSocket stream broadcasting audio pulse and instructor checkpoint milestones.
 - [x] **Canvas LMS & EdStem Integration:** Live sync for rubric criteria, countdown timers, and instructor-verified answers.
 - [x] **Test & Build Integrity:** 24 Vitest integration tests covering all REST and WebSocket routes; clean production Vite build.
-- [ ] **Research Telemetry Exporter:** Automated export of student catch-up latency and cognitive load markers to CSV/Parquet for educational data analytics.
-- [ ] **Socratic Scaffolding Agent:** Integration with LangGraph-based pedagogical guardrails to provide Socratic hints during coding and math exercises.
+- [x] **Research Telemetry Exporter:** Automated export of student catch-up latency, dwell durations, and cognitive friction markers to RFC 4180 CSV / JSON.
+- [x] **Socratic Scaffolding Agent:** 4-tier Zone of Proximal Development scaffolding engine with deterministic solution guardrails to prevent cognitive offloading.
 
 ---
 
