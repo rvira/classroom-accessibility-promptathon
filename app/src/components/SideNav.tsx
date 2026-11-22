@@ -3,7 +3,9 @@ import {
   BarChart3,
   BookOpen,
   Calendar,
+  Compass,
   Download,
+  Home,
   ListOrdered,
   RotateCcw,
   Sparkles,
@@ -13,7 +15,7 @@ import {
 import { CanvasLogo, EdStemLogo } from './BrandLogos'
 import { type Translations } from '../i18n'
 
-export type ViewMode = 'now' | 'overview' | 'rejoin' | 'edstem' | 'source' | 'calendar' | 'socratic' | 'teacher'
+export type ViewMode = 'home' | 'now' | 'overview' | 'rejoin' | 'edstem' | 'source' | 'calendar' | 'socratic' | 'teacher'
 
 interface SideNavProps {
   isOpen: boolean
@@ -31,6 +33,7 @@ export function SideNav({
   onClose,
   activeView,
   onSelectView,
+  onOpenTour,
   onExportTelemetry,
   edstemCount,
   t,
@@ -137,6 +140,21 @@ export function SideNav({
 
         {/* Primary Navigation Links */}
         <nav className="sidenav-nav-list" aria-label={t.navigation}>
+          {/* Home Landing Page */}
+          <button
+            type="button"
+            className={`sidenav-item ${activeView === 'home' ? 'active' : ''}`}
+            onClick={() => handleNavClick('home')}
+          >
+            <div className="sidenav-item-icon">
+              <Home size={18} aria-hidden="true" />
+            </div>
+            <div className="sidenav-item-text">
+              <span className="item-title">Home Landing</span>
+              <span className="item-sub">Overview & Launchpad</span>
+            </div>
+          </button>
+
           {/* Calendar & Live Class - Highlighted entry point */}
           <button
             type="button"
@@ -294,6 +312,26 @@ export function SideNav({
               <span className="item-badge live">Cognitive Pulse</span>
             </div>
           </button>
+
+          {/* Interactive Product Tour */}
+          {onOpenTour && (
+            <button
+              type="button"
+              className="sidenav-item tour-highlight"
+              onClick={() => {
+                onClose()
+                onOpenTour()
+              }}
+            >
+              <div className="sidenav-item-icon">
+                <Compass size={18} aria-hidden="true" />
+              </div>
+              <div className="sidenav-item-text">
+                <span className="item-title">Guided Tour</span>
+                <span className="item-sub">Spotlight Walkthrough</span>
+              </div>
+            </button>
+          )}
         </nav>
       </div>
     </div>

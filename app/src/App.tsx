@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
+import { Routes, Route, useNavigate, useLocation, Link, Navigate } from 'react-router-dom'
 import {
   AlertTriangle,
   ArrowRight,
   BarChart3,
   Check,
   CheckCircle,
-  ChevronLeft,
-  ChevronRight,
   Compass,
   Globe,
   LogOut,
@@ -21,6 +20,12 @@ import { InteractiveBackground } from './components/InteractiveBackground'
 import { CanvasLogo, EdStemLogo } from './components/BrandLogos'
 import { SideNav, type ViewMode } from './components/SideNav'
 import { TeacherDashboard } from './components/TeacherDashboard'
+import { Breadcrumbs } from './components/Breadcrumbs'
+import { LandingPage } from './components/LandingPage'
+import { CalendarPage } from './components/CalendarPage'
+import { ClassDetailPage } from './components/ClassDetailPage'
+import { ProductTour } from './components/ProductTour'
+import type { ScheduledClass } from './types'
 import { api } from './services/api'
 import {
   translations,
@@ -126,324 +131,7 @@ const initialEdstemQuestions: EdstemQuestion[] = [
   },
 ]
 
-interface ClassOutline {
-  unit: string
-  summary: string
-  keyConcepts: string[]
-  reading: string
-  assignments: string
-  rubricConstraint: string
-  officeHours?: string
-}
 
-interface ScheduledClass {
-  id: string
-  code: string
-  title: string
-  time: string
-  location: string
-  topic: string
-  instructor: string
-  isLive: boolean
-  canvasSync: string
-  outline: ClassOutline
-}
-
-const scheduleData: Record<string, ScheduledClass[]> = {
-  'Mon Nov 10': [
-    {
-      id: 'm1',
-      code: 'MATH 2B',
-      title: 'Calculus II · Lecture 12',
-      time: '10:00 AM – 10:50 AM',
-      location: 'Rowland Hall 101',
-      topic: 'Introduction to Substitution Rule',
-      instructor: 'Prof. Chen',
-      isLive: false,
-      canvasSync: 'Homework 3 Graded',
-      outline: {
-        unit: 'Substitution Rule Intro',
-        summary: 'Learn how to simplify messy integrals using the u-substitution method.',
-        keyConcepts: [
-          'Find inside parts: u = g(x)',
-          'Swap dx for du to make it easy',
-          'Add + C at the end',
-        ],
-        reading: 'Stewart Calculus · Sec 5.5',
-        assignments: 'Homework 3 (Done) · Worksheet 12',
-        rubricConstraint: 'Always include + C for indefinite integrals.',
-        officeHours: 'Prof. Chen · Mon/Wed 2:00 PM (RH 214)',
-      },
-    },
-    {
-      id: 'm2',
-      code: 'PHYS 7C',
-      title: 'Classical Mechanics · Lecture 7',
-      time: '1:00 PM – 2:20 PM',
-      location: 'PSLH 120',
-      topic: 'Simple Harmonic Motion & Energy',
-      instructor: 'Prof. Robertson',
-      isLive: false,
-      canvasSync: 'Lab 2 Submitted',
-      outline: {
-        unit: 'Simple Harmonic Motion',
-        summary: 'How springs and pendulums move back and forth continuously.',
-        keyConcepts: [
-          'Motion repeats in smooth waves',
-          'Energy swaps between motion and stored energy',
-          'Stiffer springs bounce faster',
-        ],
-        reading: 'Giancoli Physics · Ch 14.1–14.3',
-        assignments: 'Lab 2 (Submitted)',
-        rubricConstraint: 'Always write units (meters, seconds, rad/s).',
-        officeHours: 'Prof. Robertson · Tue 10:00 AM (PSLH 142)',
-      },
-    },
-  ],
-  'Tue Nov 11': [
-    {
-      id: 't1',
-      code: 'COMPSCI 161',
-      title: 'Design and Analysis of Algorithms',
-      time: '3:30 PM – 4:50 PM',
-      location: 'DBH 1100',
-      topic: 'Divide and Conquer: Master Theorem',
-      instructor: 'Prof. Shindler',
-      isLive: false,
-      canvasSync: 'Quiz 3 Completed',
-      outline: {
-        unit: 'Master Theorem Shortcut',
-        summary: 'A quick 3-rule shortcut to see how fast recursive code runs.',
-        keyConcepts: [
-          'Compare branching work vs combining work',
-          'Pick which part grows faster',
-          '3 simple cases to check',
-        ],
-        reading: 'CLRS Algorithms · Ch 4.5',
-        assignments: 'Quiz 3 (Done) · Problem Set 2',
-        rubricConstraint: 'State which of the 3 cases applies.',
-        officeHours: 'Prof. Shindler · Tue/Thu 1:00 PM (DBH 4022)',
-      },
-    },
-  ],
-  'Wed Nov 12': [
-    {
-      id: 'w1',
-      code: 'MATH 2B',
-      title: 'Calculus II · Lecture 13',
-      time: '10:00 AM – 10:50 AM',
-      location: 'Rowland Hall 101',
-      topic: 'Indefinite Integrals with Algebraic Substitution',
-      instructor: 'Prof. Chen',
-      isLive: false,
-      canvasSync: 'Worksheet 13 Submitted',
-      outline: {
-        unit: 'Algebraic Substitutions',
-        summary: 'Easy tricks to rewrite hard fractions before integrating.',
-        keyConcepts: [
-          'Complete the square to match simple formulas',
-          'Spot arcsin and arctan shapes',
-          'Clean up algebra before substituting',
-        ],
-        reading: 'Stewart Calculus · Sec 5.5',
-        assignments: 'Worksheet 13 (Done)',
-        rubricConstraint: 'Show your step-by-step algebra.',
-        officeHours: 'Prof. Chen · Mon/Wed 2:00 PM (RH 214)',
-      },
-    },
-    {
-      id: 'w2',
-      code: 'PHYS 7C',
-      title: 'Classical Mechanics · Lecture 8',
-      time: '1:00 PM – 2:20 PM',
-      location: 'PSLH 120',
-      topic: 'Driven Oscillations & Resonance',
-      instructor: 'Prof. Robertson',
-      isLive: false,
-      canvasSync: 'Homework 4 Due',
-      outline: {
-        unit: 'Resonance & Driven Waves',
-        summary: 'What happens when an outside push matches the natural rhythm.',
-        keyConcepts: [
-          'Pushing in rhythm makes waves much bigger',
-          'Small gentle taps can build large motion',
-          'Friction turns excess energy into heat',
-        ],
-        reading: 'Giancoli Physics · Ch 14.7',
-        assignments: 'Homework 4 (Due 11:59 PM)',
-        rubricConstraint: 'Show the max amplitude formula before plugging numbers in.',
-        officeHours: 'Prof. Robertson · Wed 3:00 PM (PSLH 142)',
-      },
-    },
-    {
-      id: 'w3',
-      code: 'COMPSCI 161',
-      title: 'Algorithms Discussion',
-      time: '5:00 PM – 5:50 PM',
-      location: 'ICS 174',
-      topic: 'Greedy Algorithms: Interval Scheduling',
-      instructor: 'TA Jessica',
-      isLive: false,
-      canvasSync: 'No submission required',
-      outline: {
-        unit: 'Greedy Algorithms',
-        summary: 'Making the best choice right now without looking back.',
-        keyConcepts: [
-          'Pick the task that finishes earliest',
-          'Greedy choice never falls behind',
-          'Fast and low memory',
-        ],
-        reading: 'Kleinberg & Tardos · Ch 4.1',
-        assignments: 'In-class practice (Ungraded)',
-        rubricConstraint: 'Explain why greedy choice beats any other step.',
-        officeHours: 'TA Jessica · Fri 11:00 AM (ICS 248)',
-      },
-    },
-  ],
-  'Thu Nov 13': [
-    {
-      id: 'th1',
-      code: 'COMPSCI 161',
-      title: 'Design and Analysis of Algorithms',
-      time: '3:30 PM – 4:50 PM',
-      location: 'DBH 1100',
-      topic: 'Dynamic Programming: Intro & Memoization',
-      instructor: 'Prof. Shindler',
-      isLive: false,
-      canvasSync: 'Quiz 4 Prep Available',
-      outline: {
-        unit: 'Dynamic Programming Intro',
-        summary: 'Save answers to smaller steps so you never repeat work.',
-        keyConcepts: [
-          'Remember past answers in a table',
-          'Repeated subproblems get solved only once',
-          'Trades a little memory for huge speed',
-        ],
-        reading: 'Kleinberg & Tardos · Ch 6.1',
-        assignments: 'Quiz 4 Prep (Canvas)',
-        rubricConstraint: 'Clearly write down the first simple starting cases.',
-        officeHours: 'Prof. Shindler · Tue/Thu 1:00 PM (DBH 4022)',
-      },
-    },
-  ],
-  'Fri Nov 14 (Today)': [
-    {
-      id: 'f1',
-      code: 'MATH 2B',
-      title: 'Calculus II · Lecture 14',
-      time: '10:00 AM – 10:50 AM',
-      location: 'Rowland Hall 101',
-      topic: 'Definite Integrals via u-substitution',
-      instructor: 'Prof. Chen',
-      isLive: true,
-      canvasSync: 'Lab 14 Worksheet (Due 10:50 AM)',
-      outline: {
-        unit: 'Definite Integrals & Bounds',
-        summary: 'Change the numbers at the top and bottom of the integral into u-numbers.',
-        keyConcepts: [
-          'Convert x-bounds to u-bounds right away',
-          'Solve numbers directly: e¹ − e⁰ = e − 1',
-          'Never switch back to x at the end',
-        ],
-        reading: 'Stewart Calculus · Sec 5.5',
-        assignments: 'Lab 14 Worksheet (Due 10:50 AM today)',
-        rubricConstraint: 'Exact numbers only: write "e − 1" (do not round to 1.718).',
-        officeHours: 'Prof. Chen · Mon/Wed 2:00 PM (RH 214)',
-      },
-    },
-    {
-      id: 'f2',
-      code: 'PHYS 7C',
-      title: 'Classical Mechanics · Lecture 9',
-      time: '1:00 PM – 2:20 PM',
-      location: 'PSLH 120',
-      topic: 'Damped Harmonic Oscillations',
-      instructor: 'Prof. Robertson',
-      isLive: false,
-      canvasSync: 'Lab 3 Opens at 1:00 PM',
-      outline: {
-        unit: 'Damped Oscillations',
-        summary: 'How friction and air drag slow down swinging objects over time.',
-        keyConcepts: [
-          'Energy drains away into gentle heat',
-          '3 speeds: light oscillation, quick stop, slow drag',
-          'Real example: car shock absorbers',
-        ],
-        reading: 'Giancoli Physics · Ch 14.4',
-        assignments: 'Lab 3 (Opens 1:00 PM, 20 pts)',
-        rubricConstraint: 'Clearly distinguish damped frequency from natural frequency.',
-        officeHours: 'Prof. Robertson · Wed 3:00 PM (PSLH 142)',
-      },
-    },
-    {
-      id: 'f3',
-      code: 'COMPSCI 161',
-      title: 'Design and Analysis of Algorithms',
-      time: '3:30 PM – 4:50 PM',
-      location: 'DBH 1100',
-      topic: 'Dynamic Programming: Bellman-Ford',
-      instructor: 'Prof. Shindler',
-      isLive: false,
-      canvasSync: 'In-Class Quiz #4',
-      outline: {
-        unit: 'Shortest Paths (Bellman-Ford)',
-        summary: 'Find the quickest route on a map even when shortcuts give bonuses or penalties.',
-        keyConcepts: [
-          'Check routes step by step (up to N-1 times)',
-          'Catch infinite loops automatically',
-          'A bit slower than Dijkstra, but handles negative costs safely',
-        ],
-        reading: 'Kleinberg & Tardos · Sec 6.8',
-        assignments: 'In-Class Quiz #4 (15 pts on Canvas)',
-        rubricConstraint: 'Verify there are no infinite negative loops.',
-        officeHours: 'Prof. Shindler · Tue/Thu 1:00 PM (DBH 4022)',
-      },
-    },
-  ],
-}
-
-interface TourStep {
-  title: string
-  subtitle: string
-  description: string
-  tip?: string
-  icon: typeof Target
-}
-
-const tourSteps: TourStep[] = [
-  {
-    title: 'Welcome to Bullseye',
-    subtitle: 'A calmer, clearer classroom interface',
-    description:
-      'Lectures move fast. Bullseye strips away clutter and visual noise, distilling the room into three stable anchors: where the class is, what to do right now, and what constraints to keep.',
-    tip: 'Designed for executive-function, processing, and attention needs.',
-    icon: Target,
-  },
-  {
-    title: 'Triadic Working-Memory Horizon',
-    subtitle: 'Antecedent state, focal directive, and invariant constraints',
-    description:
-      'The workspace projects tasks across three spatial depths: Context Anchor maintains situational awareness, Active Directive isolates the immediate execution target, and Invariant Constraints preserves critical rubric and submission boundaries.',
-    tip: 'Eliminates cognitive fragmentation without sacrificing academic rigor or grading parameters.',
-    icon: Compass,
-  },
-  {
-    title: 'Canvas LMS & EdStem Integration',
-    subtitle: 'Assignments & live classroom questions',
-    description:
-      'Bullseye syncs with your Canvas modules for exact submission deadlines, and surfaces live EdStem discussion threads tagged directly to your current lecture problem.',
-    tip: 'One click lets you ask a question auto-tagged with your problem step.',
-    icon: Compass,
-  },
-  {
-    title: 'Rejoin Whenever You Drift',
-    subtitle: 'No penalties, no lost time',
-    description:
-      'Lost the thread? Tap "Help me rejoin" at the top. Type what you recall, and Bullseye provides a safe 10-second recap grounded in the current step.',
-    tip: 'You can restart this tour anytime from the top bar or side navigation.',
-    icon: Sparkles,
-  },
-]
 
 type BlockKey = 'where' | 'next' | 'keep'
 
@@ -522,31 +210,55 @@ function Technical({ block, t }: { block: BlockKey; t: Translations }) {
 }
 
 export default function App() {
-  // Support URL view parameter: ?view=teacher, ?view=socratic, ?view=now, etc.
-  const [activeView, setActiveView] = useState<ViewMode>(() => {
-    try {
-      const params = new URLSearchParams(window.location.search)
-      const v = params.get('view') as ViewMode
-      if (
-        v &&
-        [
-          'now',
-          'overview',
-          'rejoin',
-          'edstem',
-          'source',
-          'calendar',
-          'socratic',
-          'teacher',
-        ].includes(v)
-      ) {
-        return v
-      }
-    } catch {
-      // ignore
-    }
-    return 'calendar'
-  })
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  // Derive active view from current URL route
+  const activeView: ViewMode = (() => {
+    const path = location.pathname
+    if (path === '/') return 'home'
+    if (path.startsWith('/calendar')) return 'calendar'
+    if (path === '/focus') return 'now'
+    if (path === '/socratic') return 'socratic'
+    if (path === '/teacher') return 'teacher'
+    if (path === '/overview') return 'overview'
+    if (path === '/rejoin') return 'rejoin'
+    if (path === '/edstem') return 'edstem'
+    if (path === '/source') return 'source'
+    return 'home'
+  })()
+
+  // Unified view switcher that seamlessly syncs with URL routes
+  const setActiveView = (v: ViewMode) => {
+    if (v === 'home') navigate('/')
+    else if (v === 'calendar') navigate('/calendar/2026-11-21')
+    else if (v === 'now') navigate('/focus')
+    else if (v === 'socratic') navigate('/socratic')
+    else if (v === 'teacher') navigate('/teacher')
+    else if (v === 'overview') navigate('/overview')
+    else if (v === 'rejoin') navigate('/rejoin')
+    else if (v === 'edstem') navigate('/edstem')
+    else if (v === 'source') navigate('/source')
+  }
+
+  // Synchronize legacy query parameter (?view=...)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const v = params.get('view')
+    if (v === 'teacher') navigate('/teacher')
+    else if (v === 'socratic') navigate('/socratic')
+    else if (v === 'now') navigate('/focus')
+    else if (v === 'calendar') navigate('/calendar/2026-11-21')
+    else if (v === 'rejoin') navigate('/rejoin')
+    else if (v === 'edstem') navigate('/edstem')
+    else if (v === 'overview') navigate('/overview')
+  }, [location.search, navigate])
+
+  const handleLaunchClass = (classInfo: ScheduledClass) => {
+    setCurrentCourse(classInfo.code)
+    setCurrentTopic(classInfo.topic)
+    navigate('/focus')
+  }
   const [openTech, setOpenTech] = useState<BlockKey | null>(null)
   const [profileOpen, setProfileOpen] = useState(false)
   const [recordingActive, setRecordingActive] = useState(true)
@@ -583,12 +295,9 @@ export default function App() {
   const [stepCompleted, setStepCompleted] = useState(false)
   const [activeStepNumber, setActiveStepNumber] = useState(2)
 
-  // Calendar Hub State
-  const [selectedDate, setSelectedDate] = useState<string>('Fri Nov 14 (Today)')
-  const [roomCodeInput, setRoomCodeInput] = useState<string>('MATH-2B')
+  // Course State
   const [currentCourse, setCurrentCourse] = useState<string>('MATH 2B')
   const [currentTopic, setCurrentTopic] = useState<string>('Lecture 14: Integrals')
-  const [expandedOutlineId, setExpandedOutlineId] = useState<string | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
   // Help Me Rejoin State
@@ -724,7 +433,6 @@ export default function App() {
       return false
     }
   })
-  const [tourStep, setTourStep] = useState<number>(0)
 
   const profileRef = useRef<HTMLDivElement | null>(null)
   const cardsRowRef = useRef<HTMLDivElement | null>(null)
@@ -754,7 +462,6 @@ export default function App() {
   }, [fontScale])
 
   const openTour = () => {
-    setTourStep(0)
     setTourOpen(true)
     setProfileOpen(false)
   }
@@ -792,18 +499,6 @@ export default function App() {
         setCalmMode((prev) => !prev)
         return
       }
-
-      if (event.key === ']' || event.key === 'ArrowRight') {
-        if (tourOpen) {
-          setTourStep((s) => (s < tourSteps.length - 1 ? s + 1 : s))
-        }
-      }
-
-      if (event.key === '[' || event.key === 'ArrowLeft') {
-        if (tourOpen) {
-          setTourStep((s) => (s > 0 ? s - 1 : s))
-        }
-      }
     }
 
     window.addEventListener('keydown', onKey)
@@ -831,12 +526,6 @@ export default function App() {
       }
       return next
     })
-  }
-
-  const handleJoinClass = (course: string, topic: string) => {
-    setCurrentCourse(course)
-    setCurrentTopic(topic)
-    setActiveView('now')
   }
 
   const handlePostEdstemQuestion = (e: React.FormEvent) => {
@@ -887,50 +576,43 @@ export default function App() {
             <Menu size={20} strokeWidth={2.4} aria-hidden="true" />
           </button>
 
-          <button
-            type="button"
+          <Link
+            to="/"
             className="revamped-brand-btn"
-            onClick={() => setActiveView('calendar')}
-            title="Open Class Schedule & Hub"
+            title="Return to Homepage"
           >
             <Target size={22} strokeWidth={2.8} className="revamped-brand-icon" aria-hidden="true" />
             <span className="revamped-brand-name">{t.appName}</span>
-          </button>
+          </Link>
 
-          <span className="revamped-crumb-divider">/</span>
-
-          <div className="revamped-crumb-wrap">
-            <button
-              type="button"
-              className="revamped-course-crumb"
-              onClick={() => setActiveView(activeView === 'calendar' ? 'now' : 'calendar')}
-              title="Click to view classes or switch course"
-            >
-              <span>{currentCourse}</span>
-              <span className="crumb-arrow">▼</span>
-            </button>
-
-            <span className="revamped-crumb-dot">·</span>
-            <span className="revamped-topic-crumb">{currentTopic}</span>
-            <span className="live-crumb-badge" title="Live lecture in session">
-              <span className="live-mic-pulse-beacon" aria-hidden="true" />
-              LIVE
-            </span>
-          </div>
+          {/* Interactive Breadcrumb Component matching user image media_1795303961514_101ea361.png */}
+          <Breadcrumbs variant="header" />
         </div>
 
         {/* Right: Essential, Focused Action Controls (Strict Single-Home Placement) */}
         <div className="revamped-actions-row">
+          {/* Interactive Feature Tour Launcher */}
+          <button
+            type="button"
+            className="header-tour-btn"
+            onClick={openTour}
+            title="Take Interactive Feature Tour"
+            aria-label="Take Interactive Feature Tour"
+          >
+            <Compass size={15} aria-hidden="true" />
+            <span>Take Tour</span>
+          </button>
+
           {/* Quick Teacher / Student View Switcher */}
           <button
             type="button"
-            className={`header-role-toggle ${activeView === 'teacher' ? 'active' : ''}`}
-            onClick={() => setActiveView(activeView === 'teacher' ? 'now' : 'teacher')}
-            title={activeView === 'teacher' ? 'Switch to Student View' : 'Open Teacher & Cognitive Analytics Dashboard'}
-            aria-label={activeView === 'teacher' ? 'Switch to Student View' : 'Open Teacher & Cognitive Analytics Dashboard'}
+            className={`header-role-toggle ${location.pathname === '/teacher' ? 'active' : ''}`}
+            onClick={() => navigate(location.pathname === '/teacher' ? '/focus' : '/teacher')}
+            title={location.pathname === '/teacher' ? 'Switch to Student View' : 'Open Teacher & Cognitive Analytics Dashboard'}
+            aria-label={location.pathname === '/teacher' ? 'Switch to Student View' : 'Open Teacher & Cognitive Analytics Dashboard'}
           >
             <BarChart3 size={15} aria-hidden="true" />
-            <span>{activeView === 'teacher' ? 'Student View' : 'Teacher View'}</span>
+            <span>{location.pathname === '/teacher' ? 'Student View' : 'Teacher View'}</span>
           </button>
 
           {/* Live Audio Telemetry Pill (Single Home for Audio Controls) */}
@@ -1082,207 +764,26 @@ export default function App() {
 
       {/* ================= MAIN CONTENT VIEWS ================= */}
       <main className="revamped-main-stage">
-        {/* VIEW 6: CALENDAR & CLASS JOIN HUB (DEFAULT LANDING VIEW) */}
-        {activeView === 'calendar' && (
-          <section className="calendar-container" aria-label="Class schedule and join hub">
-            <div className="calendar-top-bar">
-              <div>
-                <h2 className="calendar-title">{t.calendarTitle}</h2>
-                <p className="calendar-sub">
-                  <span>{t.calendarSubtitle}</span>
-                  <span className="calendar-crumb-dot">·</span>
-                  <span className="calendar-canvas-status">
-                    <CanvasLogo size={13} />
-                    <span>Canvas Synced</span>
-                  </span>
-                </p>
-              </div>
+        <Routes>
+          {/* LANDING PAGE (REPLACING IMMEDIATE CALENDAR OPENING VIEW) */}
+          <Route path="/" element={<LandingPage onStartTour={openTour} />} />
 
-              {/* Room Code Quick Join */}
-              <div className="quick-code-box">
-                <span className="quick-code-label">{t.roomCodeLabel}</span>
-                <input
-                  type="text"
-                  className="quick-code-input"
-                  value={roomCodeInput}
-                  onChange={(e) => setRoomCodeInput(e.target.value.toUpperCase())}
-                  placeholder="e.g. MATH-2B"
-                  aria-label={t.roomCodeLabel}
-                />
-                <button
-                  type="button"
-                  className="quick-code-btn"
-                  onClick={() => handleJoinClass(roomCodeInput.trim() || 'MATH 2B', 'Lecture 14: Integrals')}
-                >
-                  {t.joinLiveBtn}
-                </button>
-              </div>
-            </div>
+          {/* DYNAMIC 5-DAY ROLLING CALENDAR SYSTEM */}
+          <Route path="/calendar" element={<CalendarPage onLaunchFocusMode={handleLaunchClass} />} />
+          <Route path="/calendar/:date" element={<CalendarPage onLaunchFocusMode={handleLaunchClass} />} />
+          <Route path="/calendar/:date/compsci" element={<CalendarPage initialSubjectFilter="compsci" onLaunchFocusMode={handleLaunchClass} />} />
 
-            {/* Weekly Date Selector Bar */}
-            <div className="weekly-date-nav">
-              <div className="date-pills-row">
-                {Object.keys(scheduleData).map((dateKey) => {
-                  const isActive = selectedDate === dateKey
-                  const isToday = dateKey.includes('Today')
-                  return (
-                    <button
-                      key={dateKey}
-                      type="button"
-                      className={`date-pill-btn ${isActive ? 'active' : ''}`}
-                      onClick={() => {
-                        setSelectedDate(dateKey)
-                        setExpandedOutlineId(null)
-                      }}
-                    >
-                      <span className="pill-day">{dateKey.split(' ')[0]}</span>
-                      <span className="pill-date">{dateKey.split(' ')[1]}</span>
-                      <span className="pill-status">
-                        {isToday ? t.liveClassCount : `${scheduleData[dateKey].length} ${t.classesCount}`}
-                      </span>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
+          {/* DEEP CLASS PAGES */}
+          <Route path="/calendar/:date/compsci/:classId" element={<ClassDetailPage onLaunchFocusMode={handleLaunchClass} />} />
 
-            {/* Scheduled Classes for Selected Date */}
-            <div className="scheduled-classes-section">
-              <div className="scheduled-section-header">
-                <h3 className="scheduled-section-title">
-                  {t.classesForDate} {selectedDate}
-                </h3>
-                <span className="scheduled-count-badge">
-                  {scheduleData[selectedDate]?.length || 0} enrolled classes
-                </span>
-              </div>
-
-              <div className="scheduled-cards-stack">
-                {scheduleData[selectedDate]?.map((cls) => {
-                  const isExpanded = expandedOutlineId === cls.id
-                  return (
-                    <div
-                      key={cls.id}
-                      className={`scheduled-class-card ${cls.isLive ? 'class-live' : ''} ${isExpanded ? 'card-expanded' : ''}`}
-                    >
-                      <div className="class-card-top-row">
-                        <div className="class-info">
-                          <div className="class-status-line">
-                            {cls.isLive ? (
-                              <span className="badge-live-now">
-                                <span className="live-broadcast-indicator" aria-hidden="true" />
-                                {t.liveNowBadge}
-                              </span>
-                            ) : (
-                              <span className="badge-upcoming">{t.upcomingBadge}</span>
-                            )}
-                            <span className="class-time">{cls.time}</span>
-                            <span className="class-loc">· {cls.location}</span>
-                            <span className="class-prof">· {cls.instructor}</span>
-                          </div>
-                          <h4 className="class-name">{cls.title}</h4>
-                          <p className="class-topic">
-                            <strong>{t.topicLabel}</strong> {cls.topic}
-                          </p>
-                          <div className="class-canvas-pill">
-                            <CanvasLogo size={13} />
-                            <span className="class-canvas-sync">{cls.canvasSync}</span>
-                          </div>
-                        </div>
-
-                        <div className="class-action-wrap">
-                          {cls.isLive && (
-                            <button
-                              type="button"
-                              className="btn-enter-live"
-                              onClick={() => handleJoinClass(cls.code, cls.topic)}
-                            >
-                              <span>{t.enterLiveClassCTA}</span>
-                              <ArrowRight size={14} aria-hidden="true" />
-                            </button>
-                          )}
-                          <button
-                            type="button"
-                            className={`btn-preview-class ${isExpanded ? 'active' : ''}`}
-                            onClick={() =>
-                              setExpandedOutlineId((prev) => (prev === cls.id ? null : cls.id))
-                            }
-                            aria-expanded={isExpanded}
-                            title="Toggle lecture syllabus, formulas, and rubric data"
-                          >
-                            <span>{isExpanded ? 'Hide Outline ▲' : 'Preview Outline ▼'}</span>
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* INLINE BITE-SIZED LECTURE DATA (ACCESSIBLE & CALM) */}
-                      {isExpanded && cls.outline && (
-                        <div className="class-outline-drawer" role="region" aria-label="Course outline details">
-                          <div className="outline-grid">
-                            {/* Topic Box */}
-                            <div className="outline-box">
-                              <span className="outline-box-title">What You'll Learn</span>
-                              <strong className="outline-unit-name">{cls.outline.unit}</strong>
-                              <p className="outline-summary-text">{cls.outline.summary}</p>
-                            </div>
-
-                            {/* Key Points */}
-                            <div className="outline-box">
-                              <span className="outline-box-title">Key Points (Quick Read)</span>
-                              <ul className="outline-concepts-list">
-                                {cls.outline.keyConcepts.map((concept, i) => (
-                                  <li key={i}>{concept}</li>
-                                ))}
-                              </ul>
-                            </div>
-
-                            {/* Reading & Help */}
-                            <div className="outline-box">
-                              <span className="outline-box-title">Reading & Office Hours</span>
-                              <p className="outline-reading-text">📖 {cls.outline.reading}</p>
-                              {cls.outline.officeHours && (
-                                <p className="outline-office-hours">🕒 {cls.outline.officeHours}</p>
-                              )}
-                            </div>
-
-                            {/* Canvas Due & Rule */}
-                            <div className="outline-box rubric-box">
-                              <span className="outline-box-title">Canvas Rule</span>
-                              <div className="outline-rubric-note">
-                                📌 {cls.outline.rubricConstraint}
-                              </div>
-                              <p className="outline-assignment-meta">
-                                📋 {cls.outline.assignments}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="outline-footer-actions">
-                            <button
-                              type="button"
-                              className="btn-launch-course-horizon"
-                              onClick={() => handleJoinClass(cls.code, cls.topic)}
-                            >
-                              <span>Open {cls.code} Focus Mode</span>
-                              <ArrowRight size={13} aria-hidden="true" />
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* VIEW 1: NOW FOCUS (ZERO-SCROLL MONOLITHIC FOCUS STREAM) */}
-        {activeView === 'now' && (
-          <div
-            ref={arenaRef}
-            className="now-perspective-arena"
-          >
+          {/* VIEW 1: NOW FOCUS (ZERO-SCROLL MONOLITHIC FOCUS STREAM) */}
+          <Route
+            path="/focus"
+            element={
+              <div
+                ref={arenaRef}
+                className="now-perspective-arena"
+              >
             {/* SLEEK COMPACT PROGRESS BAR (ZERO VERTICAL OVERHEAD) */}
             <div className="compact-step-bar" role="region" aria-label="Step progress">
               <div className="compact-step-left">
@@ -1573,10 +1074,13 @@ export default function App() {
               </div>
             )}
           </div>
-        )}
+        }
+      />
 
-        {/* VIEW 2: ALL STEPS OVERVIEW */}
-        {activeView === 'overview' && (
+      {/* VIEW 2: ALL STEPS OVERVIEW */}
+      <Route
+        path="/overview"
+        element={
           <section className="overview-container" aria-label="Step-by-step activity overview">
             <div className="view-top-back-row">
               <button
@@ -1679,10 +1183,13 @@ export default function App() {
               </li>
             </ol>
           </section>
-        )}
+        }
+      />
 
-        {/* VIEW 3: HELP ME REJOIN (CATCH-UP ASSISTANT) */}
-        {activeView === 'rejoin' && (
+      {/* VIEW 3: HELP ME REJOIN (CATCH-UP ASSISTANT) */}
+      <Route
+        path="/rejoin"
+        element={
           <section className="rejoin-container" aria-label="Catch me up safe rejoin flow">
             <div className="view-top-back-row">
               <button
@@ -1748,10 +1255,13 @@ export default function App() {
               </div>
             )}
           </section>
-        )}
+        }
+      />
 
-        {/* VIEW 4: EDSTEM LIVE Q&A */}
-        {activeView === 'edstem' && (
+      {/* VIEW 4: EDSTEM LIVE Q&A */}
+      <Route
+        path="/edstem"
+        element={
           <section className="edstem-container" aria-label="EdStem discussion thread">
             <div className="view-top-back-row">
               <button
@@ -1851,10 +1361,13 @@ export default function App() {
               </div>
             )}
           </section>
-        )}
+        }
+      />
 
-        {/* VIEW 5: ORIGINAL SOURCE */}
-        {activeView === 'source' && (
+      {/* VIEW 5: ORIGINAL SOURCE */}
+      <Route
+        path="/source"
+        element={
           <section className="source-container" aria-label="Original teacher instructions">
             <div className="view-top-back-row">
               <button
@@ -1899,10 +1412,13 @@ export default function App() {
               </div>
             </div>
           </section>
-        )}
+        }
+      />
 
-        {/* VIEW 6: GENERAL-PURPOSE SOCRATIC SCAFFOLDING ASSISTANT */}
-        {activeView === 'socratic' && (
+      {/* VIEW 6: GENERAL-PURPOSE SOCRATIC SCAFFOLDING ASSISTANT */}
+      <Route
+        path="/socratic"
+        element={
           <section className="socratic-container" aria-label="Socratic Scaffolding Assistant">
             <div className="view-top-back-row">
               <button
@@ -2029,10 +1545,13 @@ export default function App() {
               </div>
             )}
           </section>
-        )}
+        }
+      />
 
-        {/* VIEW 7: TEACHER & COGNITIVE ANALYTICS DASHBOARD */}
-        {activeView === 'teacher' && (
+      {/* VIEW 7: TEACHER & COGNITIVE ANALYTICS DASHBOARD */}
+      <Route
+        path="/teacher"
+        element={
           <TeacherDashboard
             currentCourse={currentCourse}
             currentTopic={currentTopic}
@@ -2040,8 +1559,13 @@ export default function App() {
             onSwitchToStudent={() => setActiveView('now')}
             t={t}
           />
-        )}
-      </main>
+        }
+      />
+
+      {/* FALLBACK REDIRECT TO LANDING PAGE */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  </main>
 
       {/* ================= TECHNICAL MATH DETAILS POPOVER ================= */}
       {openTech !== null && (
@@ -2061,91 +1585,8 @@ export default function App() {
         </div>
       )}
 
-      {/* ================= ACCESSIBLE WELCOME TOUR MODAL ================= */}
-      {tourOpen && (
-        <div className="tour-overlay" role="dialog" aria-modal="true" aria-label={t.welcomeTour}>
-          <div className="tour-card">
-            <div className="tour-card-header">
-              <span className="tour-badge">
-                Step {tourStep + 1} of {tourSteps.length}
-              </span>
-              <button
-                type="button"
-                className="tour-close-btn"
-                onClick={closeTour}
-                aria-label="Close tour"
-              >
-                <X size={16} aria-hidden="true" />
-              </button>
-            </div>
-
-            <div className="tour-body">
-              <div className="tour-icon-wrap" aria-hidden="true">
-                {(() => {
-                  const IconComponent = tourSteps[tourStep].icon
-                  return <IconComponent size={28} />
-                })()}
-              </div>
-              <h3 className="tour-title">{tourSteps[tourStep].title}</h3>
-              <p className="tour-subtitle">{tourSteps[tourStep].subtitle}</p>
-              <p className="tour-description">{tourSteps[tourStep].description}</p>
-              {tourSteps[tourStep].tip && (
-                <div className="tour-tip">
-                  <span className="tour-tip-tag">Tip: </span>
-                  <span>{tourSteps[tourStep].tip}</span>
-                </div>
-              )}
-            </div>
-
-            <div className="tour-footer">
-              <div className="tour-dots" aria-hidden="true">
-                {tourSteps.map((_, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    className={`tour-dot ${i === tourStep ? 'active' : ''}`}
-                    onClick={() => setTourStep(i)}
-                    aria-label={`Go to tour step ${i + 1}`}
-                  />
-                ))}
-              </div>
-
-              <div className="tour-buttons">
-                {tourStep > 0 && (
-                  <button
-                    type="button"
-                    className="tour-btn tour-btn-secondary"
-                    onClick={() => setTourStep((s) => s - 1)}
-                  >
-                    <ChevronLeft size={16} aria-hidden="true" />
-                    <span>Back</span>
-                  </button>
-                )}
-
-                {tourStep < tourSteps.length - 1 ? (
-                  <button
-                    type="button"
-                    className="tour-btn tour-btn-primary"
-                    onClick={() => setTourStep((s) => s + 1)}
-                  >
-                    <span>Next</span>
-                    <ChevronRight size={16} aria-hidden="true" />
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className="tour-btn tour-btn-primary"
-                    onClick={closeTour}
-                  >
-                    <span>Get Started</span>
-                    <CheckCircle size={16} aria-hidden="true" />
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ================= INTERACTIVE SECTION-HIGHLIGHTING PRODUCT TOUR ================= */}
+      <ProductTour isOpen={tourOpen} onClose={closeTour} />
 
       {/* Floating Non-Intrusive Toast Alert */}
       {toastMessage && (
