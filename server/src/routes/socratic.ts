@@ -162,7 +162,7 @@ function generateScaffold(
     if (requestedTier === 1) {
       return {
         scaffoldPrompt:
-          'Focus on the structure of the integrand: it consists of an algebraic term multiplied by a transcendental term.',
+          'Focus on Selecting u and dv via LIATE. In this stage, isolate the known inputs before performing the transformation. Identify which factor is Algebraic (x) and which is Trigonometric (cos(x)).',
         probingQuestion:
           'According to the LIATE hierarchy (Logarithmic, Inverse trig, Algebraic, Trigonometric, Exponential), which factor should be selected as u to simplify upon differentiation?',
         nextActionCue:
