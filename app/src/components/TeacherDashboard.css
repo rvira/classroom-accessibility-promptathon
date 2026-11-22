@@ -409,40 +409,47 @@
 
 .td-dial-wrap {
   position: relative;
-  width: 230px;
-  height: 140px;
-  margin: 4px auto 8px auto;
+  width: 240px;
+  height: 148px;
+  margin: 4px auto 10px auto;
 }
 
 .td-dial-center-content {
   position: absolute;
-  inset: 0;
+  top: 50px;
+  left: 0;
+  right: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  top: 15px;
+  justify-content: flex-start;
+  text-align: center;
+  pointer-events: none;
 }
 
 .td-dial-percentage {
-  font-size: 2.6rem;
+  font-size: 2.35rem;
   font-weight: 900;
   color: var(--td-text);
   line-height: 1;
   letter-spacing: -0.02em;
+  margin: 0;
 }
 
 .td-dial-title {
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 800;
   color: var(--td-teal-deep);
-  margin-top: 3px;
+  margin-top: 4px;
+  line-height: 1.2;
 }
 
 .td-dial-subtext {
   font-size: 0.72rem;
+  font-weight: 600;
   color: var(--td-text-muted);
-  margin-top: 1px;
+  margin-top: 2px;
+  line-height: 1.2;
 }
 
 .td-hero-action-btn {

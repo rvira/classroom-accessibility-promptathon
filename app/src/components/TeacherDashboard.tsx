@@ -812,27 +812,29 @@ export function TeacherDashboard({
         {/* CARD 2 (CENTER HERO): 86% Concept Flow Dial Arc & Milestone Progression */}
         <div className="td-card td-hero-dial-card">
           <div className="td-dial-wrap" title="86% Cohort Concept Flow">
-            <svg viewBox="0 0 200 140" style={{ width: '100%', height: '100%', overflow: 'visible' }} aria-hidden="true">
+            <svg viewBox="0 0 240 150" style={{ width: '100%', height: '100%', overflow: 'visible' }} aria-hidden="true">
               <defs>
                 <linearGradient id="dialGrad" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#00a896" />
                   <stop offset="100%" stopColor="#10b981" />
                 </linearGradient>
               </defs>
+              {/* Dial background track arc (212° open gauge) */}
               <path
-                d="M 25,120 A 75,75 0 1,1 175,120"
+                d="M 35.4,142.3 A 88,88 0 1,1 204.6,142.3"
                 fill="none"
                 stroke="#e2e8f0"
                 strokeWidth="14"
                 strokeLinecap="round"
               />
+              {/* Dial filled progress arc (86% fill) */}
               <path
-                d="M 25,120 A 75,75 0 1,1 175,120"
+                d="M 35.4,142.3 A 88,88 0 1,1 204.6,142.3"
                 fill="none"
                 stroke="url(#dialGrad)"
                 strokeWidth="14"
-                strokeDasharray="275"
-                strokeDashoffset="38"
+                strokeDasharray="325"
+                strokeDashoffset="45"
                 strokeLinecap="round"
               />
             </svg>
