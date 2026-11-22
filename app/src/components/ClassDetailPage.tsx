@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import {
-  Calendar,
   Clock,
   MapPin,
   Mail,
@@ -17,7 +16,6 @@ import {
   FileCode,
   FileText,
   AlertCircle,
-  Sparkles,
   ExternalLink,
   ChevronLeft,
   BookOpen,
@@ -27,7 +25,7 @@ import {
 import { getClassById, CURRENT_DATE_KEY, getDateStripItem } from '../data/scheduleData'
 import type { ScheduledClass, DiscussionThread } from '../types'
 import { Breadcrumbs } from './Breadcrumbs'
-import { CanvasLogo, EdStemLogo } from './BrandLogos'
+import { CanvasLogo } from './BrandLogos'
 
 interface ClassDetailPageProps {
   onLaunchFocusMode?: (classInfo: ScheduledClass) => void
@@ -59,11 +57,10 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
     return (
       <div className="class-detail-not-found">
         <AlertCircle size={40} className="not-found-icon" />
-        <h2>Class Session Not Found</h2>
-        <p>The requested course session could not be located for {activeDate}.</p>
+        <h2>Class Not Found</h2>
         <Link to={`/calendar/${activeDate}`} className="back-to-calendar-btn">
           <ChevronLeft size={16} />
-          <span>Return to Calendar</span>
+          <span>Calendar</span>
         </Link>
       </div>
     )
@@ -101,7 +98,7 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
 
     const newThread: DiscussionThread = {
       id: `user-${Date.now()}`,
-      author: 'You (Student)',
+      author: 'You',
       role: 'Student',
       timeAgo: 'Just now',
       title: newQuestionText.slice(0, 45) + (newQuestionText.length > 45 ? '...' : ''),
@@ -114,9 +111,8 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
     setNewQuestionText('')
   }
 
-  // Simulated clean download handler
   const handleDownloadFile = (filename: string, contentDescription: string) => {
-    const sampleContent = `# ${filename}\n# Bullseye Academic Resource\n# Course: ${classData.code} - ${classData.title}\n# Instructor: ${classData.instructor.name}\n\n${contentDescription}\n\nGenerated for academic session on ${activeDate}.`
+    const sampleContent = `# ${filename}\n# Course: ${classData.code} - ${classData.title}\n# Instructor: ${classData.instructor.name}\n\n${contentDescription}`
     const blob = new Blob([sampleContent], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -143,11 +139,10 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
             {classData.isLive && (
               <span className="course-live-pill">
                 <span className="live-dot-pulse" aria-hidden="true" />
-                <span>LIVE SESSION UNDERWAY</span>
+                <span>LIVE</span>
               </span>
             )}
             <span className="course-date-pill">
-              <Calendar size={13} aria-hidden="true" />
               <span>{dateStripInfo ? dateStripInfo.fullLabel : activeDate}</span>
             </span>
           </div>
@@ -166,7 +161,6 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
 
         <h1 className="course-title-main">{classData.title}</h1>
         <div className="course-topic-highlight">
-          <span className="topic-prefix">Current Topic:</span>
           <span className="topic-title">{classData.topic}</span>
         </div>
 
@@ -176,11 +170,9 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
             to="/focus"
             className="hero-action-btn primary"
             onClick={() => onLaunchFocusMode && onLaunchFocusMode(classData)}
-            title="Launch the distraction-free single-step focus mode"
           >
             <Radio size={16} aria-hidden="true" />
-            <span>Launch Bullseye Focus Mode</span>
-            <Sparkles size={15} aria-hidden="true" />
+            <span>Focus Mode</span>
           </Link>
 
           <a
@@ -188,10 +180,9 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
             target="_blank"
             rel="noopener noreferrer"
             className="hero-action-btn secondary"
-            title="Join the live video stream"
           >
             <Video size={16} aria-hidden="true" />
-            <span>{classData.isLive ? 'Join Live Stream' : 'Class Zoom Link'}</span>
+            <span>{classData.isLive ? 'Join Stream' : 'Zoom Link'}</span>
             <ExternalLink size={13} aria-hidden="true" />
           </a>
 
@@ -201,10 +192,9 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
               target="_blank"
               rel="noopener noreferrer"
               className="hero-action-btn tertiary"
-              title="Watch lecture recording"
             >
               <FileText size={16} aria-hidden="true" />
-              <span>Panopto Recording</span>
+              <span>Recording</span>
               <ExternalLink size={13} aria-hidden="true" />
             </a>
           )}
@@ -221,7 +211,7 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
           onClick={() => setActiveTab('outline')}
         >
           <BookOpen size={16} aria-hidden="true" />
-          <span>Topic Outline</span>
+          <span>Outline</span>
         </button>
 
         <button
@@ -232,7 +222,7 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
           onClick={() => setActiveTab('instructor')}
         >
           <User size={16} aria-hidden="true" />
-          <span>Instructor & Office Hours</span>
+          <span>Instructor</span>
         </button>
 
         <button
@@ -243,7 +233,7 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
           onClick={() => setActiveTab('notes')}
         >
           <FileCode size={16} aria-hidden="true" />
-          <span>Syllabus Notes & Code</span>
+          <span>Notes & Code</span>
         </button>
 
         <button
@@ -265,7 +255,7 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
           onClick={() => setActiveTab('discussion')}
         >
           <MessageSquare size={16} aria-hidden="true" />
-          <span>Q&A Discussion ({threads.length})</span>
+          <span>Discussion ({threads.length})</span>
         </button>
       </div>
 
@@ -273,12 +263,11 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
       <main className="detail-tab-content">
         {/* TAB 1: OUTLINE */}
         {activeTab === 'outline' && (
-          <section className="tab-pane outline-pane" aria-labelledby="outline-heading">
+          <section className="tab-pane outline-pane" aria-label="Outline">
             <div className="pane-card">
-              <h2 id="outline-heading" className="pane-section-title">Lecture Outline & Learning Goals</h2>
               <p className="unit-summary-text">{classData.outline.summary}</p>
 
-              <h3 className="sub-heading">Key Algorithmic Concepts</h3>
+              <h3 className="sub-heading">Concepts</h3>
               <ul className="key-concepts-grid">
                 {classData.outline.keyConcepts.map((concept, idx) => (
                   <li key={idx} className="concept-item">
@@ -288,26 +277,23 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
                 ))}
               </ul>
 
-              {/* Rubric Constraint Box */}
+              {/* Rubric Constraint */}
               <div className="rubric-constraint-callout">
                 <div className="rubric-header">
                   <CanvasLogo size={16} />
                   <span className="rubric-badge-title">CANVAS RUBRIC CONSTRAINT</span>
                 </div>
                 <p className="rubric-text">{classData.outline.rubricConstraint}</p>
-                <div className="rubric-note">
-                  Penalty protection active: Bullseye surfaces this constraint so no grading conditions are missed.
-                </div>
               </div>
 
               {/* Assignments & Readings */}
               <div className="meta-grid-2col">
                 <div className="meta-grid-box">
-                  <span className="box-label">Required Reading:</span>
+                  <span className="box-label">Reading</span>
                   <span className="box-value">{classData.outline.reading}</span>
                 </div>
                 <div className="meta-grid-box">
-                  <span className="box-label">Assignment Deadline:</span>
+                  <span className="box-label">Deadline</span>
                   <span className="box-value">{classData.outline.assignments}</span>
                 </div>
               </div>
@@ -317,14 +303,14 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
 
         {/* TAB 2: INSTRUCTOR */}
         {activeTab === 'instructor' && (
-          <section className="tab-pane instructor-pane" aria-labelledby="instructor-heading">
+          <section className="tab-pane instructor-pane" aria-label="Instructor">
             <div className="instructor-card-large">
               <div className="instructor-profile-header">
                 <div className="profile-avatar-circle">
                   <span>{classData.instructor.avatarInitials}</span>
                 </div>
                 <div className="profile-info-block">
-                  <h2 id="instructor-heading" className="instructor-full-name">{classData.instructor.name}</h2>
+                  <h2 className="instructor-full-name">{classData.instructor.name}</h2>
                   <span className="instructor-official-title">{classData.instructor.title}</span>
                   <span className="instructor-dept">{classData.instructor.department}</span>
                 </div>
@@ -336,7 +322,7 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
                     <Mail size={18} aria-hidden="true" />
                   </div>
                   <div>
-                    <span className="item-label">Direct Email</span>
+                    <span className="item-label">Email</span>
                     <a href={`mailto:${classData.instructor.email}`} className="item-link">
                       {classData.instructor.email}
                     </a>
@@ -348,7 +334,7 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
                     <Building size={18} aria-hidden="true" />
                   </div>
                   <div>
-                    <span className="item-label">Office Location</span>
+                    <span className="item-label">Office</span>
                     <span className="item-value">{classData.instructor.office}</span>
                   </div>
                 </div>
@@ -358,14 +344,13 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
                     <Clock size={18} aria-hidden="true" />
                   </div>
                   <div>
-                    <span className="item-label">Office Hours Schedule</span>
+                    <span className="item-label">Office Hours</span>
                     <span className="item-value">{classData.instructor.officeHours}</span>
                   </div>
                 </div>
               </div>
 
               <div className="instructor-bio-section">
-                <h3 className="sub-heading">Instructor Background & Pedagogy</h3>
                 <p className="bio-text">{classData.instructor.bio}</p>
               </div>
             </div>
@@ -374,9 +359,8 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
 
         {/* TAB 3: SYLLABUS NOTES & CODE */}
         {activeTab === 'notes' && (
-          <section className="tab-pane notes-pane" aria-labelledby="notes-heading">
+          <section className="tab-pane notes-pane" aria-label="Notes & Code">
             <div className="pane-card">
-              <h2 id="notes-heading" className="pane-section-title">Syllabus Overview & Foundations</h2>
               <p className="overview-text">{classData.syllabusNotes.overview}</p>
 
               <div className="prereq-badge-box">
@@ -384,7 +368,6 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
                 <span className="prereq-content">{classData.syllabusNotes.prerequisites}</span>
               </div>
 
-              <h3 className="sub-heading">Core Topic Breakdown</h3>
               <div className="core-topics-tags">
                 {classData.syllabusNotes.coreTopics.map((topic, i) => (
                   <span key={i} className="core-topic-chip">
@@ -396,19 +379,12 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
               {/* ASCII Diagram if available */}
               {classData.syllabusNotes.asciiDiagram && (
                 <div className="ascii-diagram-wrapper">
-                  <div className="diagram-header">
-                    <Sparkles size={14} aria-hidden="true" />
-                    <span>Algorithmic Concept Model</span>
-                  </div>
                   <pre className="ascii-code-block">{classData.syllabusNotes.asciiDiagram}</pre>
                 </div>
               )}
 
               {/* Executable Code Snippets */}
-              <h3 className="sub-heading">Python Code Implementation</h3>
-              {classData.syllabusNotes.codeSnippets.length === 0 ? (
-                <p className="text-muted">No code snippets attached for this session.</p>
-              ) : (
+              {classData.syllabusNotes.codeSnippets.length > 0 &&
                 classData.syllabusNotes.codeSnippets.map((snippet, idx) => (
                   <div key={idx} className="code-snippet-box">
                     <div className="snippet-header">
@@ -421,17 +397,17 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
                         type="button"
                         className="copy-code-btn"
                         onClick={() => handleCopyCode(snippet.code, idx)}
-                        aria-label="Copy code to clipboard"
+                        aria-label="Copy code"
                       >
                         {copiedIndex === idx ? (
                           <>
                             <Check size={14} aria-hidden="true" />
-                            <span>Copied!</span>
+                            <span>Copied</span>
                           </>
                         ) : (
                           <>
                             <Copy size={14} aria-hidden="true" />
-                            <span>Copy Code</span>
+                            <span>Copy</span>
                           </>
                         )}
                       </button>
@@ -441,23 +417,17 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
                       <code>{snippet.code}</code>
                     </pre>
                   </div>
-                ))
-              )}
+                ))}
             </div>
           </section>
         )}
 
         {/* TAB 4: DOWNLOADS */}
         {activeTab === 'downloads' && (
-          <section className="tab-pane downloads-pane" aria-labelledby="downloads-heading">
+          <section className="tab-pane downloads-pane" aria-label="Downloads">
             <div className="pane-card">
-              <h2 id="downloads-heading" className="pane-section-title">Course Materials & Downloads</h2>
-              <p className="pane-sub-desc">
-                Official lecture slides, starter code templates, and problem set worksheets.
-              </p>
-
               {classData.downloads.length === 0 ? (
-                <div className="no-materials-msg">No files uploaded for this session yet.</div>
+                <div className="no-materials-msg">No files uploaded.</div>
               ) : (
                 <div className="downloads-list">
                   {classData.downloads.map((dl) => (
@@ -472,7 +442,6 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
 
                       <div className="download-details">
                         <h4 className="download-name">{dl.name}</h4>
-                        <p className="download-desc">{dl.description}</p>
                         <span className="download-size-badge">{dl.size} · {dl.type.toUpperCase()}</span>
                       </div>
 
@@ -495,51 +464,33 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
 
         {/* TAB 5: DISCUSSION / EDSTEM */}
         {activeTab === 'discussion' && (
-          <section className="tab-pane discussion-pane" aria-labelledby="discussion-heading">
+          <section className="tab-pane discussion-pane" aria-label="Discussion">
             <div className="pane-card">
-              <div className="discussion-pane-header">
-                <div>
-                  <div className="edstem-sync-banner">
-                    <EdStemLogo size={18} />
-                    <span className="edstem-sync-title">EdStem Classroom Discussion Sync</span>
-                  </div>
-                  <h2 id="discussion-heading" className="pane-section-title">
-                    Questions & Collaborative Answers
-                  </h2>
-                  <p className="pane-sub-desc">
-                    Live questions asked by students during the lecture, verified and endorsed by course staff.
-                  </p>
-                </div>
-              </div>
-
               {/* Ask Question Form */}
               <form onSubmit={handleAddQuestion} className="ask-question-form">
-                <div className="form-top-row">
-                  <span className="form-label">Ask a Question for this Session:</span>
+                <div className="form-input-row">
                   <select
                     value={newQuestionStep}
                     onChange={(e) => setNewQuestionStep(e.target.value)}
                     className="step-tag-select"
-                    aria-label="Select Step Tag"
+                    aria-label="Step Tag"
                   >
                     <option value="Step 1: Initialization">Step 1: Initialization</option>
                     <option value="Step 2: Negative Cycle Relaxation">Step 2: Negative Cycle Relaxation</option>
                     <option value="Step 3: Correctness Proof">Step 3: Correctness Proof</option>
-                    <option value="Canvas Rubric & Submission">Canvas Rubric &amp; Submission</option>
+                    <option value="Canvas Rubric">Canvas Rubric</option>
                   </select>
-                </div>
 
-                <div className="form-input-row">
                   <input
                     type="text"
                     value={newQuestionText}
                     onChange={(e) => setNewQuestionText(e.target.value)}
-                    placeholder="E.g., Why do we stop at |V| - 1 iterations instead of |E|?"
+                    placeholder="Ask a question..."
                     className="question-input-field"
                   />
                   <button type="submit" className="submit-question-btn">
                     <Send size={15} aria-hidden="true" />
-                    <span>Post Question</span>
+                    <span>Post</span>
                   </button>
                 </div>
               </form>
@@ -556,7 +507,7 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
                           type="button"
                           className={`upvote-btn ${isUpvoted ? 'voted' : ''}`}
                           onClick={() => handleUpvote(th.id)}
-                          aria-label={`Upvote question: ${th.title}. Current count: ${th.upvotes}`}
+                          aria-label={`Upvote question. Current: ${th.upvotes}`}
                         >
                           <ThumbsUp size={15} aria-hidden="true" />
                           <span className="upvote-count">{th.upvotes}</span>
@@ -578,7 +529,7 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
                             <div className="answer-header">
                               <span className="endorsed-badge">
                                 <Check size={12} aria-hidden="true" />
-                                <span>Endorsed Answer</span>
+                                <span>Endorsed</span>
                               </span>
                               <span className="answer-author">{th.answer.author} ({th.answer.role})</span>
                             </div>

@@ -75,7 +75,7 @@ export function Breadcrumbs({ className = '', variant = 'header' }: BreadcrumbsP
                   Computer Science · {dateStripInfo ? dateStripInfo.displayDate : 'Nov 21'}
                 </span>
                 <span className="dropdown-menu-subtitle">
-                  {compsciClasses.length} sessions available
+                  {compsciClasses.length} classes
                 </span>
               </div>
 
@@ -97,7 +97,7 @@ export function Breadcrumbs({ className = '', variant = 'header' }: BreadcrumbsP
                       <div className="dropdown-item-top">
                         <span className="dropdown-item-code">{item.code}</span>
                         {item.isLive && (
-                          <span className="live-indicator-chip" title="Live lecture underway">
+                          <span className="live-indicator-chip">
                             <span className="live-pulse-dot" /> LIVE
                           </span>
                         )}
@@ -117,7 +117,7 @@ export function Breadcrumbs({ className = '', variant = 'header' }: BreadcrumbsP
                   onClick={() => setDropdownOpen(false)}
                 >
                   <Calendar size={13} aria-hidden="true" />
-                  <span>View All 5-Day Schedules</span>
+                  <span>All Schedules</span>
                 </Link>
               </div>
             </div>

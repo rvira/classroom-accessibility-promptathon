@@ -1,11 +1,9 @@
 import { useState, useMemo } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import {
-  Calendar,
   Clock,
   MapPin,
   BookOpen,
-  Filter,
   ChevronRight,
   Radio,
 } from 'lucide-react'
@@ -13,7 +11,6 @@ import {
   DATE_STRIP_ITEMS,
   CURRENT_DATE_KEY,
   getClassesForDate,
-  getDateStripItem,
   getCompsciClassesForDate,
 } from '../data/scheduleData'
 import type { SubjectCategory, ScheduledClass } from '../types'
@@ -44,7 +41,6 @@ export function CalendarPage({
     return getClassesForDate(activeDate, subjectFilter)
   }, [activeDate, subjectFilter])
 
-  const dateStripInfo = getDateStripItem(activeDate)
   const compsciClasses = getCompsciClassesForDate(activeDate)
 
   const handleDateSelect = (selectedDateKey: string) => {
@@ -56,57 +52,45 @@ export function CalendarPage({
       {/* Page Breadcrumb Trail */}
       <Breadcrumbs variant="page" />
 
-      {/* Calendar Header with Title & Quick Info */}
+      {/* Streamlined Header */}
       <div className="calendar-header-banner">
-        <div className="calendar-header-left">
-          <div className="calendar-page-badge">
-            <Calendar size={15} aria-hidden="true" />
-            <span>Academic Schedule & Horizon</span>
-          </div>
-          <h1 className="calendar-main-title">Class Schedules & Course Timeline</h1>
-          <p className="calendar-main-subtitle">
-            Dynamic 5-day rolling view centered on your ongoing live session. Select any day to inspect lecture outlines,
-            submission deadlines, and instructor office hours.
-          </p>
-        </div>
+        <h1 className="calendar-main-title">Schedule</h1>
 
-        {/* Live Session Alert Banner if on Nov 21 */}
-        {dateStripInfo?.isCurrentDate && (
-          <div className="calendar-live-announcement-card">
-            <div className="live-announcement-header">
-              <span className="live-pulse-dot" aria-hidden="true" />
-              <span className="live-announcement-tag">LIVE SESSION ACTIVE TODAY</span>
-            </div>
-            <h4 className="live-announcement-title">COMPSCI 161: Design and Analysis of Algorithms</h4>
-            <p className="live-announcement-details">
-              Prof. Michael Shindler · DBH 1100 · 3:30 PM &ndash; 4:50 PM
-            </p>
-            <div className="live-announcement-actions">
-              <Link
-                to={`/calendar/${CURRENT_DATE_KEY}/compsci/cs161-nov21`}
-                className="live-announcement-btn primary"
-              >
-                <span>Course Details</span>
-                <ChevronRight size={14} aria-hidden="true" />
-              </Link>
-              <Link to="/focus" className="live-announcement-btn secondary">
-                <Radio size={14} aria-hidden="true" />
-                <span>Join Focus Mode</span>
-              </Link>
-            </div>
-          </div>
-        )}
+        {/* Filter Pills */}
+        <div className="subject-filter-buttons" role="group" aria-label="Filter courses by subject">
+          <button
+            type="button"
+            className={`filter-pill-btn ${subjectFilter === 'all' ? 'active' : ''}`}
+            onClick={() => setSubjectFilter('all')}
+          >
+            All
+          </button>
+          <button
+            type="button"
+            className={`filter-pill-btn ${subjectFilter === 'compsci' ? 'active' : ''}`}
+            onClick={() => setSubjectFilter('compsci')}
+          >
+            Computer Science ({compsciClasses.length})
+          </button>
+          <button
+            type="button"
+            className={`filter-pill-btn ${subjectFilter === 'math' ? 'active' : ''}`}
+            onClick={() => setSubjectFilter('math')}
+          >
+            Mathematics
+          </button>
+          <button
+            type="button"
+            className={`filter-pill-btn ${subjectFilter === 'physics' ? 'active' : ''}`}
+            onClick={() => setSubjectFilter('physics')}
+          >
+            Physics
+          </button>
+        </div>
       </div>
 
       {/* Dynamic 5-Day Date Strip */}
       <section className="date-strip-section" aria-label="5-Day Date Strip" data-tour="date-strip">
-        <div className="date-strip-header">
-          <span className="date-strip-title">5-Day Rolling Horizon</span>
-          <span className="date-strip-hint">
-            Active center: <strong>Nov 21 (Today)</strong> · Click any day to switch date view
-          </span>
-        </div>
-
         <div className="date-strip-grid" role="tablist" aria-label="Select Date">
           {DATE_STRIP_ITEMS.map((item) => {
             const isSelected = item.dateKey === activeDate
@@ -121,24 +105,21 @@ export function CalendarPage({
                 className={`date-strip-card ${isSelected ? 'selected' : ''} ${isToday ? 'is-today' : ''}`}
                 onClick={() => handleDateSelect(item.dateKey)}
               >
-                {/* Top Badge */}
                 <div className="strip-card-top">
                   <span className="strip-day-name">{item.displayDay}</span>
                   {isToday ? (
-                    <span className="today-live-indicator" title="Active Ongoing Lecture Day">
-                      <span className="pulse-circle" /> LIVE / ONGOING
+                    <span className="today-live-indicator">
+                      <span className="pulse-circle" /> LIVE
                     </span>
                   ) : (
                     <span className="relative-offset-badge">{item.relativeLabel}</span>
                   )}
                 </div>
 
-                {/* Main Date Number */}
                 <div className="strip-card-date">
                   <span className="strip-date-text">{item.displayDate}</span>
                 </div>
 
-                {/* Class Counts */}
                 <div className="strip-card-footer">
                   <span className="strip-class-count">
                     {item.classCount} {item.classCount === 1 ? 'class' : 'classes'}
@@ -153,69 +134,17 @@ export function CalendarPage({
         </div>
       </section>
 
-      {/* Filter and Subject Toolbar */}
-      <section className="calendar-toolbar-section">
-        <div className="toolbar-left">
-          <div className="filter-label">
-            <Filter size={15} aria-hidden="true" />
-            <span>Filter Subject:</span>
-          </div>
-
-          <div className="subject-filter-buttons" role="group" aria-label="Subject Filter">
-            <button
-              type="button"
-              className={`filter-pill-btn ${subjectFilter === 'all' ? 'active' : ''}`}
-              onClick={() => setSubjectFilter('all')}
-            >
-              All Subjects
-            </button>
-            <button
-              type="button"
-              className={`filter-pill-btn ${subjectFilter === 'compsci' ? 'active' : ''}`}
-              onClick={() => setSubjectFilter('compsci')}
-            >
-              Computer Science ({compsciClasses.length})
-            </button>
-            <button
-              type="button"
-              className={`filter-pill-btn ${subjectFilter === 'math' ? 'active' : ''}`}
-              onClick={() => setSubjectFilter('math')}
-            >
-              Mathematics
-            </button>
-            <button
-              type="button"
-              className={`filter-pill-btn ${subjectFilter === 'physics' ? 'active' : ''}`}
-              onClick={() => setSubjectFilter('physics')}
-            >
-              Physics
-            </button>
-          </div>
-        </div>
-
-        {/* Selected Date Summary */}
-        <div className="toolbar-right">
-          <span className="selected-date-text">
-            Viewing: <strong>{dateStripInfo ? dateStripInfo.fullLabel : activeDate}</strong>
-          </span>
-        </div>
-      </section>
-
       {/* Classes Grid */}
       <section className="scheduled-classes-section" aria-label="Scheduled Classes List">
         {classesForDay.length === 0 ? (
           <div className="no-classes-card">
-            <Calendar size={36} className="no-classes-icon" aria-hidden="true" />
-            <h3 className="no-classes-title">No classes scheduled for this subject on this date</h3>
-            <p className="no-classes-desc">
-              Try switching to &ldquo;All Subjects&rdquo; or selecting another day from the 5-day strip above.
-            </p>
+            <h3 className="no-classes-title">No classes scheduled</h3>
             <button
               type="button"
               className="reset-filter-btn"
               onClick={() => setSubjectFilter('all')}
             >
-              Reset Subject Filter
+              Show All Subjects
             </button>
           </div>
         ) : (
@@ -240,7 +169,7 @@ export function CalendarPage({
                       {item.isLive && (
                         <span className="live-status-badge">
                           <span className="pulse-dot" aria-hidden="true" />
-                          <span>LIVE NOW</span>
+                          <span>LIVE</span>
                         </span>
                       )}
                     </div>
@@ -261,11 +190,10 @@ export function CalendarPage({
                   <div className="class-card-body">
                     <h3 className="class-card-title">{item.title}</h3>
                     <div className="class-card-topic">
-                      <span className="topic-kicker">Topic:</span>
                       <span className="topic-name">{item.topic}</span>
                     </div>
 
-                    {/* Instructor Info */}
+                    {/* Instructor */}
                     <div className="class-card-instructor">
                       <div className="instructor-avatar-pill">
                         {item.instructor.avatarInitials}
@@ -276,26 +204,22 @@ export function CalendarPage({
                       </div>
                     </div>
 
-                    {/* Unit Summary */}
-                    <p className="class-card-summary">{item.outline.summary}</p>
-
-                    {/* Canvas Status Chip */}
+                    {/* Canvas Status & Deadline */}
                     <div className="class-canvas-sync">
                       <CanvasLogo size={14} />
                       <span className="canvas-sync-text">{item.canvasSync}</span>
                     </div>
                   </div>
 
-                  {/* Card Footer Actions */}
+                  {/* Card Actions */}
                   <div className="class-card-footer">
-                    {/* Deep link into course page */}
                     {item.subject === 'compsci' ? (
                       <Link
                         to={`/calendar/${activeDate}/compsci/${item.id}`}
                         className="card-action-btn view-details"
                       >
                         <BookOpen size={15} aria-hidden="true" />
-                        <span>Course Details & Notes</span>
+                        <span>Details</span>
                         <ChevronRight size={14} aria-hidden="true" />
                       </Link>
                     ) : (
@@ -305,12 +229,11 @@ export function CalendarPage({
                         onClick={() => onLaunchFocusMode && onLaunchFocusMode(item)}
                       >
                         <BookOpen size={15} aria-hidden="true" />
-                        <span>View Lecture Outline</span>
+                        <span>Details</span>
                         <ChevronRight size={14} aria-hidden="true" />
                       </Link>
                     )}
 
-                    {/* Quick Focus Button if Live */}
                     {item.isLive && (
                       <Link
                         to="/focus"
@@ -318,7 +241,7 @@ export function CalendarPage({
                         onClick={() => onLaunchFocusMode && onLaunchFocusMode(item)}
                       >
                         <Radio size={14} aria-hidden="true" />
-                        <span>Open Focus Mode</span>
+                        <span>Focus Mode</span>
                       </Link>
                     )}
                   </div>
