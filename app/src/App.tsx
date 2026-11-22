@@ -763,7 +763,7 @@ export default function App() {
       </header>
 
       {/* ================= MAIN CONTENT VIEWS ================= */}
-      <main className="revamped-main-stage">
+      <main className={`revamped-main-stage ${location.pathname === '/teacher' ? 'teacher-view-stage' : ''}`}>
         <Routes>
           {/* LANDING PAGE (REPLACING IMMEDIATE CALENDAR OPENING VIEW) */}
           <Route path="/" element={<LandingPage onStartTour={openTour} />} />

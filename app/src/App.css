@@ -2423,6 +2423,16 @@ input:focus-visible {
   margin: 0 auto;
 }
 
+.revamped-main-stage.teacher-view-stage,
+.revamped-main-stage:has(.teacher-dashboard-container) {
+  max-width: 100% !important;
+  width: 100% !important;
+  padding: 0 !important;
+  display: block !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+}
+
 /* ---------- View 1: Now Focus (3D Cards) ---------- */
 .now-perspective-arena {
   perspective: 1200px;

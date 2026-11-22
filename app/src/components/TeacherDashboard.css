@@ -1,6 +1,6 @@
 /* ==========================================================================
    BULLSEYE PROFESSOR PEDAGOGICAL COCKPIT & ANALYTICS DASHBOARD
-   Design Philosophy: Serene, Low-Glare, High-Legibility Executive Informatics
+   Design Philosophy: Wide, Serene, Low-Glare Executive Informatics
    WCAG 2.2 AA Compliant · Atkinson Hyperlegible Typography
    ========================================================================== */
 
@@ -48,11 +48,12 @@
   --td-shadow-elevated: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
 }
 
+/* Wide Container that spans full width of display with comfortable margins */
 .teacher-dashboard-container {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1680px;
   margin: 0 auto;
-  padding: clamp(16px, 2.5vw, 32px);
+  padding: clamp(20px, 2.5vw, 36px) clamp(24px, 3.5vw, 56px);
   background: var(--td-bg);
   min-height: 100vh;
   box-sizing: border-box;
@@ -122,7 +123,7 @@
 }
 
 .td-title {
-  font-size: 1.6rem;
+  font-size: 1.65rem;
   font-weight: 800;
   color: var(--td-text);
   margin: 0 0 4px 0;
@@ -164,7 +165,7 @@
   color: var(--td-teal-deep);
   font-size: 0.84rem;
   font-weight: 700;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   box-shadow: 0 1px 3px rgba(0, 168, 150, 0.06);
 }
 
@@ -268,31 +269,19 @@
 }
 
 /* ==========================================================================
-   TRI-COLUMN HERO COCKPIT GRID (Inspired by Reference Layout)
+   ROW 1: PRIMARY COCKPIT GRID (3 Equal-Height Balanced Hero Cards)
    ========================================================================== */
-.td-hero-cockpit {
+.td-primary-cockpit-grid {
   display: grid;
-  grid-template-columns: 1.1fr 1.3fr 1.1fr;
+  grid-template-columns: 1.15fr 1.35fr 1.15fr;
   gap: 20px;
-  margin-bottom: 24px;
+  margin-bottom: 22px;
+  align-items: stretch;
 }
 
-@media (max-width: 1200px) {
-  .td-hero-cockpit {
-    grid-template-columns: 1fr 1fr;
-  }
-  .td-hero-center-col {
-    grid-column: 1 / -1;
-    order: -1;
-  }
-}
-
-@media (max-width: 768px) {
-  .td-hero-cockpit {
+@media (max-width: 1240px) {
+  .td-primary-cockpit-grid {
     grid-template-columns: 1fr;
-  }
-  .td-hero-center-col {
-    grid-column: 1;
   }
 }
 
@@ -316,7 +305,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--td-border-subtle);
 }
@@ -343,25 +332,16 @@
   color: var(--td-text-muted);
 }
 
-/* ==========================================================================
-   LEFT COLUMN: ATTENTION WAVE, DUAL SPARKLINE KPIS & DIVERGENT BAR
-   ========================================================================== */
-.td-left-col {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* Attention Wave SVG Card */
-.td-flow-wave-card {
-  flex: 1;
+/* --- CARD 1 (LEFT): ATTENTION WAVE & INTEGRATED DUAL METRICS --- */
+.td-attention-card {
+  justify-content: space-between;
 }
 
 .td-wave-svg-wrap {
   width: 100%;
-  height: 120px;
+  height: 130px;
   position: relative;
-  margin-top: 6px;
+  margin: 4px 0 14px 0;
 }
 
 .td-wave-callout {
@@ -381,56 +361,291 @@
   gap: 4px;
 }
 
-/* Dual Metric Tile with Paired Sparklines */
-.td-dual-metric-tile {
+.td-dual-kpi-strip {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   background: var(--td-surface-subtle);
-  padding: 14px;
+  padding: 12px 14px;
   border-radius: var(--td-radius-subtle);
   border: 1px solid var(--td-border-subtle);
+  margin-top: auto;
 }
 
-.td-metric-subcard {
+.td-kpi-subitem {
   display: flex;
   flex-direction: column;
 }
 
-.td-metric-sublabel {
-  font-size: 0.72rem;
+.td-kpi-subitem-label {
+  font-size: 0.7rem;
   font-weight: 700;
   color: var(--td-text-muted);
   text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
-.td-metric-subval {
-  font-size: 1.4rem;
+.td-kpi-subitem-val {
+  font-size: 1.35rem;
   font-weight: 900;
   color: var(--td-text);
-  margin: 2px 0;
   line-height: 1.1;
+  margin: 2px 0;
 }
 
-.td-mini-sparkline {
-  height: 24px;
+.td-kpi-subitem-sparkline {
+  height: 22px;
   width: 100%;
+  margin-top: 2px;
+}
+
+/* --- CARD 2 (CENTER HERO): 86% CONCEPT FLOW DIAL ARC --- */
+.td-hero-dial-card {
+  align-items: center;
+  text-align: center;
+  justify-content: space-between;
+  padding: 20px 22px;
+}
+
+.td-dial-wrap {
+  position: relative;
+  width: 230px;
+  height: 140px;
+  margin: 4px auto 8px auto;
+}
+
+.td-dial-center-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  top: 15px;
+}
+
+.td-dial-percentage {
+  font-size: 2.6rem;
+  font-weight: 900;
+  color: var(--td-text);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.td-dial-title {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--td-teal-deep);
+  margin-top: 3px;
+}
+
+.td-dial-subtext {
+  font-size: 0.72rem;
+  color: var(--td-text-muted);
+  margin-top: 1px;
+}
+
+.td-hero-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 24px;
+  background: var(--td-amber);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--td-radius-pill);
+  font-weight: 800;
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+  margin-bottom: 14px;
+}
+
+.td-hero-action-btn:hover {
+  background: #d97706;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35);
+}
+
+.td-timeline-strip {
+  width: 100%;
+  border-top: 1px solid var(--td-border-subtle);
+  padding-top: 12px;
+}
+
+.td-timeline-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--td-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.td-timeline-steps {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.td-timeline-step-chip {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 4px;
+  border-radius: 6px;
+  background: var(--td-surface-subtle);
+  border: 1px solid var(--td-border-subtle);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--td-text-muted);
+}
+
+.td-timeline-step-chip.active {
+  background: var(--td-teal-bg);
+  border-color: var(--td-teal-border);
+  color: var(--td-teal-deep);
+  box-shadow: 0 2px 6px rgba(0, 168, 150, 0.12);
+}
+
+.td-timeline-step-chip.done {
+  background: var(--td-emerald-bg);
+  border-color: var(--td-emerald-border);
+  color: var(--td-emerald-deep);
+}
+
+.td-timeline-arrow {
+  color: #cbd5e1;
+  font-size: 0.76rem;
+}
+
+/* --- CARD 3 (RIGHT): COHORT READINESS RINGS & CUMULATIVE PACE --- */
+.td-readiness-card {
+  justify-content: space-between;
+}
+
+.td-rings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: 6px 0 12px 0;
+}
+
+.td-ring-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.td-ring-svg-wrap {
+  position: relative;
+  width: 78px;
+  height: 78px;
+}
+
+.td-ring-center-val {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--td-text);
+}
+
+.td-ring-label {
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--td-text-secondary);
   margin-top: 4px;
 }
 
-/* Conceptual vs Procedural Balance Bar Chart */
-.td-balance-card {
-  padding: 16px 18px;
+.td-ring-sub {
+  font-size: 0.68rem;
+  color: var(--td-text-muted);
 }
 
+.td-integrated-pace-block {
+  border-top: 1px solid var(--td-border-subtle);
+  padding-top: 10px;
+}
+
+.td-pace-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--td-text-muted);
+  margin-bottom: 4px;
+}
+
+.td-pace-svg-wrap {
+  width: 100%;
+  height: 55px;
+}
+
+/* ==========================================================================
+   ROW 2: SECONDARY ANALYTICS GRID (Schedule, Balance Bars, Dwell Histogram)
+   ========================================================================== */
+.td-secondary-cockpit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+  align-items: stretch;
+}
+
+@media (max-width: 1050px) {
+  .td-secondary-cockpit-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Schedule List */
+.td-schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.td-schedule-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--td-surface-subtle);
+  font-size: 0.76rem;
+}
+
+.td-schedule-time {
+  font-weight: 800;
+  color: var(--td-teal-deep);
+}
+
+.td-schedule-topic {
+  font-weight: 600;
+  color: var(--td-text);
+}
+
+/* Balance Bars */
 .td-balance-chart {
   display: flex;
   align-items: flex-end;
   gap: 12px;
-  height: 80px;
-  padding: 10px 0 20px 0;
+  height: 75px;
+  padding: 8px 0 20px 0;
   border-bottom: 2px solid #e2e8f0;
   position: relative;
+  margin-top: 6px;
 }
 
 .td-balance-col {
@@ -463,258 +678,60 @@
   white-space: nowrap;
 }
 
-/* ==========================================================================
-   CENTER COLUMN (HERO): 86% CONCEPT FLOW DIAL ARC & MILESTONE TIMELINE
-   ========================================================================== */
-.td-hero-center-col {
+/* Dwell Time Histogram */
+.td-dwell-histogram-bars {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.td-hero-card {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 24px 20px;
-  background: #ffffff;
-  border: 1px solid var(--td-border);
-}
-
-.td-dial-wrap {
+  align-items: flex-end;
+  gap: 12px;
+  height: 75px;
+  padding: 8px 0 20px 0;
+  border-bottom: 2px solid #e2e8f0;
   position: relative;
-  width: 220px;
-  height: 150px;
-  margin: 0 auto 8px auto;
+  margin-top: 6px;
 }
 
-.td-dial-center-content {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  top: 15px;
-}
-
-.td-dial-percentage {
-  font-size: 2.5rem;
-  font-weight: 900;
-  color: var(--td-text);
-  line-height: 1;
-  letter-spacing: -0.02em;
-}
-
-.td-dial-title {
-  font-size: 0.88rem;
-  font-weight: 800;
-  color: var(--td-teal-deep);
-  margin-top: 4px;
-}
-
-.td-dial-subtext {
-  font-size: 0.74rem;
-  color: var(--td-text-muted);
-  margin-top: 2px;
-}
-
-/* Supportive Trigger Action Button */
-.td-hero-action-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 22px;
-  background: var(--td-amber);
-  color: #ffffff;
-  border: none;
-  border-radius: var(--td-radius-pill);
-  font-weight: 800;
-  font-size: 0.88rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
-  margin-bottom: 24px;
-}
-
-.td-hero-action-btn:hover {
-  background: #d97706;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35);
-}
-
-/* Milestone Timeline Strip */
-.td-timeline-strip {
-  width: 100%;
-  border-top: 1px solid var(--td-border-subtle);
-  padding-top: 16px;
-}
-
-.td-timeline-title {
-  font-size: 0.74rem;
-  font-weight: 800;
-  color: var(--td-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 12px;
-  display: block;
-}
-
-.td-timeline-steps {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  position: relative;
-}
-
-.td-timeline-step-chip {
+.td-hist-col {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 6px 4px;
-  border-radius: 8px;
-  background: var(--td-surface-subtle);
-  border: 1px solid var(--td-border-subtle);
+  height: 100%;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.td-hist-bar {
+  width: 80%;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.3s ease;
+  min-height: 4px;
+  position: relative;
+}
+
+.td-hist-bar.normal { background: #94a3b8; }
+.td-hist-bar.target { background: var(--td-teal); }
+.td-hist-bar.warning { background: var(--td-amber); }
+.td-hist-bar.critical { background: #ef4444; }
+
+.td-hist-count {
+  position: absolute;
+  top: -16px;
   font-size: 0.7rem;
   font-weight: 700;
-  color: var(--td-text-muted);
-  transition: all 0.15s ease;
-}
-
-.td-timeline-step-chip.active {
-  background: var(--td-teal-bg);
-  border-color: var(--td-teal-border);
-  color: var(--td-teal-deep);
-  box-shadow: 0 2px 6px rgba(0, 168, 150, 0.12);
-}
-
-.td-timeline-step-chip.done {
-  background: var(--td-emerald-bg);
-  border-color: var(--td-emerald-border);
-  color: var(--td-emerald-deep);
-}
-
-.td-timeline-arrow {
-  color: #cbd5e1;
-  font-size: 0.8rem;
-}
-
-/* ==========================================================================
-   RIGHT COLUMN: SCHEDULE, DUAL PROGRESS RINGS & CUMULATIVE PACE CURVE
-   ========================================================================== */
-.td-right-col {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* Lecture Schedule Widget */
-.td-schedule-card {
-  padding: 16px 18px;
-}
-
-.td-schedule-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 6px;
-}
-
-.td-schedule-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 10px;
-  border-radius: 6px;
-  background: var(--td-surface-subtle);
-  font-size: 0.76rem;
-}
-
-.td-schedule-time {
-  font-weight: 800;
-  color: var(--td-teal-deep);
-}
-
-.td-schedule-topic {
-  font-weight: 600;
   color: var(--td-text);
 }
 
-/* Dual Progress Rings Card */
-.td-rings-card {
-  padding: 18px;
-}
-
-.td-rings-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  margin-top: 8px;
-}
-
-.td-ring-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.td-ring-svg-wrap {
-  position: relative;
-  width: 84px;
-  height: 84px;
-}
-
-.td-ring-center-val {
+.td-hist-label {
   position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.15rem;
-  font-weight: 900;
-  color: var(--td-text);
-}
-
-.td-ring-label {
-  font-size: 0.74rem;
-  font-weight: 800;
-  color: var(--td-text-secondary);
-  margin-top: 6px;
-}
-
-.td-ring-sub {
+  bottom: -20px;
   font-size: 0.68rem;
+  font-weight: 700;
   color: var(--td-text-muted);
-}
-
-/* Cumulative Pace Comparison Area Curve */
-.td-pace-card {
-  flex: 1;
-}
-
-.td-pace-svg-wrap {
-  width: 100%;
-  height: 70px;
-  margin-top: 8px;
-}
-
-.td-pace-legend {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.72rem;
-  color: var(--td-text-muted);
-  margin-top: 6px;
+  white-space: nowrap;
 }
 
 /* ==========================================================================
-   BOTTOM SECTION: MULTI-STUDENT PROGRESS HEATMAP & INTERVENTION HUB
+   ROW 3: FULL-WIDTH STUDENT PROGRESS HEATMAP & ACTION HUB
    ========================================================================== */
 .td-bottom-section {
   display: flex;
@@ -779,7 +796,7 @@
   background: var(--td-surface-subtle);
   border: 1px solid var(--td-border);
   border-radius: 8px;
-  width: 220px;
+  width: 240px;
 }
 
 .td-search-box input {
@@ -794,7 +811,7 @@
 /* Heatmap Table */
 .td-table-wrapper {
   overflow-x: auto;
-  max-height: 440px;
+  max-height: 460px;
   overflow-y: auto;
   border: 1px solid var(--td-border-subtle);
   border-radius: 12px;

@@ -742,61 +742,53 @@ export function TeacherDashboard({
       )}
 
       {/* ==========================================================================
-          TRI-COLUMN HERO COCKPIT (Left: Wave/KPIs | Center: 86% Dial | Right: Schedule/Rings)
+          ROW 1: PRIMARY COCKPIT GRID (Attention Flow | 86% Concept Dial | Readiness Rings)
           ========================================================================== */}
-      <div className="td-hero-cockpit">
-        {/* LEFT COLUMN: 50-Min Attention Wave, Dual KPI Sparklines, Balance Bar */}
-        <div className="td-left-col">
-          {/* Attention & Cognitive Flow Wave */}
-          <div className="td-card td-flow-wave-card">
-            <div className="td-card-head">
-              <div className="td-card-title-group">
-                <Zap size={16} style={{ color: 'var(--td-teal)' }} aria-hidden="true" />
-                <h2 className="td-card-title">50-Min Attention & Cognitive Flow</h2>
-              </div>
-              <span className="td-card-badge">Live Lecture</span>
+      <div className="td-primary-cockpit-grid">
+        {/* CARD 1 (LEFT): 50-Min Attention & Cognitive Flow Wave + Integrated Dual Metrics */}
+        <div className="td-card td-attention-card">
+          <div className="td-card-head">
+            <div className="td-card-title-group">
+              <Zap size={16} style={{ color: 'var(--td-teal)' }} aria-hidden="true" />
+              <h2 className="td-card-title">50-Min Attention & Cognitive Flow</h2>
             </div>
-
-            <div className="td-wave-svg-wrap" title="Continuous cognitive attention curve across 50 minutes">
-              <div className="td-wave-callout">
-                <Sparkles size={11} aria-hidden="true" />
-                <span>Peak Flow: 88%</span>
-              </div>
-              <svg viewBox="0 0 280 110" preserveAspectRatio="none" style={{ width: '100%', height: '100%', overflow: 'visible' }} aria-hidden="true">
-                <defs>
-                  <linearGradient id="attentionFlowGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#00a896" stopOpacity="0.32" />
-                    <stop offset="70%" stopColor="#10b981" stopOpacity="0.10" />
-                    <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
-                  </linearGradient>
-                </defs>
-                {/* Area fill */}
-                <path
-                  d="M 0,80 C 40,30 70,85 110,60 C 140,40 160,20 180,24 C 200,28 220,70 250,55 C 265,48 275,60 280,65 L 280,110 L 0,110 Z"
-                  fill="url(#attentionFlowGrad)"
-                />
-                {/* Flow stroke */}
-                <path
-                  d="M 0,80 C 40,30 70,85 110,60 C 140,40 160,20 180,24 C 200,28 220,70 250,55 C 265,48 275,60 280,65"
-                  fill="none"
-                  stroke="#00a896"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                />
-                {/* Peak point marker */}
-                <circle cx="180" cy="24" r="4.5" fill="#00a896" stroke="#ffffff" strokeWidth="2" />
-                {/* Dashed vertical marker */}
-                <line x1="180" y1="28" x2="180" y2="110" stroke="#00a896" strokeWidth="1" strokeDasharray="3,3" opacity="0.4" />
-              </svg>
-            </div>
+            <span className="td-card-badge">Live Lecture</span>
           </div>
 
-          {/* Dual Metric Sparklines Tile */}
-          <div className="td-dual-metric-tile">
-            <div className="td-metric-subcard">
-              <span className="td-metric-sublabel">Active Students</span>
-              <span className="td-metric-subval" style={{ color: 'var(--td-teal-deep)' }}>44</span>
-              <div className="td-mini-sparkline" title="Attendance stable: 44 live students">
+          <div className="td-wave-svg-wrap" title="Continuous cognitive attention curve across 50 minutes">
+            <div className="td-wave-callout">
+              <Sparkles size={11} aria-hidden="true" />
+              <span>Peak Flow: 88%</span>
+            </div>
+            <svg viewBox="0 0 280 110" preserveAspectRatio="none" style={{ width: '100%', height: '100%', overflow: 'visible' }} aria-hidden="true">
+              <defs>
+                <linearGradient id="attentionFlowGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#00a896" stopOpacity="0.32" />
+                  <stop offset="70%" stopColor="#10b981" stopOpacity="0.10" />
+                  <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
+                </linearGradient>
+              </defs>
+              <path
+                d="M 0,80 C 40,30 70,85 110,60 C 140,40 160,20 180,24 C 200,28 220,70 250,55 C 265,48 275,60 280,65 L 280,110 L 0,110 Z"
+                fill="url(#attentionFlowGrad)"
+              />
+              <path
+                d="M 0,80 C 40,30 70,85 110,60 C 140,40 160,20 180,24 C 200,28 220,70 250,55 C 265,48 275,60 280,65"
+                fill="none"
+                stroke="#00a896"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+              <circle cx="180" cy="24" r="4.5" fill="#00a896" stroke="#ffffff" strokeWidth="2" />
+              <line x1="180" y1="28" x2="180" y2="110" stroke="#00a896" strokeWidth="1" strokeDasharray="3,3" opacity="0.4" />
+            </svg>
+          </div>
+
+          <div className="td-dual-kpi-strip">
+            <div className="td-kpi-subitem">
+              <span className="td-kpi-subitem-label">Active Students</span>
+              <span className="td-kpi-subitem-val" style={{ color: 'var(--td-teal-deep)' }}>44</span>
+              <div className="td-kpi-subitem-sparkline" title="Attendance stable: 44 live students">
                 <svg viewBox="0 0 100 24" preserveAspectRatio="none" style={{ width: '100%', height: '100%' }} aria-hidden="true">
                   <path d="M 0,16 Q 25,12 50,18 T 100,10" fill="none" stroke="#00a896" strokeWidth="2.2" strokeLinecap="round" />
                   <circle cx="100" cy="10" r="3" fill="#00a896" />
@@ -804,10 +796,10 @@ export function TeacherDashboard({
               </div>
             </div>
 
-            <div className="td-metric-subcard">
-              <span className="td-metric-sublabel">Rejoin Latency</span>
-              <span className="td-metric-subval" style={{ color: 'var(--td-amber-deep)' }}>8.4s</span>
-              <div className="td-mini-sparkline" title="Latency dropped from 14s to 8.4s">
+            <div className="td-kpi-subitem">
+              <span className="td-kpi-subitem-label">Rejoin Latency</span>
+              <span className="td-kpi-subitem-val" style={{ color: 'var(--td-amber-deep)' }}>8.4s</span>
+              <div className="td-kpi-subitem-sparkline" title="Latency dropped from 14s to 8.4s">
                 <svg viewBox="0 0 100 24" preserveAspectRatio="none" style={{ width: '100%', height: '100%' }} aria-hidden="true">
                   <path d="M 0,6 Q 25,10 50,14 T 100,20" fill="none" stroke="#f59e0b" strokeWidth="2.2" strokeLinecap="round" />
                   <circle cx="100" cy="20" r="3" fill="#f59e0b" />
@@ -815,242 +807,260 @@ export function TeacherDashboard({
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Conceptual vs Procedural Balance Bar Chart */}
-          <div className="td-card td-balance-card">
-            <div className="td-card-head">
-              <div className="td-card-title-group">
-                <BarChart3 size={15} style={{ color: 'var(--td-text-muted)' }} aria-hidden="true" />
-                <h3 className="td-card-title" style={{ fontSize: '0.84rem' }}>Conceptual vs Procedural Balance</h3>
-              </div>
-              <span style={{ fontSize: '0.7rem', color: 'var(--td-emerald-deep)', fontWeight: 700 }}>Balanced Flow</span>
+        {/* CARD 2 (CENTER HERO): 86% Concept Flow Dial Arc & Milestone Progression */}
+        <div className="td-card td-hero-dial-card">
+          <div className="td-dial-wrap" title="86% Cohort Concept Flow">
+            <svg viewBox="0 0 200 140" style={{ width: '100%', height: '100%', overflow: 'visible' }} aria-hidden="true">
+              <defs>
+                <linearGradient id="dialGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#00a896" />
+                  <stop offset="100%" stopColor="#10b981" />
+                </linearGradient>
+              </defs>
+              <path
+                d="M 25,120 A 75,75 0 1,1 175,120"
+                fill="none"
+                stroke="#e2e8f0"
+                strokeWidth="14"
+                strokeLinecap="round"
+              />
+              <path
+                d="M 25,120 A 75,75 0 1,1 175,120"
+                fill="none"
+                stroke="url(#dialGrad)"
+                strokeWidth="14"
+                strokeDasharray="275"
+                strokeDashoffset="38"
+                strokeLinecap="round"
+              />
+            </svg>
+
+            <div className="td-dial-center-content">
+              <span className="td-dial-percentage">86%</span>
+              <span className="td-dial-title">Concept Flow</span>
+              <span className="td-dial-subtext">Cohort in Strong Rhythm</span>
             </div>
+          </div>
 
-            <div className="td-balance-chart" role="img" aria-label="Conceptual versus procedural balance chart">
-              <div className="td-balance-col">
-                <div className="td-balance-bar teal" style={{ height: '78%' }} title="Conceptual Understanding: 78%" />
-                <span className="td-balance-label">Concept</span>
+          <button
+            type="button"
+            className="td-hero-action-btn"
+            onClick={handlePushHint}
+            title="Push a subtle reminder about u(0)=1 and u(4)=9"
+          >
+            <Sparkles size={16} aria-hidden="true" />
+            <span>Push Step 2 Micro-Hint</span>
+          </button>
+
+          <div className="td-timeline-strip">
+            <span className="td-timeline-title">Lecture Milestone Progression</span>
+            <div className="td-timeline-steps">
+              <div className="td-timeline-step-chip done">
+                <span>Step 1</span>
+                <span>Setup</span>
               </div>
-              <div className="td-balance-col">
-                <div className="td-balance-bar emerald" style={{ height: '94%' }} title="Limit Logic: 94%" />
-                <span className="td-balance-label">Limits</span>
+              <span className="td-timeline-arrow">→</span>
+              <div className="td-timeline-step-chip active">
+                <span>Step 2</span>
+                <span>Limits</span>
               </div>
-              <div className="td-balance-col">
-                <div className="td-balance-bar lavender" style={{ height: '68%' }} title="Subst. Rewriting: 68%" />
-                <span className="td-balance-label">Rewrite</span>
+              <span className="td-timeline-arrow">→</span>
+              <div className="td-timeline-step-chip">
+                <span>Step 3</span>
+                <span>Integrate</span>
               </div>
-              <div className="td-balance-col">
-                <div className="td-balance-bar amber" style={{ height: '84%' }} title="Procedural Algebra: 84%" />
-                <span className="td-balance-label">Procedural</span>
+              <span className="td-timeline-arrow">→</span>
+              <div className="td-timeline-step-chip">
+                <span>Step 4</span>
+                <span>Verify</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* CENTER COLUMN (HERO): 86% Concept Flow Dial Arc & Milestone Timeline */}
-        <div className="td-hero-center-col">
-          <div className="td-card td-hero-card">
-            {/* 220° Open Gauge SVG Dial */}
-            <div className="td-dial-wrap" title="86% Cohort Concept Flow">
-              <svg viewBox="0 0 200 140" style={{ width: '100%', height: '100%', overflow: 'visible' }} aria-hidden="true">
-                <defs>
-                  <linearGradient id="dialGrad" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#00a896" />
-                    <stop offset="100%" stopColor="#10b981" />
-                  </linearGradient>
-                </defs>
-                {/* Dial background track arc */}
-                <path
-                  d="M 25,120 A 75,75 0 1,1 175,120"
-                  fill="none"
-                  stroke="#e2e8f0"
-                  strokeWidth="14"
-                  strokeLinecap="round"
-                />
-                {/* Dial filled progress arc (86% fill) */}
-                <path
-                  d="M 25,120 A 75,75 0 1,1 175,120"
-                  fill="none"
-                  stroke="url(#dialGrad)"
-                  strokeWidth="14"
-                  strokeDasharray="275"
-                  strokeDashoffset="38"
-                  strokeLinecap="round"
-                />
-              </svg>
-
-              <div className="td-dial-center-content">
-                <span className="td-dial-percentage">86%</span>
-                <span className="td-dial-title">Concept Flow</span>
-                <span className="td-dial-subtext">Cohort in Strong Rhythm</span>
-              </div>
+        {/* CARD 3 (RIGHT): Cohort Readiness Rings + Integrated Cumulative Pace Curve */}
+        <div className="td-card td-readiness-card">
+          <div className="td-card-head">
+            <div className="td-card-title-group">
+              <CheckCircle size={15} style={{ color: 'var(--td-emerald)' }} aria-hidden="true" />
+              <h3 className="td-card-title" style={{ fontSize: '0.86rem' }}>Cohort Readiness Rings</h3>
             </div>
-
-            {/* Supportive Action Button */}
-            <button
-              type="button"
-              className="td-hero-action-btn"
-              onClick={handlePushHint}
-              title="Push a subtle reminder about u(0)=1 and u(4)=9"
-            >
-              <Sparkles size={16} aria-hidden="true" />
-              <span>Push Step 2 Micro-Hint</span>
-            </button>
-
-            {/* Milestone Timeline Strip */}
-            <div className="td-timeline-strip">
-              <span className="td-timeline-title">Lecture Milestone Progression</span>
-              <div className="td-timeline-steps">
-                <div className="td-timeline-step-chip done">
-                  <span>Step 1</span>
-                  <span>Setup</span>
-                </div>
-                <span className="td-timeline-arrow">→</span>
-                <div className="td-timeline-step-chip active">
-                  <span>Step 2</span>
-                  <span>Limits</span>
-                </div>
-                <span className="td-timeline-arrow">→</span>
-                <div className="td-timeline-step-chip">
-                  <span>Step 3</span>
-                  <span>Integrate</span>
-                </div>
-                <span className="td-timeline-arrow">→</span>
-                <div className="td-timeline-step-chip">
-                  <span>Step 4</span>
-                  <span>Verify</span>
-                </div>
-              </div>
-            </div>
+            <span style={{ fontSize: '0.7rem', color: 'var(--td-emerald-deep)', fontWeight: 700 }}>High Health</span>
           </div>
-        </div>
 
-        {/* RIGHT COLUMN: Lecture Schedule, Dual Progress Rings, Cumulative Pace Curve */}
-        <div className="td-right-col">
-          {/* Mini Lecture Schedule Card */}
-          <div className="td-card td-schedule-card">
-            <div className="td-card-head">
-              <div className="td-card-title-group">
-                <Calendar size={15} style={{ color: 'var(--td-teal)' }} aria-hidden="true" />
-                <h3 className="td-card-title" style={{ fontSize: '0.86rem' }}>Mini Lecture Schedule</h3>
+          <div className="td-rings-row">
+            <div className="td-ring-item">
+              <div className="td-ring-svg-wrap" title="92% Attendance (44 of 48 live)">
+                <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }} aria-hidden="true">
+                  <path
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="#f1f5f9"
+                    strokeWidth="3.4"
+                  />
+                  <path
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="#00a896"
+                    strokeWidth="3.4"
+                    strokeDasharray="92, 100"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="td-ring-center-val">92%</div>
               </div>
-              <span className="td-card-badge">Today</span>
+              <span className="td-ring-label">Attendance</span>
+              <span className="td-ring-sub">44 / 48 Active</span>
             </div>
 
-            <div className="td-schedule-list">
-              <div className="td-schedule-item">
-                <span className="td-schedule-time">11:00 AM</span>
-                <span className="td-schedule-topic">Substitution Conception</span>
+            <div className="td-ring-item">
+              <div className="td-ring-svg-wrap" title="82% Socratic Self-Sufficiency without answer leaks">
+                <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }} aria-hidden="true">
+                  <path
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="#f1f5f9"
+                    strokeWidth="3.4"
+                  />
+                  <path
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="#6366f1"
+                    strokeWidth="3.4"
+                    strokeDasharray="82, 100"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="td-ring-center-val" style={{ color: 'var(--td-lavender-deep)' }}>82%</div>
               </div>
-              <div className="td-schedule-item" style={{ background: 'var(--td-teal-bg)' }}>
-                <span className="td-schedule-time" style={{ color: 'var(--td-teal-deep)' }}>11:18 AM</span>
-                <span className="td-schedule-topic" style={{ color: 'var(--td-teal-deep)', fontWeight: 800 }}>Change of Limits Focus</span>
-              </div>
-              <div className="td-schedule-item">
-                <span className="td-schedule-time">11:35 AM</span>
-                <span className="td-schedule-topic">Integration & FTC Verify</span>
-              </div>
+              <span className="td-ring-label">Self-Sufficiency</span>
+              <span className="td-ring-sub">Zero Answer Leaks</span>
             </div>
           </div>
 
-          {/* Dual Progress Rings Card */}
-          <div className="td-card td-rings-card">
-            <div className="td-card-head">
-              <div className="td-card-title-group">
-                <CheckCircle size={15} style={{ color: 'var(--td-emerald)' }} aria-hidden="true" />
-                <h3 className="td-card-title" style={{ fontSize: '0.86rem' }}>Cohort Readiness Rings</h3>
-              </div>
-              <span style={{ fontSize: '0.7rem', color: 'var(--td-emerald-deep)', fontWeight: 700 }}>High Health</span>
-            </div>
-
-            <div className="td-rings-row">
-              {/* Ring 1: Attendance */}
-              <div className="td-ring-item">
-                <div className="td-ring-svg-wrap" title="92% Attendance (44 of 48 live)">
-                  <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }} aria-hidden="true">
-                    <path
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                      fill="none"
-                      stroke="#f1f5f9"
-                      strokeWidth="3.4"
-                    />
-                    <path
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                      fill="none"
-                      stroke="#00a896"
-                      strokeWidth="3.4"
-                      strokeDasharray="92, 100"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <div className="td-ring-center-val">92%</div>
-                </div>
-                <span className="td-ring-label">Attendance</span>
-                <span className="td-ring-sub">44 / 48 Active</span>
-              </div>
-
-              {/* Ring 2: Self-Sufficiency */}
-              <div className="td-ring-item">
-                <div className="td-ring-svg-wrap" title="82% Socratic Self-Sufficiency without answer leaks">
-                  <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }} aria-hidden="true">
-                    <path
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                      fill="none"
-                      stroke="#f1f5f9"
-                      strokeWidth="3.4"
-                    />
-                    <path
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                      fill="none"
-                      stroke="#6366f1"
-                      strokeWidth="3.4"
-                      strokeDasharray="82, 100"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <div className="td-ring-center-val" style={{ color: 'var(--td-lavender-deep)' }}>82%</div>
-                </div>
-                <span className="td-ring-label">Self-Sufficiency</span>
-                <span className="td-ring-sub">Zero Answer Leaks</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Cumulative Pace Comparison Area Curve */}
-          <div className="td-card td-pace-card">
-            <div className="td-card-head">
-              <div className="td-card-title-group">
-                <TrendingUp size={15} style={{ color: 'var(--td-teal)' }} aria-hidden="true" />
-                <h3 className="td-card-title" style={{ fontSize: '0.86rem' }}>Cumulative Pace Comparison</h3>
-              </div>
-              <span className="td-card-badge">+6% vs Syllabus</span>
+          <div className="td-integrated-pace-block">
+            <div className="td-pace-header">
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <TrendingUp size={13} style={{ color: 'var(--td-teal)' }} aria-hidden="true" />
+                Cumulative Pace vs Syllabus
+              </span>
+              <span className="td-card-badge" style={{ color: 'var(--td-emerald-deep)', fontWeight: 800 }}>+6% Ahead</span>
             </div>
 
             <div className="td-pace-svg-wrap" title="Actual cohort pace tracking slightly ahead of expected syllabus pace">
-              <svg viewBox="0 0 240 60" preserveAspectRatio="none" style={{ width: '100%', height: '100%', overflow: 'visible' }} aria-hidden="true">
+              <svg viewBox="0 0 240 55" preserveAspectRatio="none" style={{ width: '100%', height: '100%', overflow: 'visible' }} aria-hidden="true">
                 <defs>
                   <linearGradient id="paceGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#00a896" stopOpacity="0.25" />
                     <stop offset="100%" stopColor="#00a896" stopOpacity="0.0" />
                   </linearGradient>
                 </defs>
-                {/* Expected pace line */}
-                <path d="M 0,55 Q 120,40 240,22" fill="none" stroke="#cbd5e1" strokeWidth="2" strokeDasharray="4,4" />
-                {/* Actual cohort area fill */}
-                <path d="M 0,55 Q 120,32 240,12 L 240,60 L 0,60 Z" fill="url(#paceGrad)" />
-                {/* Actual cohort pace stroke */}
-                <path d="M 0,55 Q 120,32 240,12" fill="none" stroke="#00a896" strokeWidth="2.5" strokeLinecap="round" />
-                <circle cx="240" cy="12" r="3.5" fill="#00a896" />
+                <path d="M 0,50 Q 120,38 240,20" fill="none" stroke="#cbd5e1" strokeWidth="2" strokeDasharray="4,4" />
+                <path d="M 0,50 Q 120,30 240,10 L 240,55 L 0,55 Z" fill="url(#paceGrad)" />
+                <path d="M 0,50 Q 120,30 240,10" fill="none" stroke="#00a896" strokeWidth="2.5" strokeLinecap="round" />
+                <circle cx="240" cy="10" r="3.5" fill="#00a896" />
               </svg>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <div className="td-pace-legend">
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ width: '10px', height: '2px', background: '#00a896', display: 'inline-block' }} /> Actual Cohort
-              </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ width: '10px', height: '2px', background: '#cbd5e1', display: 'inline-block' }} /> Expected Syllabus
-              </span>
+      {/* ==========================================================================
+          ROW 2: SECONDARY ANALYTICS GRID (Lecture Schedule | Balance Bars | Dwell Histogram)
+          ========================================================================== */}
+      <div className="td-secondary-cockpit-grid">
+        {/* CARD 4: Mini Lecture Schedule */}
+        <div className="td-card td-schedule-card">
+          <div className="td-card-head">
+            <div className="td-card-title-group">
+              <Calendar size={15} style={{ color: 'var(--td-teal)' }} aria-hidden="true" />
+              <h3 className="td-card-title" style={{ fontSize: '0.86rem' }}>Mini Lecture Schedule</h3>
+            </div>
+            <span className="td-card-badge">Today</span>
+          </div>
+
+          <div className="td-schedule-list">
+            <div className="td-schedule-item">
+              <span className="td-schedule-time">11:00 AM</span>
+              <span className="td-schedule-topic">Substitution Conception</span>
+            </div>
+            <div className="td-schedule-item" style={{ background: 'var(--td-teal-bg)' }}>
+              <span className="td-schedule-time" style={{ color: 'var(--td-teal-deep)' }}>11:18 AM</span>
+              <span className="td-schedule-topic" style={{ color: 'var(--td-teal-deep)', fontWeight: 800 }}>Change of Limits Focus</span>
+            </div>
+            <div className="td-schedule-item">
+              <span className="td-schedule-time">11:35 AM</span>
+              <span className="td-schedule-topic">Integration & FTC Verify</span>
+            </div>
+          </div>
+        </div>
+
+        {/* CARD 5: Conceptual vs Procedural Balance Bar Chart */}
+        <div className="td-card td-balance-card">
+          <div className="td-card-head">
+            <div className="td-card-title-group">
+              <BarChart3 size={15} style={{ color: 'var(--td-text-muted)' }} aria-hidden="true" />
+              <h3 className="td-card-title" style={{ fontSize: '0.84rem' }}>Conceptual vs Procedural Balance</h3>
+            </div>
+            <span style={{ fontSize: '0.7rem', color: 'var(--td-emerald-deep)', fontWeight: 700 }}>Balanced Flow</span>
+          </div>
+
+          <div className="td-balance-chart" role="img" aria-label="Conceptual versus procedural balance chart">
+            <div className="td-balance-col">
+              <div className="td-balance-bar teal" style={{ height: '78%' }} title="Conceptual Understanding: 78%" />
+              <span className="td-balance-label">Concept</span>
+            </div>
+            <div className="td-balance-col">
+              <div className="td-balance-bar emerald" style={{ height: '94%' }} title="Limit Logic: 94%" />
+              <span className="td-balance-label">Limits</span>
+            </div>
+            <div className="td-balance-col">
+              <div className="td-balance-bar lavender" style={{ height: '68%' }} title="Subst. Rewriting: 68%" />
+              <span className="td-balance-label">Rewrite</span>
+            </div>
+            <div className="td-balance-col">
+              <div className="td-balance-bar amber" style={{ height: '84%' }} title="Procedural Algebra: 84%" />
+              <span className="td-balance-label">Procedural</span>
+            </div>
+          </div>
+        </div>
+
+        {/* CARD 6: Step 2 Dwell Time Distribution Histogram */}
+        <div className="td-card td-dwell-card">
+          <div className="td-card-head">
+            <div className="td-card-title-group">
+              <Clock size={15} style={{ color: 'var(--td-teal)' }} aria-hidden="true" />
+              <h3 className="td-card-title" style={{ fontSize: '0.84rem' }}>Step 2 Dwell Time Distribution</h3>
+            </div>
+            <span className="td-card-badge" style={{ color: 'var(--td-teal-deep)', fontWeight: 700 }}>Target: 2–4m</span>
+          </div>
+
+          <div className="td-dwell-histogram-bars" role="img" aria-label="Dwell time distribution histogram">
+            <div className="td-hist-col">
+              <div className="td-hist-bar normal" style={{ height: '24%' }}>
+                <span className="td-hist-count">6</span>
+              </div>
+              <span className="td-hist-label">&lt;2m</span>
+            </div>
+            <div className="td-hist-col">
+              <div className="td-hist-bar target" style={{ height: '88%' }}>
+                <span className="td-hist-count">28</span>
+              </div>
+              <span className="td-hist-label" style={{ color: 'var(--td-teal-deep)' }}>2–4m</span>
+            </div>
+            <div className="td-hist-col">
+              <div className="td-hist-bar warning" style={{ height: '32%' }}>
+                <span className="td-hist-count">8</span>
+              </div>
+              <span className="td-hist-label">4–6m</span>
+            </div>
+            <div className="td-hist-col">
+              <div className="td-hist-bar critical" style={{ height: '14%' }}>
+                <span className="td-hist-count">2</span>
+              </div>
+              <span className="td-hist-label">&gt;6m</span>
             </div>
           </div>
         </div>
