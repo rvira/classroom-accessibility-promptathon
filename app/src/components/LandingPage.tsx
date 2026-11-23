@@ -21,11 +21,6 @@ export function LandingPage({ onStartTour }: LandingPageProps) {
       {/* Hero Section */}
       <section className="landing-hero-section" aria-labelledby="hero-heading">
         <div className="landing-hero-content">
-          <div className="hero-pill-tag">
-            <span className="pill-dot" />
-            <span className="pill-text">WCAG 2.2 AA · Cognitive Accessibility</span>
-          </div>
-
           <h1 id="hero-heading" className="landing-hero-title">
             Classrooms Built for <span className="highlight-text">Working Memory</span>.
           </h1>
@@ -61,26 +56,6 @@ export function LandingPage({ onStartTour }: LandingPageProps) {
               <Compass size={16} aria-hidden="true" />
               <span>Tour</span>
             </button>
-          </div>
-
-          {/* Value Props Bar */}
-          <div className="hero-value-props-bar">
-            <div className="prop-item">
-              <span className="prop-dot" />
-              <span>Zero-Scroll Viewport</span>
-            </div>
-            <div className="prop-item">
-              <span className="prop-dot" />
-              <span>Dynamic 5-Day Strip</span>
-            </div>
-            <div className="prop-item">
-              <span className="prop-dot" />
-              <span>Canvas &amp; EdStem Sync</span>
-            </div>
-            <div className="prop-item">
-              <span className="prop-dot" />
-              <span>Socratic Scaffolding</span>
-            </div>
           </div>
         </div>
 

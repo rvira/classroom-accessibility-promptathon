@@ -285,18 +285,6 @@ export function ClassDetailPage({ onLaunchFocusMode }: ClassDetailPageProps) {
                 </div>
                 <p className="rubric-text">{classData.outline.rubricConstraint}</p>
               </div>
-
-              {/* Assignments & Readings */}
-              <div className="meta-grid-2col">
-                <div className="meta-grid-box">
-                  <span className="box-label">Reading</span>
-                  <span className="box-value">{classData.outline.reading}</span>
-                </div>
-                <div className="meta-grid-box">
-                  <span className="box-label">Deadline</span>
-                  <span className="box-value">{classData.outline.assignments}</span>
-                </div>
-              </div>
             </div>
           </section>
         )}

@@ -657,8 +657,8 @@ i=3 [  0,   -1,    2,    1,    3 ]  <- Converged!
         bio: 'Focused on undergraduate calculus pedagogy and active learning strategies.',
         avatarInitials: 'PC',
       },
-      isLive: true,
-      isOngoingToday: true,
+      isLive: false,
+      isOngoingToday: false,
       canvasSync: 'Lab 14 Worksheet (Due Today 10:50 AM)',
       streamUrl: 'https://uci.zoom.us/j/9912093847',
       outline: {
